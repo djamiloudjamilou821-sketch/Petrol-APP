@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Petroleum Learning Platform</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+
+    <meta name="theme-color" content="#1e293b">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            color: white;
+
+            background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
+                        url("/static/bg.jpg");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #020617;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            color: #38bdf8;
+        }
+
+        /* LANGUAGE */
+        .lang-form {
+            display: inline-flex;
+            margin-left: 15px;
+        }
+
+        .lang-form button {
+            background: transparent;
+            border: 1px solid #38bdf8;
+            color: white;
+            margin-left: 5px;
+            padding: 5px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .lang-form button:hover {
+            background: #38bdf8;
+            color: black;
+        }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            margin-top: 100px;
+            padding: 0 15px;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+
+        .main-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .main-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            padding: 25px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: #273449;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .card p {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* MOBILE */
+        @media (max-width: 700px) {
+
+            .menu {
+                position: absolute;
+                top: 60px;
+                right: 0;
+                background: #020617;
+                width: 200px;
+                flex-direction: column;
+                display: none;
+                padding: 10px;
+                border-radius: 0 0 0 10px;
+            }
+
+            .menu a {
+                margin: 10px 0;
+            }
+
+            .lang-form {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .lang-form button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero {
+                margin-top: 70px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+
+    <div class="logo">🛢️ PetroApp</div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <div class="menu" id="menu">
+        <a href="/lessons">Lessons</a>
+        <a href="/quiz">Quiz</a>
+        <a href="/converter">Converter</a>
+        <a href="/formulas">Formulas</a>
+
+        <!-- LANGUAGE -->
+        <form method="POST" action="/" class="lang-form">
+            <button name="lang" value="en">EN</button>
+            <button name="lang" value="fr">FR</button>
+        </form>
+    </div>
+
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>
+        {% if lang == "fr" %}
+            Plateforme Pétrolière
+        {% else %}
+            Petroleum Learning Platform
+        {% endif %}
+    </h1>
+
+    <p>
+        {% if lang == "fr" %}
+            Apprenez comme un vrai ingénieur
+        {% else %}
+            Learn, practice, and calculate like a real engineer
+        {% endif %}
+    </p>
+
+    <a class="main-btn" href="/lessons">
+        {% if lang == "fr" %}
+            Commencer
+        {% else %}
+            Start Learning
+        {% endif %}
+    </a>
+</div>
+
+<!-- FEATURES -->
+<div class="grid">
+
+    <a href="/lessons" class="card">
+        <h3>📘 Lessons</h3>
+        <p>
+            Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals,
+            drilling operations, production systems, and real industry concepts used by engineers.
+        </p>
+    </a>
+
+    <a href="/quiz" class="card">
+        <h3>🧠 Quiz System</h3>
+        <p>
+            Test your understanding with interactive quizzes based on real petroleum engineering topics.
+            Track your progress and improve your knowledge after each lesson.
+        </p>
+    </a>
+
+    <a href="/converter" class="card">
+        <h3>⚙️ Engineering Converter</h3>
+        <p>
+            Quickly convert oil & gas units like barrels, liters, pressure (psi/bar), and more.
+            Designed for real field calculations and engineering accuracy.
+        </p>
+    </a>
+
+    <a href="/formulas" class="card">
+        <h3>📊 Petroleum Formulas</h3>
+        <p>
+            Access essential engineering formulas used in production, drilling, and reservoir calculations.
+            Understand how professionals solve real industry problems.
+        </p>
+    </a>
+
+</div>
+<!-- SCRIPT -->
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+
+    if (menu.style.display === "flex") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "flex";
+    }
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js")
+    .then(() => console.log("Service Worker Registered"));
+}
+</script>
+</body>
+</html>

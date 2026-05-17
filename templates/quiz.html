@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Petroleum Engineering Quiz</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 700px;
+            margin: auto;
+            margin-top: 30px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .question {
+            text-align: left;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .question h3 {
+            margin: 0 0 10px 0;
+        }
+
+        label {
+            display: block;
+            margin: 6px 0;
+            cursor: pointer;
+        }
+
+        input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 10px;
+        }
+
+        .correct {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .wrong {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .score {
+            font-size: 20px;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .explanation {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-top: 5px;
+        }
+
+        a {
+            display: block;
+            margin-top: 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>🧠 Petroleum Engineering Quiz</h1>
+        <p>
+            Test your knowledge in drilling, reservoir engineering,
+            production, pressure, porosity, and petroleum calculations.
+        </p>
+    </div>
+
+    <!-- QUIZ FORM -->
+    <form method="POST">
+
+        {% for q in questions %}
+        <div class="question-card">
+
+            <div class="question-number">
+                Question {{ loop.index }}
+            </div>
+
+            <h3 class="question-title">
+                {{ q.q }}
+            </h3>
+
+            <div class="options">
+
+                {% for key, value in q.options.items() %}
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question{{ q.q }}"
+                        value="{{ key }}"
+                        required
+                    >
+
+                    <span class="option-text">
+                        <strong>{{ key }}.</strong> {{ value }}
+                    </span>
+
+                </label>
+                {% endfor %}
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="submit-btn">
+            🚀 Submit Quiz
+        </button>
+
+    </form>
+
+    <!-- RESULTS -->
+    {% if results %}
+
+    <div class="result-box">
+
+        <div class="score-box">
+
+            <h2>🏆 Quiz Result</h2>
+
+            <div class="score">
+                {{ score }} / {{ total }}
+            </div>
+
+            {% if score == total %}
+                <p class="score-message">Excellent work Engineer 👏</p>
+
+            {% elif score >= total / 2 %}
+                <p class="score-message">Good job! Keep improving 🔥</p>
+
+            {% else %}
+                <p class="score-message">
+                    Keep practicing and try again 💪
+                </p>
+            {% endif %}
+
+        </div>
+
+        <!-- ANSWERS -->
+        {% for r in results %}
+
+        <div class="answer-card">
+
+            <h3>
+                {{ loop.index }}. {{ r.question }}
+            </h3>
+
+            <p>
+                Your Answer:
+                <span class="{{ 'correct' if r.is_correct else 'wrong' }}">
+                    {{ r.your_answer }}
+                </span>
+            </p>
+
+            <p>
+                Correct Answer:
+                <span class="correct">
+                    {{ r.correct_answer }}
+                </span>
+            </p>
+
+            <div class="explanation">
+                💡 {{ r.explanation }}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+    <!-- FOOTER -->
+    <div class="footer-buttons">
+
+        <a href="/quiz" class="retry-btn">
+            🔄 Retry Quiz
+        </a>
+
+        <a href="/home" class="home-btn">
+            🏠 Back Home
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

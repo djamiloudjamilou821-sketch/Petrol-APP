@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1000px;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .title {
+            font-size: 18px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .formula {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #fbbf24;
+        }
+
+        .desc {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 Petroleum Formulas</h1>
+    <p>Engineering equations used in oil & gas</p>
+
+    <div class="grid">
+
+        {% for f in formulas %}
+
+        <a href="{{ f.link or '#' }}" class="card" target="_blank">
+
+            <div class="title">{{ f.name }}</div>
+
+            <div class="formula">{{ f.formula }}</div>
+
+            <p class="desc">{{ f.desc }}</p>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

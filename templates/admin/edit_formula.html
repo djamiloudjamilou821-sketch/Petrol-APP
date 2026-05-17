@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Formula</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 700px;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            color: #cbd5e1;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: none;
+            background: #0f172a;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #f59e0b;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #d97706;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>✏️ Edit Formula</h1>
+    <p>Update formula details</p>
+
+    <div class="card">
+
+        <form method="POST">
+
+            <label>Name</label>
+            <input type="text" name="name" value="{{ formula.name }}" required>
+
+            <label>Formula</label>
+            <input type="text" name="formula" value="{{ formula.formula }}" required>
+
+            <label>Description</label>
+            <input type="text" name="desc" value="{{ formula.desc }}">
+
+            <label>Link</label>
+            <input type="text" name="link" value="{{ formula.link }}">
+
+            <button type="submit">💾 Save Changes</button>
+
+        </form>
+
+    </div>
+
+    <a href="/admin/manage-formulas">⬅ Back</a>
+
+</div>
+
+</body>
+</html>

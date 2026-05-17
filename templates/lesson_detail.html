@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ lesson.title }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 850px;
+            margin: auto;
+            padding: 15px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        /* VIDEO */
+        .video-box {
+            margin-top: 15px;
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            border-radius: 10px;
+        }
+
+        /* CONTENT */
+        .content {
+            margin-top: 15px;
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 15px;
+            color: #e2e8f0;
+        }
+
+        /* BUTTON */
+        .btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* MOBILE FIX */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .content {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>🎥 {{ lesson.title }}</h1>
+        <p>Petroleum Engineering Learning Module</p>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box">
+        <iframe src="{{ lesson.video }}" allowfullscreen></iframe>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        {{ lesson.content }}
+    </div>
+
+    <!-- BACK BUTTON -->
+    <a class="btn" href="/lessons">⬅ Back to Lessons</a>
+
+</div>
+
+</body>
+</html>

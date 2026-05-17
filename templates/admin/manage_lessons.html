@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Lessons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 900px;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🛠 Manage Lessons</h1>
+
+    {% for lesson in lessons %}
+    <div class="card">
+        <h3>{{ lesson.title }}</h3>
+
+        <a href="/admin/edit-lesson/{{ loop.index0 }}" class="btn">
+            ✏️ Edit Lesson
+        </a>
+
+        <a href="/admin/delete-lesson/{{ loop.index0 }}"
+            class="btn"
+            style="background:#dc2626;"
+            onclick="return confirm('⚠️ Are you sure you want to delete this lesson? This cannot be undone.')">
+            🗑️ Delete
+        </a>
+    </div>
+    {% endfor %}
+
+    <a class="back" href="/admin">⬅ Back to Admin</a>
+
+</div>
+
+</body>
+</html>

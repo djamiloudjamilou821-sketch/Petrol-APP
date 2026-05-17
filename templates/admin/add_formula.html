@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Formula</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 700px;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: #0f172a;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #22c55e;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 Add New Formula</h1>
+    <p>Create a new engineering formula</p>
+
+    <div class="card">
+
+        <form method="POST">
+
+            <label>Formula Name</label>
+            <input type="text" name="name" required>
+
+            <label>Formula</label>
+            <input type="text" name="formula" placeholder="Example: Q = V / t" required>
+
+            <label>Description</label>
+            <input type="text" name="desc" placeholder="Short explanation">
+
+            <label>Route (example: /flow)</label>
+            <input type="text" name="link" required>
+
+            <button type="submit">➕ Add Formula</button>
+
+        </form>
+
+    </div>
+
+    <a href="/admin">⬅ Back to Admin</a>
+
+</div>
+
+</body>
+</html>

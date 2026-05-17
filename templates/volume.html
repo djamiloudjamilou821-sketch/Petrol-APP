@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Volume Calculator</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            margin-top: 40px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .formula {
+            color: #38bdf8;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 15px;
+            color: #38bdf8;
+            font-size: 18px;
+        }
+
+        a {
+            display: block;
+            margin-top: 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>🌊 Volume Calculator</h2>
+
+    <div class="formula">V = Q × t</div>
+
+    <p>Calculate total produced volume from flow rate and time</p>
+
+    <form method="POST">
+        <input name="q" type="number" step="any" placeholder="Flow Rate (Q)" required>
+        <input name="t" type="number" step="any" placeholder="Time (t)" required>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    {% if result is not none %}
+        <div class="result">
+            Result: {{ result }}
+        </div>
+    {% endif %}
+
+    <a href="/formulas">⬅ Back to Formulas</a>
+
+</div>
+
+</body>
+</html>
