@@ -24,6 +24,7 @@ def register_admin(app):
             return redirect("/admin-login")
 
         lesson = Lesson.query.get_or_404(id)
+        
         if request.method == "POST":
 
             lesson.title = request.form["title"]

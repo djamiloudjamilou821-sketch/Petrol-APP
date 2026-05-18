@@ -70,7 +70,7 @@ def register_formulas(app):
         return render_template("api.html", result=result)
 
     @app.route("/api/api-gravity", methods=["POST"])
-    def api_gravity():
+    def api_api_gravity():
         data = request.get_json()
 
         try:
