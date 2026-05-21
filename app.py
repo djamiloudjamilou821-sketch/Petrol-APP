@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from database import db
+from models import Lesson, Formula
 
 from lessons import register_lessons
 from quiz import register_quiz
@@ -13,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = "secret123"
 
 # DATABASE
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///petroleum.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.qmwbvuspqepsmhirdgqk:C,s-L7Q47st?2M,@aws-0-eu-west-1.pooler.supabase.com:6543/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
@@ -81,4 +82,8 @@ def language():
     return render_template("language.html")
 # ▶️ RUN APP
 if __name__ == "__main__":
+    
+    with app.app_context():
+        db.create_all()
+        
     app.run(debug=True)
