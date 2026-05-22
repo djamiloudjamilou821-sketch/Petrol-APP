@@ -63,12 +63,12 @@
     <div class="card">
         <h3>{{ lesson.title }}</h3>
 
-        <a href="/admin/edit-lesson/{{ loop.index0 }}" class="btn">
+        <a href="/admin/edit-lesson/{{ lesson.id }}" class="btn edit-btn">
             ✏️ Edit Lesson
         </a>
 
-        <a href="/admin/delete-lesson/{{ loop.index0 }}"
-            class="btn"
+        <a href="/admin/delete-lesson/{{ lesson.id }}"
+            class="btn delete-btn"
             style="background:#dc2626;"
             onclick="return confirm('⚠️ Are you sure you want to delete this lesson? This cannot be undone.')">
             🗑️ Delete
