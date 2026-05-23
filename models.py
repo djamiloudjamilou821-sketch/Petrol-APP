@@ -21,12 +21,19 @@ class Lesson(db.Model):
 
 class Formula(db.Model):
 
+
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(200), nullable=False)
 
-    formula = db.Column(db.String(200), nullable=False)
+    equation = db.Column(db.Text)
 
-    desc = db.Column(db.String(500))
+    description = db.Column(db.Text)
 
-    link = db.Column(db.String(200))
+    variables = db.Column(db.Text)
+
+    example = db.Column(db.Text)
+
+    category = db.Column(db.String(100))
+
+    python_formula = db.Column(db.Text)

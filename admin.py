@@ -103,16 +103,13 @@ def register_admin(app):
         if request.method == "POST":
 
             formula = Formula(
-
-            name=request.form["name"],
-
-            formula=request.form["formula"],
-
-            desc=request.form.get("desc"),
-
-            link=request.form.get("link")
-
-        )
+                name=request.form["name"],
+                equation=request.form["equation"],
+                description=request.form["description"],
+                variables=request.form["variables"],
+                python_formula=request.form["python_formula"],
+                category=request.form["category"]
+            )
 
             db.session.add(formula)
             db.session.commit()
@@ -159,9 +156,16 @@ def register_admin(app):
         if request.method == "POST":
 
             formula.name = request.form["name"]
-            formula.formula = request.form["formula"]
-            formula.desc = request.form.get("desc")
-            formula.link = request.form.get("link")
+
+            formula.equation = request.form["equation"]
+
+            formula.description = request.form["description"]
+
+            formula.variables = request.form["variables"]
+
+            formula.category = request.form["category"]
+
+            formula.python_formula = request.form["python_formula"]
 
             db.session.commit()
 
@@ -192,4 +196,5 @@ def register_admin(app):
 
         formulas = Formula.query.all()
 
+        return render_template("admin/manage_formulas.html", formulas=formulas)
         return render_template("admin/manage_formulas.html", formulas=formulas)
