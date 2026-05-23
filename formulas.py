@@ -57,3 +57,13 @@ def register_formulas(app):
 
             except ZeroDivisionError:
                 result = "Error: Division by zero"
+
+            except Exception as e:
+                result = f"Error: {e}"
+
+        return render_template(
+            "formula_page.html",
+            formula=formula,
+            result=result,
+            variables=variables
+        )

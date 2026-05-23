@@ -1,88 +1,247 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Formulas</title>
+    <title>Petroleum Formulas</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            text-align: center;
+
+        *{
+            box-sizing:border-box;
         }
 
-        .container {
-            width: 92%;
-            max-width: 1000px;
-            margin: auto;
-            margin-top: 20px;
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#0f172a;
+            color:white;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        .topbar{
+            background:#020617;
+            padding:18px;
+            text-align:center;
+            font-size:22px;
+            font-weight:bold;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            box-shadow:0 2px 10px rgba(0,0,0,0.4);
         }
 
-        .card {
-            background: #1e293b;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: left;
-            transition: 0.3s;
+        .container{
+            width:92%;
+            max-width:1200px;
+            margin:auto;
+            padding:25px 0;
         }
 
-        .card:hover {
-            transform: scale(1.03);
+        .hero{
+            text-align:center;
+            margin-bottom:30px;
         }
 
-        .title {
-            font-size: 18px;
-            color: #38bdf8;
-            font-weight: bold;
+        .hero h1{
+            margin-bottom:10px;
+            font-size:34px;
         }
 
-        .formula {
-            font-size: 16px;
-            margin: 10px 0;
-            color: #fbbf24;
+        .hero p{
+            color:#cbd5e1;
+            font-size:15px;
+            line-height:1.6;
+            max-width:700px;
+            margin:auto;
         }
 
-        .desc {
-            font-size: 13px;
-            color: #cbd5e1;
+        .search-box{
+            margin-top:25px;
+            display:flex;
+            justify-content:center;
         }
 
-        a {
-            display: inline-block;
-            margin-top: 10px;
-            color: #38bdf8;
-            text-decoration: none;
+        .search-box input{
+            width:100%;
+            max-width:500px;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:#1e293b;
+            color:white;
+            font-size:15px;
+            outline:none;
         }
+
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+            gap:20px;
+            margin-top:35px;
+        }
+
+        .card{
+            background:#1e293b;
+            border-radius:18px;
+            padding:22px;
+            text-decoration:none;
+            color:white;
+            transition:0.3s;
+            position:relative;
+            overflow:hidden;
+            border:1px solid transparent;
+        }
+
+        .card:hover{
+            transform:translateY(-6px);
+            border:1px solid #38bdf8;
+            background:#243447;
+        }
+
+        .category{
+            display:inline-block;
+            background:#2563eb;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+            margin-bottom:15px;
+        }
+
+        .title{
+            font-size:22px;
+            font-weight:bold;
+            margin-bottom:12px;
+        }
+
+        .equation{
+            background:#0f172a;
+            padding:12px;
+            border-radius:10px;
+            color:#38bdf8;
+            font-size:18px;
+            text-align:center;
+            margin-bottom:15px;
+            overflow-x:auto;
+        }
+
+        .desc{
+            color:#cbd5e1;
+            font-size:14px;
+            line-height:1.6;
+            margin-bottom:18px;
+        }
+
+        .footer{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .open-btn{
+            background:#2563eb;
+            padding:10px 16px;
+            border-radius:10px;
+            font-size:14px;
+            font-weight:bold;
+        }
+
+        .arrow{
+            font-size:18px;
+        }
+
+        .empty{
+            text-align:center;
+            margin-top:80px;
+            color:#94a3b8;
+        }
+
+        @media(max-width:700px){
+
+            .hero h1{
+                font-size:26px;
+            }
+
+            .card{
+                padding:18px;
+            }
+
+            .title{
+                font-size:20px;
+            }
+
+            .equation{
+                font-size:16px;
+            }
+        }
+
     </style>
 </head>
 
 <body>
 
+<div class="topbar">
+    🛢️ Petroleum Engineering Formulas
+</div>
+
 <div class="container">
 
-    <h1>📊 Petroleum Formulas</h1>
-    <p>Engineering equations used in oil & gas</p>
+    <div class="hero">
 
-    <div class="grid">
+        <h1>Engineering Formula Library</h1>
+
+        <p>
+            Explore petroleum engineering equations used in drilling,
+            reservoir engineering, production, fluid mechanics,
+            pressure analysis, and field calculations.
+        </p>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="search"
+                placeholder="🔍 Search formulas..."
+                onkeyup="searchFormula()"
+            >
+        </div>
+
+    </div>
+
+    {% if formulas %}
+
+    <div class="grid" id="formulaGrid">
 
         {% for f in formulas %}
 
-        <a href="{{ f.link or '#' }}" class="card" target="_blank">
+        <a href="/formula/{{ f.id }}" class="card formula-card">
 
-            <div class="title">{{ f.name }}</div>
+            <div class="category">
+                {{ f.category if f.category else "Engineering" }}
+            </div>
 
-            <div class="formula">{{ f.formula }}</div>
+            <div class="title">
+                {{ f.name }}
+            </div>
 
-            <p class="desc">{{ f.desc }}</p>
+            <div class="equation">
+                {{ f.equation }}
+            </div>
+
+            <div class="desc">
+                {{ f.description }}
+            </div>
+
+            <div class="footer">
+
+                <div class="open-btn">
+                    Open Formula
+                </div>
+
+                <div class="arrow">
+                    ➜
+                </div>
+
+            </div>
 
         </a>
 
@@ -90,7 +249,43 @@
 
     </div>
 
+    {% else %}
+
+    <div class="empty">
+
+        <h2>No formulas found</h2>
+
+        <p>
+            Add formulas from the admin panel.
+        </p>
+
+    </div>
+
+    {% endif %}
+
 </div>
+
+<script>
+
+function searchFormula(){
+
+    let input = document.getElementById("search").value.toLowerCase();
+
+    let cards = document.getElementsByClassName("formula-card");
+
+    for(let i = 0; i < cards.length; i++){
+
+        let text = cards[i].innerText.toLowerCase();
+
+        if(text.includes(input)){
+            cards[i].style.display = "block";
+        }else{
+            cards[i].style.display = "none";
+        }
+    }
+}
+
+</script>
 
 </body>
 </html>
