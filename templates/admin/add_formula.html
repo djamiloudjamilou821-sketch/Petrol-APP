@@ -2,116 +2,248 @@
 <html>
 <head>
     <title>Add Formula</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
+
+        *{
+            box-sizing:border-box;
         }
 
-        .container {
-            width: 92%;
-            max-width: 700px;
-            margin: auto;
-            margin-top: 30px;
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#0f172a;
+            color:white;
         }
 
-        h1 {
-            text-align: center;
+        .topbar{
+            background:#020617;
+            padding:18px;
+            text-align:center;
+            font-size:22px;
+            font-weight:bold;
+            position:sticky;
+            top:0;
         }
 
-        p {
-            text-align: center;
-            color: #cbd5e1;
-            font-size: 14px;
+        .container{
+            width:92%;
+            max-width:800px;
+            margin:auto;
+            padding:30px 0;
         }
 
-        .card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
+        .card{
+            background:#1e293b;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.3);
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #cbd5e1;
+        h1{
+            margin-top:0;
+            text-align:center;
+            margin-bottom:10px;
         }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            background: #0f172a;
-            color: white;
+        .subtitle{
+            text-align:center;
+            color:#cbd5e1;
+            margin-bottom:30px;
+            line-height:1.6;
         }
 
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            background: #22c55e;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
+        label{
+            display:block;
+            margin-top:18px;
+            margin-bottom:8px;
+            font-size:14px;
+            color:#cbd5e1;
         }
 
-        button:hover {
-            background: #16a34a;
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:#0f172a;
+            color:white;
+            font-size:15px;
+            outline:none;
         }
 
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #38bdf8;
-            text-decoration: none;
+        textarea{
+            min-height:120px;
+            resize:vertical;
         }
+
+        input:focus,
+        textarea:focus,
+        select:focus{
+            border:2px solid #38bdf8;
+        }
+
+        .btn{
+            width:100%;
+            margin-top:30px;
+            padding:15px;
+            border:none;
+            border-radius:14px;
+            background:#2563eb;
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            background:#1d4ed8;
+            transform:translateY(-2px);
+        }
+
+        .back{
+            display:block;
+            text-align:center;
+            margin-top:25px;
+            color:#38bdf8;
+            text-decoration:none;
+            font-size:15px;
+        }
+
+        .example{
+            margin-top:8px;
+            font-size:13px;
+            color:#94a3b8;
+        }
+
+        @media(max-width:700px){
+
+            .card{
+                padding:20px;
+            }
+
+            h1{
+                font-size:26px;
+            }
+        }
+
     </style>
 </head>
 
 <body>
 
+<div class="topbar">
+    ➕ Add Engineering Formula
+</div>
+
 <div class="container">
 
-    <h1>📊 Add New Formula</h1>
-    <p>Create a new engineering formula</p>
-
     <div class="card">
+
+        <h1>Create New Formula</h1>
+
+        <div class="subtitle">
+            Add petroleum engineering formulas dynamically without creating routes manually.
+        </div>
 
         <form method="POST">
 
             <label>Formula Name</label>
-            <input type="text" name="name" required>
+            <input
+                type="text"
+                name="name"
+                placeholder="Example: Darcy Flow Equation"
+                required
+            >
 
-            <label>Formula</label>
-            <input type="text" name="formula" placeholder="Example: Q = V / t" required>
+            <label>Equation</label>
+            <input
+                type="text"
+                name="equation"
+                placeholder="q = (0.00708 × k × h × ΔP) / (μ × B × ln(re/rw))"
+                required
+            >
+
+            <div class="example">
+                Write the exact engineering equation
+            </div>
 
             <label>Description</label>
-            <input type="text" name="desc" placeholder="Short explanation">
 
-            <label>Route (example: /flow)</label>
-            <input type="text" name="link" required>
+            <textarea
+                name="description"
+                placeholder="Explain what the formula calculates and where it is used..."
+                required
+            ></textarea>
 
-            <button type="submit">➕ Add Formula</button>
+            <label>Category</label>
+
+            <select name="category">
+
+                <option value="Reservoir">
+                    Reservoir Engineering
+                </option>
+
+                <option value="Drilling">
+                    Drilling Engineering
+                </option>
+
+                <option value="Production">
+                    Production Engineering
+                </option>
+
+                <option value="Fluid Mechanics">
+                    Fluid Mechanics
+                </option>
+
+                <option value="Pressure Analysis">
+                    Pressure Analysis
+                </option>
+
+                <option value="General">
+                    General Engineering
+                </option>
+
+            </select>
+
+            <label>Variables</label>
+
+            <textarea
+                name="variables"
+                placeholder="q = flow rate&#10;k = permeability&#10;h = formation thickness"
+            ></textarea>
+
+            <label>Python Formula</label>
+
+            <textarea
+                name="python_formula"
+                placeholder="(0.00708 * k * h * dp) / (mu * B * math.log(re/rw))"
+                required
+            ></textarea>
+
+            <div class="example">
+                Use Python syntax for automatic calculations
+            </div>
+
+            <button class="btn" type="submit">
+                🚀 Save Formula
+            </button>
 
         </form>
 
     </div>
 
-    <a href="/admin">⬅ Back to Admin</a>
+    <a href="/admin/manage-formulas" class="back">
+        ⬅ Back to Manage Formulas
+    </a>
 
 </div>
 
 </body>
+</html>
 </html>
