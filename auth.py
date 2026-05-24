@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, session
 
 # SIMPLE ADMIN PASSWORD (you can change it anytime)
-ADMIN_PASSWORD = "1234"  # 🔐 change this later
+ADMIN_PASSWORD = "mydjamal1"  # 🔐 change this later
 
 def register_auth(app):
 
