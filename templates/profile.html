@@ -58,6 +58,27 @@
             background:#1d4ed8;
         }
 
+        .back-arrow{
+            text-decoration:none;
+            color:white;
+            font-size:22px;
+            font-weight:bold;
+
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:10px;
+            transition:0.2s;
+        }
+
+        .back-arrow:hover{
+            background:#1e293b;
+        }
+
     </style>
 
 </head>
@@ -67,7 +88,7 @@
 <div class="container">
 
     <div class="card">
-
+        <a href="/" class="back-arrow">⬅</a>
         <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
      width="150">
 

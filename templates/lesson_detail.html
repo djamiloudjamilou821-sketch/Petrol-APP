@@ -91,6 +91,27 @@
                 font-size: 14px;
             }
         }
+
+        .back-arrow{
+            text-decoration:none;
+            color:white;
+            font-size:22px;
+            font-weight:bold;
+
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:10px;
+            transition:0.2s;
+        }
+
+        .back-arrow:hover{
+            background:#1e293b;
+        }
     </style>
 </head>
 
@@ -100,6 +121,7 @@
 
     <!-- HEADER -->
     <div class="header">
+        <a href="/lessons" class="back-arrow">⬅</a>
         <h1>🎥 {{ lesson.title }}</h1>
         <p>Petroleum Engineering Learning Module</p>
     </div>
@@ -114,8 +136,6 @@
         {{ lesson.content }}
     </div>
 
-    <!-- BACK BUTTON -->
-    <a class="btn" href="/lessons">⬅ Back to Lessons</a>
 
 </div>
 

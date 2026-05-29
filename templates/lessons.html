@@ -75,19 +75,27 @@
             margin-bottom: 20px;
         }
 
-        .btn-home {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background: #2563eb;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
+        .back-arrow{
+            text-decoration:none;
+            color:white;
+            font-size:22px;
+            font-weight:bold;
+
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:10px;
+            transition:0.2s;
         }
 
-        .btn-home:hover {
-            background: #1d4ed8;
+        .back-arrow:hover{
+            background:#1e293b;
         }
+
     </style>
 </head>
 
@@ -96,6 +104,7 @@
 <div class="container">
 
     <div class="top-bar">
+        <a href="/" class="back-arrow">⬅</a>
         <h1>📚 Petroleum Engineering Lessons</h1>
         <p>Learn the fundamentals of oil & gas engineering step by step</p>
     </div>
@@ -116,8 +125,6 @@
     {% endfor %}
 
 </div>
-
-    <a class="btn-home" href="/">⬅ Back Home</a>
 
 </div>
 

@@ -118,6 +118,27 @@
             font-size:15px;
         }
 
+        .back-arrow{
+            text-decoration:none;
+            color:white;
+            font-size:22px;
+            font-weight:bold;
+
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:10px;
+            transition:0.2s;
+        }
+
+        .back-arrow:hover{
+            background:#1e293b;
+        }
+
     </style>
 
 </head>
@@ -127,6 +148,8 @@
 <div class="container">
 
     <div class="card">
+        <a href="/profile" class="back-arrow">⬅</a>
+
 
         <h1>✏️ Edit Profile</h1>
 
@@ -199,10 +222,7 @@
 
         </form>
 
-        <a href="/profile" class="back-btn">
-            ← Back to Profile
-        </a>
-
+        
     </div>
 
 </div>

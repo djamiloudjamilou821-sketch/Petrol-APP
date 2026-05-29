@@ -148,6 +148,27 @@
             margin-bottom:15px;
         }
 
+        .back-arrow{
+            text-decoration:none;
+            color:white;
+            font-size:22px;
+            font-weight:bold;
+
+            width:40px;
+            height:40px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border-radius:10px;
+            transition:0.2s;
+        }
+
+        .back-arrow:hover{
+            background:#1e293b;
+        }
+
     </style>
 </head>
 
@@ -156,6 +177,7 @@
 <div class="container">
 
     <div class="card">
+        <a href="/formulas" class="back-arrow">⬅</a>
 
         <div class="category">
             {{ formula.category }}
@@ -214,9 +236,6 @@
 
         {% endif %}
 
-        <a href="/formulas" class="back">
-            ⬅ Back to Formulas
-        </a>
 
     </div>
 
