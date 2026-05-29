@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, session
-from models import Lesson, Formula
+from models import Lesson, Formula, User
 from database import db
 
 def admin_required():
@@ -198,3 +198,14 @@ def register_admin(app):
 
         return render_template("admin/manage_formulas.html", formulas=formulas)
         return render_template("admin/manage_formulas.html", formulas=formulas)
+
+    # user
+    @app.route("/admin/users")
+    def admin_users():
+
+        users = User.query.all()
+
+        return render_template(
+            "admin_users.html",
+            users=users
+        )

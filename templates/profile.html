@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#0f172a;
+            color:white;
+        }
+
+        .container{
+            width:90%;
+            max-width:700px;
+            margin:auto;
+            margin-top:40px;
+        }
+
+        .card{
+            background:#1e293b;
+            padding:25px;
+            border-radius:20px;
+            text-align:center;
+        }
+
+        img{
+            width:130px;
+            height:130px;
+            border-radius:50%;
+            object-fit:cover;
+            border:4px solid #38bdf8;
+        }
+
+        h1{
+            margin-top:15px;
+        }
+
+        p{
+            color:#cbd5e1;
+        }
+
+        .btn{
+            display:inline-block;
+            margin-top:15px;
+            padding:12px 20px;
+            background:#2563eb;
+            color:white;
+            text-decoration:none;
+            border-radius:10px;
+        }
+
+        .btn:hover{
+            background:#1d4ed8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
+     width="150">
+
+        <h1>{{ user.username }}</h1>
+
+        <p>{{ user.email }}</p>
+
+        <p>{{ user.bio }}</p>
+
+        <p>🌍 {{ user.country }}</p>
+
+        <p>🏫 {{ user.university }}</p>
+
+        <p>🛢️ {{ user.petroleum_level }}</p>
+
+        <a href="/edit-profile" class="btn">
+            ✏ Edit Profile
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

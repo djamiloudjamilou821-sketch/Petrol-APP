@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Create account</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    width:90%;
+    max-width:400px;
+    background:#1e293b;
+    padding:30px;
+    border-radius:20px;
+    color:white;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+    border:none;
+    border-radius:10px;
+    background:#334155;
+    color:white;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.link{
+    text-align:center;
+    margin-top:20px;
+}
+
+a{
+    color:#38bdf8;
+    text-decoration:none;
+}
+
+.error{
+    color:#ef4444;
+    text-align:center;
+}
+
+.password-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-box input {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+.eye {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 18px;
+    color: #94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Create Account</h1>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+
+<input type="text" name="username" placeholder="Username" required>
+
+<input type="email" name="email" placeholder="Email" required>
+
+<div class="password-box">
+
+    <input type="password" id="password" name="password" placeholder="Password">
+
+    <span class="eye" onclick="togglePassword()">👁️</span>
+
+</div>
+
+<button type="submit">
+Create Account
+</button>
+
+</form>
+
+<div class="link">
+Already have account?
+<a href="/login">Login</a>
+</div>
+
+</div>
+<script>
+function togglePassword() {
+    const input = document.getElementById("password");
+
+    if (input.type === "password") {
+        input.type = "text";
+    } else {
+        input.type = "password";
+    }
+}
+</script>
+</body>
+</html>

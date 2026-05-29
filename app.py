@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from database import db
 from models import Lesson, Formula
+from datetime import timedelta
 
 from lessons import register_lessons
 from quiz import register_quiz
@@ -8,8 +9,14 @@ from formulas import register_formulas
 from converter import register_converter
 from admin import register_admin
 from auth import register_auth
+import os
 
 app = Flask(__name__)
+app.permanent_session_lifetime = timedelta(days=365)
+
+app.config["UPLOAD_FOLDER"] = "static/uploads"
+
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 app.secret_key = "secret123"
 
@@ -30,7 +37,12 @@ register_auth(app)
 # 🏠 HOME PAGE
 @app.route("/home")
 def home():
+
+    if not session.get("logged_in"):
+        return redirect("/login")
+
     lang = session.get("lang", "en")
+
     return render_template("index.html", lang=lang)
 
 
