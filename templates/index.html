@@ -421,5 +421,25 @@ if ("serviceWorker" in navigator) {
 }
 
 </script>
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+        navigator.serviceWorker
+        .register("/static/sw.js")
+
+        .then(() => {
+
+            console.log("PWA Ready");
+
+        });
+
+    });
+
+}
+
+</script>
 </body>
 </html>

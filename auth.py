@@ -155,7 +155,6 @@ def register_auth(app):
             user.petroleum_level = request.form["petroleum_level"]
 
             file = request.files["profile_pic"]
-
             if file and file.filename != "":
 
                 filename = secure_filename(file.filename)
