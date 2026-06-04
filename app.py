@@ -51,26 +51,6 @@ def home():
     return render_template("index.html", lang=lang)
 
 
-# 🛢️ POROSITY CALCULATOR
-@app.route("/porosity", methods=["GET", "POST"])
-def porosity():
-    result = None
-
-    if request.method == "POST":
-        vp = request.form.get("vp")
-        vt = request.form.get("vt")
-
-        if vp and vt:
-            vp = float(vp)
-            vt = float(vt)
-
-            if vt != 0:
-                result = round((vp / vt) * 100, 2)
-            else:
-                result = "Error: Total volume cannot be zero"
-
-    return render_template("porosity.html", result=result)
-
 
 # LANGUAGE
 @app.route("/", methods=["GET", "POST"])
