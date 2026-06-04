@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PetroAI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body{
+            margin:0;
+            font-family:system-ui, -apple-system, Arial;
+            background:#0b1220;
+            color:white;
+            display:flex;
+            flex-direction:column;
+            height:100vh;
+        }
+
+        /* HEADER */
+        .header{
+            background:#111827;
+            padding:14px;
+            text-align:center;
+            font-size:18px;
+            font-weight:600;
+            border-bottom:1px solid #1f2937;
+        }
+
+        /* CHAT AREA */
+        #chat-box{
+            flex:1;
+            overflow-y:auto;
+            padding:15px;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        /* BUBBLES */
+        .bubble{
+            max-width:85%;
+            padding:12px 14px;
+            border-radius:14px;
+            line-height:1.5;
+            font-size:15px;
+            word-wrap:break-word;
+            white-space:pre-wrap;
+        }
+
+        .user{
+            align-self:flex-end;
+            background:#2563eb;
+            border-bottom-right-radius:4px;
+        }
+
+        .ai{
+            align-self:flex-start;
+            background:#1f2937;
+            border-bottom-left-radius:4px;
+        }
+
+        /* INPUT AREA */
+        .input-area{
+            display:flex;
+            padding:10px;
+            background:#111827;
+            border-top:1px solid #1f2937;
+            gap:10px;
+        }
+
+        #question{
+            flex:1;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            font-size:15px;
+            outline:none;
+            background:#0f172a;
+            color:white;
+        }
+
+        button{
+            padding:12px 16px;
+            border:none;
+            border-radius:10px;
+            background:#10b981;
+            color:white;
+            font-size:14px;
+            cursor:pointer;
+        }
+
+        button:active{
+            transform:scale(0.98);
+        }
+
+        /* AI CONTENT STYLING */
+        .ai h3{
+            margin:8px 0 4px;
+            font-size:16px;
+            color:#38bdf8;
+        }
+
+        .ai b{
+            color:#fbbf24;
+        }
+
+        .ai ul{
+            padding-left:18px;
+        }
+
+        .typing{
+            font-style:italic;
+            opacity:0.7;
+        }
+
+        /* MOBILE TWEAK */
+        @media (max-width:600px){
+            .bubble{
+                max-width:90%;
+                font-size:14px;
+            }
+
+            button{
+                padding:10px 12px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    🤖 PetroAI – Petroleum Engineering Assistant
+</div>
+
+<div id="chat-box">
+
+    <div class="bubble ai">
+        Hello 👋 I’m PetroAI.<br>
+        Ask me anything about petroleum engineering (drilling, reservoirs, production, logs, etc.)
+    </div>
+
+</div>
+
+<div class="input-area">
+
+    <input id="question" placeholder="Ask PetroAI..." />
+
+    <button onclick="askAI()">Send</button>
+
+</div>
+
+<script>
+
+// FORMAT AI RESPONSE (simple markdown cleaner)
+function formatAI(text){
+
+    if(!text) return "";
+
+    return text
+        .replace(/\n/g, "<br>")
+        .replace(/### (.*?)(<br>|$)/g, "<h3>$1</h3>")
+        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+        .replace(/- /g, "• ");
+}
+
+async function askAI(){
+
+    let input = document.getElementById("question");
+    let question = input.value.trim();
+
+    if(question === "") return;
+
+    let chatBox = document.getElementById("chat-box");
+
+    // USER MESSAGE
+    chatBox.innerHTML += `
+        <div class="bubble user">${question}</div>
+    `;
+
+    input.value = "";
+
+    // TYPING INDICATOR
+    let loadingId = "loading_" + Date.now();
+
+    chatBox.innerHTML += `
+        <div class="bubble ai typing" id="${loadingId}">
+            PetroAI is thinking...
+        </div>
+    `;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try{
+
+        const res = await fetch("/ask_petroai", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+
+        document.getElementById(loadingId).remove();
+
+        chatBox.innerHTML += `
+            <div class="bubble ai">
+                ${formatAI(data.answer)}
+            </div>
+        `;
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch(err){
+
+        document.getElementById(loadingId).remove();
+
+        chatBox.innerHTML += `
+            <div class="bubble ai">
+                ❌ Error connecting to PetroAI. Try again.
+            </div>
+        `;
+    }
+}
+
+// ENTER KEY SUPPORT
+document.getElementById("question").addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        askAI();
+    }
+});
+
+</script>
+
+</body>
+</html>

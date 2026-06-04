@@ -3,6 +3,11 @@ from database import db
 from models import Lesson, Formula
 from datetime import timedelta
 
+import requests
+from dotenv import load_dotenv
+from flask import jsonify
+load_dotenv()
+
 from lessons import register_lessons
 from quiz import register_quiz
 from formulas import register_formulas
@@ -92,6 +97,88 @@ def language():
         session["lang"] = "en"
 
     return render_template("language.html")
+
+@app.route("/petroai")
+def petroai_page():
+
+    if not session.get("logged_in"):
+        return redirect("/login")
+
+    return render_template("petroai.html")
+
+
+@app.route("/ask_petroai", methods=["POST"])
+def ask_petroai():
+
+    question = request.json.get("question")
+
+    # 🧠 INIT MEMORY
+    if "chat_history" not in session:
+        session["chat_history"] = []
+
+    # Add user message to memory
+    session["chat_history"].append({
+        "role": "user",
+        "content": question
+    })
+
+    # Keep only last 10 messages (important for performance)
+    session["chat_history"] = session["chat_history"][-10:]
+
+    headers = {
+        "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "openai/gpt-oss-20b",
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are PetroAI, a professional petroleum engineering tutor."
+
+                    "Default writing style rules:"
+                    "- Always answer in clear paragraphs by default"
+                    "- Do NOT use bullet points unless the user explicitly asks for them"
+                    "- Do NOT use tables unless requested"
+                    "- Keep explanations simple, structured, and natural like a teacher speaking"
+                    "- Maximum 2–5 short paragraphs per answer"
+                    "- Use bullet points ONLY if the user says: 'use bullets', 'list', or 'steps'"
+                    "- Make answers easy to read on mobile"
+                    "- Avoid textbook or report style formatting"
+                    "- Ask to the user if they need more clarification after answer"
+                    "- Always write formulas in simple text format, not LaTeX"
+                    "- Use formats like: V = m/t, φ = Vp/Vt, Q = A × v"
+                    "- NEVER use fractions like \\frac{}{} or LaTeX math symbols"
+                    "- Keep formulas readable on mobile screens"
+                    "- Use plain ASCII math only"
+                    "- Explain formulas in words below if needed"
+                )
+            }
+        ] + session["chat_history"]
+    }
+
+    response = requests.post(
+        "https://router.huggingface.co/v1/chat/completions",
+        headers=headers,
+        json=payload,
+        timeout=60
+    )
+
+    data = response.json()
+
+    answer = data["choices"][0]["message"]["content"]
+
+    # Add AI response to memory
+    session["chat_history"].append({
+        "role": "assistant",
+        "content": answer
+    })
+
+    session.modified = True
+
+    return jsonify({"answer": answer})
 # ▶️ RUN APP
 if __name__ == "__main__":
     
