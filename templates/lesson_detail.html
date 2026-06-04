@@ -6,112 +6,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
+
+        *{
+            box-sizing:border-box;
         }
 
-        .container {
-            width: 92%;
-            max-width: 850px;
-            margin: auto;
-            padding: 15px;
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#0f172a;
+            color:white;
+        }
+
+        .container{
+            width:92%;
+            max-width:900px;
+            margin:auto;
+            padding:15px;
         }
 
         /* HEADER */
-        .header {
-            text-align: center;
-            padding: 15px;
-            margin-top: 10px;
-        }
 
-        .header h1 {
-            font-size: 22px;
-            color: #38bdf8;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 13px;
-            color: #cbd5e1;
-        }
-
-        /* VIDEO */
-        .video-box {
-            margin-top: 15px;
-            background: #1e293b;
-            padding: 10px;
-            border-radius: 12px;
-        }
-
-        iframe {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border: none;
-            border-radius: 10px;
-        }
-
-        /* CONTENT */
-        .content {
-            margin-top: 15px;
-            background: #1e293b;
-            padding: 15px;
-            border-radius: 12px;
-            line-height: 1.6;
-            font-size: 15px;
-            color: #e2e8f0;
-        }
-
-        /* BUTTON */
-        .btn {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            padding: 12px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        .btn:hover {
-            background: #1d4ed8;
-        }
-
-        /* MOBILE FIX */
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .content {
-                font-size: 14px;
-            }
+        .header{
+            position:relative;
+            text-align:center;
+            padding:20px 10px;
         }
 
         .back-arrow{
-            text-decoration:none;
-            color:white;
-            font-size:22px;
-            font-weight:bold;
+            position:absolute;
+            left:0;
+            top:15px;
 
-            width:40px;
-            height:40px;
+            width:42px;
+            height:42px;
 
             display:flex;
             align-items:center;
             justify-content:center;
 
+            text-decoration:none;
+            color:white;
+
+            font-size:22px;
             border-radius:10px;
-            transition:0.2s;
+
+            background:#1e293b;
+            transition:.2s;
         }
 
         .back-arrow:hover{
-            background:#1e293b;
+            background:#334155;
         }
+
+        .header h1{
+            margin:0;
+            font-size:28px;
+            color:#38bdf8;
+        }
+
+        .header p{
+            margin-top:8px;
+            color:#cbd5e1;
+            font-size:14px;
+        }
+
+        /* PROGRESS BAR */
+
+        .progress-bar{
+            margin-top:15px;
+            width:100%;
+            height:8px;
+            background:#334155;
+            border-radius:20px;
+            overflow:hidden;
+        }
+
+        .progress{
+            width:100%;
+            height:100%;
+            background:#10b981;
+        }
+
+        /* VIDEO */
+
+        .video-box{
+            margin-top:20px;
+            background:#1e293b;
+            padding:12px;
+            border-radius:16px;
+            box-shadow:0 4px 12px rgba(0,0,0,.25);
+        }
+
+        iframe{
+            width:100%;
+            aspect-ratio:16/9;
+            border:none;
+            border-radius:12px;
+        }
+
+        /* CONTENT CARD */
+
+        .content-card{
+            margin-top:20px;
+            background:#1e293b;
+            border-radius:16px;
+            padding:20px;
+            box-shadow:0 4px 12px rgba(0,0,0,.25);
+        }
+
+        .content-title{
+            font-size:20px;
+            margin-bottom:15px;
+            color:#38bdf8;
+            font-weight:bold;
+        }
+
+        .content{
+            color:#e2e8f0;
+            line-height:1.9;
+            font-size:16px;
+            white-space:pre-line;
+        }
+
+        /* ACTION BUTTONS */
+
+        .lesson-actions{
+            margin-top:20px;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .action-btn{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            padding:14px;
+            text-decoration:none;
+
+            border:none;
+            border-radius:12px;
+
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        .ask-btn{
+            background:#2563eb;
+        }
+
+        .ask-btn:hover{
+            background:#1d4ed8;
+        }
+
+        
+
+        /* LESSON INFO */
+
+        .lesson-info{
+            margin-top:10px;
+            color:#94a3b8;
+            font-size:14px;
+        }
+
+        /* MOBILE */
+
+        @media(max-width:600px){
+
+            .header h1{
+                font-size:22px;
+            }
+
+            .content{
+                font-size:15px;
+            }
+
+            .action-btn{
+                font-size:15px;
+            }
+        }
+
     </style>
 </head>
 
@@ -120,24 +200,120 @@
 <div class="container">
 
     <!-- HEADER -->
+
     <div class="header">
-        <a href="/lessons" class="back-arrow">⬅</a>
-        <h1>🎥 {{ lesson.title }}</h1>
-        <p>Petroleum Engineering Learning Module</p>
+
+        <a href="/lessons" class="back-arrow">
+            ⬅
+        </a>
+
+        <h1 id="lesson-title">
+            🎥 {{ lesson.title }}
+        </h1>
+
+        <p>
+            Petroleum Engineering Learning Module
+        </p>
+
+        <div class="lesson-info">
+            📚 Lesson • 🎓 Petroleum Engineering
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+
     </div>
 
     <!-- VIDEO -->
+
     <div class="video-box">
-        <iframe src="{{ lesson.video }}" allowfullscreen></iframe>
+
+        <iframe
+            src="{{ lesson.video }}"
+            allowfullscreen>
+        </iframe>
+
     </div>
 
     <!-- CONTENT -->
-    <div class="content">
-        {{ lesson.content }}
+
+    <div class="content-card">
+
+        <div class="content-title">
+            Lesson Content
+        </div>
+
+        <div
+            class="content"
+            id="lesson-content">
+
+            {{ lesson.content }}
+
+        </div>
+
     </div>
 
+    <!-- ACTIONS -->
+
+    <div class="lesson-actions">
+
+        <button
+            class="action-btn ask-btn"
+            onclick="askPetroAI()">
+
+            🤖 Ask PetroAI About This Lesson
+
+        </button>
+
+        
+
+    </div>
 
 </div>
+
+<script>
+
+function askPetroAI(){
+
+    let title =
+        document.getElementById("lesson-title").innerText;
+
+    sessionStorage.setItem(
+        "lesson_title",
+        title
+    );
+
+    window.location.href = "/petroai";
+}
+
+function sendToPetroAI(){
+
+    let title =
+        document.getElementById("lesson-title").innerText;
+
+    let content =
+        document.getElementById("lesson-content").innerText;
+
+    sessionStorage.setItem(
+        "lesson_title",
+        title
+    );
+
+    sessionStorage.setItem(
+        "lesson_content",
+        content
+    );
+
+    sessionStorage.setItem(
+        "generate_quiz",
+        "true"
+    );
+
+    window.location.href = "/petroai";
+}
+
+</script>
 
 </body>
 </html>

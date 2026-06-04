@@ -8,7 +8,11 @@
         body{
             margin:0;
             font-family:system-ui, -apple-system, Arial;
-            background:#0b1220;
+            background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
+                url("/static/hb.jpg");
+
+            background-size: cover;
+            background-position: center;
             color:white;
             display:flex;
             flex-direction:column;
@@ -124,13 +128,40 @@
             }
         }
 
+        .back-arrow{
+            position:absolute;
+            left:0;
+            top:15px;
+
+            width:42px;
+            height:42px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            text-decoration:none;
+            color:white;
+
+            font-size:22px;
+            border-radius:10px;
+
+            background:#1e293b;
+            transition:.2s;
+        }
+
+        .back-arrow:hover{
+            background:#334155;
+        }
+
     </style>
 </head>
 
 <body>
 
 <div class="header">
-    🤖 PetroAI – Petroleum Engineering Assistant
+    <a href="/" class="back-arrow">⬅</a>
+    🤖 PetroAI 
 </div>
 
 <div id="chat-box">
@@ -194,13 +225,14 @@ async function askAI(){
     try{
 
         const res = await fetch("/ask_petroai", {
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ question })
+            body: JSON.stringify({
+                question: question
+            })
         });
-
         const data = await res.json();
 
         document.getElementById(loadingId).remove();

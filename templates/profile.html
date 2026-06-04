@@ -10,7 +10,11 @@
         body{
             margin:0;
             font-family:Arial;
-            background:#0f172a;
+            background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
+                url("/static/hb.jpg");
+
+            background-size: cover;
+            background-position: center;
             color:white;
         }
 
@@ -59,25 +63,32 @@
         }
 
         .back-arrow{
-            text-decoration:none;
-            color:white;
-            font-size:22px;
-            font-weight:bold;
+            position:absolute;
+            left:0;
+            top:15px;
 
-            width:40px;
-            height:40px;
+            width:42px;
+            height:42px;
 
             display:flex;
             align-items:center;
             justify-content:center;
 
+            text-decoration:none;
+            color:white;
+
+            font-size:22px;
             border-radius:10px;
-            transition:0.2s;
+
+            background:#1e293b;
+            transition:.2s;
         }
 
         .back-arrow:hover{
-            background:#1e293b;
+            background:#334155;
         }
+
+        
 
     </style>
 

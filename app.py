@@ -106,7 +106,6 @@ def petroai_page():
 
     return render_template("petroai.html")
 
-
 @app.route("/ask_petroai", methods=["POST"])
 def ask_petroai():
 
@@ -116,14 +115,78 @@ def ask_petroai():
     if "chat_history" not in session:
         session["chat_history"] = []
 
-    # Add user message to memory
+    # =========================
+    # ADD USER MESSAGE TO MEMORY
+    # =========================
+
     session["chat_history"].append({
         "role": "user",
         "content": question
     })
 
-    # Keep only last 10 messages (important for performance)
+    # Keep last 10 messages only
     session["chat_history"] = session["chat_history"][-10:]
+
+    # =========================
+    # SYSTEM MESSAGE
+    # =========================
+
+    system_message = {
+        "role": "system",
+        "content": (
+            "You are PetroAI, the official assistant of PetroApp, a petroleum engineering learning platform."
+
+            "About PetroApp:"
+            "- It teaches petroleum engineering through lessons, quizzes, and calculators"
+            "- It helps students understand reservoir engineering, drilling, production, and formulas"
+            "- It includes tools like porosity calculator and unit converters"
+            "- it was built by Djamilou Harouna Maman nigerien student in Ghana very passionate in Oil and Gaz"
+            "- Djamilou was born in Agadez and got SONIDEP's scholarship to study in Ghana in 2025"
+            "- SONIDEP is a national oil and gas campany in Niger"
+
+            "Your role:"
+            "- Act like a tutor inside the PetroApp system"
+            "- Help users understand petroleum engineering clearly"
+            "- Guide users through app features when needed"
+
+            "User information:"
+            f"The current user is called {session.get('user_name', 'Student')}."
+
+            "Your behavior:"
+            "- Always respond in a personal way using the user's name when appropriate"
+            "- Be friendly and supportive like a tutor"
+            "- Act like you are talking directly to this student"
+            "- Help them learn petroleum engineering step by step"
+
+
+            "Default writing style rules:"
+            "- Always answer in clear paragraphs by default"
+            "- Do NOT use bullet points unless the user explicitly asks for them"
+            "- Do NOT use tables unless requested"
+            "- Keep explanations simple, structured, and natural like a teacher speaking"
+            "- Maximum 2–5 short paragraphs per answer"
+            "- Use bullet points ONLY if the user says: 'use bullets', 'list', or 'steps'"
+            "- Make answers easy to read on mobile"
+            "- Avoid textbook or report style formatting"
+            "- Ask to the user if they need more clarification after answer"
+            "- Always write formulas in simple text format, not LaTeX"
+            "- Use formats like: V = m/t, φ = Vp/Vt, Q = A × v"
+            "- NEVER use fractions like \\frac{}{} or LaTeX math symbols"
+            "- Keep formulas readable on mobile screens"
+            "- Use plain ASCII math only"
+            "- Explain formulas in words below if needed"
+        )
+    }
+
+    # =========================
+    # BUILD MESSAGES
+    # =========================
+
+    messages = [system_message] + session["chat_history"]
+
+    # =========================
+    # API REQUEST
+    # =========================
 
     headers = {
         "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
@@ -132,31 +195,7 @@ def ask_petroai():
 
     payload = {
         "model": "openai/gpt-oss-20b",
-        "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "You are PetroAI, a professional petroleum engineering tutor."
-
-                    "Default writing style rules:"
-                    "- Always answer in clear paragraphs by default"
-                    "- Do NOT use bullet points unless the user explicitly asks for them"
-                    "- Do NOT use tables unless requested"
-                    "- Keep explanations simple, structured, and natural like a teacher speaking"
-                    "- Maximum 2–5 short paragraphs per answer"
-                    "- Use bullet points ONLY if the user says: 'use bullets', 'list', or 'steps'"
-                    "- Make answers easy to read on mobile"
-                    "- Avoid textbook or report style formatting"
-                    "- Ask to the user if they need more clarification after answer"
-                    "- Always write formulas in simple text format, not LaTeX"
-                    "- Use formats like: V = m/t, φ = Vp/Vt, Q = A × v"
-                    "- NEVER use fractions like \\frac{}{} or LaTeX math symbols"
-                    "- Keep formulas readable on mobile screens"
-                    "- Use plain ASCII math only"
-                    "- Explain formulas in words below if needed"
-                )
-            }
-        ] + session["chat_history"]
+        "messages": messages
     }
 
     response = requests.post(
@@ -170,7 +209,10 @@ def ask_petroai():
 
     answer = data["choices"][0]["message"]["content"]
 
-    # Add AI response to memory
+    # =========================
+    # SAVE ASSISTANT RESPONSE
+    # =========================
+
     session["chat_history"].append({
         "role": "assistant",
         "content": answer
