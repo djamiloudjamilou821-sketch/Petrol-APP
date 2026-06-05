@@ -50,8 +50,34 @@ def home():
 
     return render_template("index.html", lang=lang)
 
+@app.route("/subject")
+def subject_home():
 
+    subjects = [
+        {
+            "name": "Mathematics",
+            "description": "Mathematics is the foundation of petroleum engineering. It is used to calculate flow rates, pressure, porosity, reserves estimation, and reservoir modeling. Without math, it is impossible to design or analyze petroleum systems."
+        },
+        {
+            "name": "Physics",
+            "description": "Physics explains how fluids behave underground and in pipelines. It helps engineers understand pressure, flow dynamics, heat transfer, and mechanical behavior of rocks and fluids."
+        },
+        {
+            "name": "Chemistry",
+            "description": "Chemistry is essential for understanding the composition of oil, gas, and reservoir fluids. It is used in refining, corrosion control, and understanding reactions between fluids and rocks."
+        }
+    ]
 
+    return render_template("subject_home.html", subjects=subjects)
+
+@app.route("/subject/<subject_name>")
+def subject_index(subject_name):
+
+    lessons = Lesson.query.filter_by(subject=subject_name).all()
+
+    return render_template("subject_index.html",
+                           subject=subject_name,
+                           lessons=lessons)
 # LANGUAGE
 @app.route("/", methods=["GET", "POST"])
 def language():
