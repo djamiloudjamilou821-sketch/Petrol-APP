@@ -263,39 +263,7 @@ def community():
         posts=posts
     )
 
-@app.route("/create-p", methods=["GET", "POST"])
-def create_pos():
 
-    if "user_id" not in session:
-        return redirect("/login")
-
-    if request.method == "POST":
-
-        content = request.form["content"]
-
-        file = request.files.get("image")
-
-        image_path = None
-
-        if file and file.filename != "":
-            filename = secure_filename(file.filename)
-
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-            image_path = "/static/uploads/" + filename
-
-        post = Post(
-            user_id=session["user_id"],
-            content=content,
-            image=image_path
-        )
-
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect("/community")
-
-    return render_template("create_post.html")
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
@@ -309,39 +277,28 @@ def create_post():
 
     if request.method == "POST":
 
-        content = request.form["content"]
+        content = request.form.get("content")
         file = request.files.get("image")
 
-        image_url = None  # default (VERY IMPORTANT)
+        image_url = None
 
-        # -------------------------
-        # UPLOAD IMAGE TO SUPABASE
-        # -------------------------
-        if file and file.filename != "":
-
-            file.seek(0)
-            file_bytes = file.read()
+        # Upload image to Supabase
+        if file and file.filename:
 
             filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+            file_bytes = file.read()
 
-            try:
-                supabase.storage.from_("post-images").upload(
-                    filename,
-                    file_bytes,
-                    {
-                        "content-type": file.content_type
-                    }
-                )
+            supabase.storage.from_("post-images").upload(
+                filename,
+                file_bytes,
+                {
+                    "content-type": file.content_type,
+                    "upsert": "false"
+                }
+            )
 
-                image_url = supabase.storage.from_("post-images").get_public_url(filename)
+            image_url = supabase.storage.from_("post-images").get_public_url(filename)
 
-            except Exception as e:
-                print("UPLOAD ERROR:", e)
-                image_url = None  # fail safe
-
-        # -------------------------
-        # SAVE POST IN DATABASE
-        # -------------------------
         post = Post(
             user_id=session["user_id"],
             content=content,
@@ -415,12 +372,43 @@ def edit_post(post_id):
 
     post = Post.query.get_or_404(post_id)
 
+    # ONLY OWNER CAN EDIT
     if post.user_id != session["user_id"]:
         return "Unauthorized", 403
 
     if request.method == "POST":
 
+        # update text
         post.content = request.form.get("content")
+
+        file = request.files.get("image")
+
+        if file and file.filename:
+
+            filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+            file_bytes = file.read()
+
+            # upload new image
+            supabase.storage.from_("post-images").upload(
+                filename,
+                file_bytes,
+                {
+                    "content-type": file.content_type,
+                    "upsert": "false"
+                }
+            )
+
+            new_url = supabase.storage.from_("post-images").get_public_url(filename)
+
+            # delete old image (optional but good)
+            if post.image:
+                try:
+                    old_file = post.image.split("/")[-1]
+                    supabase.storage.from_("post-images").remove([old_file])
+                except:
+                    pass
+
+            post.image = new_url
 
         db.session.commit()
 

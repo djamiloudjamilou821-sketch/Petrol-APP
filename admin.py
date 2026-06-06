@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, session
-from models import Lesson, Formula, User
+from models import Lesson, Formula, User, Post, Comment
 from database import db
 
 def admin_required():
@@ -209,3 +209,42 @@ def register_admin(app):
             "admin_users.html",
             users=users
         )
+
+    @app.route("/admin/manage-posts")
+    def manage_posts():
+
+        if not session.get("admin"):
+            return redirect("/admin-login")
+
+        posts = Post.query.order_by(Post.created_at.desc()).all()
+
+        return render_template(
+            "admin/manage_posts.html",
+            posts=posts
+        )
+
+    @app.route("/admin/delete-post/<int:id>", methods=["POST"])
+    def admin_delete_post(id):
+
+        if not session.get("admin"):
+            return redirect("/admin-login")
+
+        post = Post.query.get_or_404(id)
+
+        db.session.delete(post)
+        db.session.commit()
+
+        return redirect("/admin/manage-posts")
+
+    @app.route("/admin/delete-comment/<int:id>", methods=["POST"])
+    def admin_delete_comment(id):
+
+        if not session.get("admin"):
+            return redirect("/admin-login")
+
+        comment = Comment.query.get_or_404(id)
+
+        db.session.delete(comment)
+        db.session.commit()
+
+        return redirect("/admin/manage-posts")
