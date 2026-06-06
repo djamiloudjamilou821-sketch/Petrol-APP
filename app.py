@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
 from database import db
-from supabase_client import supabase
 from models import Lesson, Formula, User, Post, Comment, Like
 from datetime import timedelta
 from werkzeug.utils import secure_filename
@@ -17,6 +16,15 @@ from converter import register_converter
 from admin import register_admin
 from auth import register_auth
 import os
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name="deo1uyu3z",   # ← replace this
+    api_key="795759859987232",         # ← replace this
+    api_secret="PDpz-mXnbGfPWVZH4e7aU-hP0gY",   # ← replace this
+    secure=True
+)
 
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=365)
@@ -41,23 +49,7 @@ register_converter(app)
 register_admin(app)
 register_auth(app)
 
-import uuid
 
-def upload_to_supabase(file):
-    ext = file.filename.rsplit(".", 1)[1].lower()
-    filename = f"{uuid.uuid4().hex}.{ext}"
-
-    file_bytes = file.read()
-
-    supabase.storage.from_("post-images").upload(
-        filename,
-        file_bytes,
-        {"content-type": file.content_type}
-    )
-
-    public_url = supabase.storage.from_("post-images").get_public_url(filename)
-
-    return public_url
 # 🏠 HOME PAGE
 @app.route("/home")
 def home():
@@ -279,25 +271,16 @@ def create_post():
 
         content = request.form.get("content")
         file = request.files.get("image")
-
         image_url = None
 
-        # Upload image to Supabase
-        if file and file.filename:
+        if file and file.filename != "":
 
-            filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
-            file_bytes = file.read()
-
-            supabase.storage.from_("post-images").upload(
-                filename,
-                file_bytes,
-                {
-                    "content-type": file.content_type,
-                    "upsert": "false"
-                }
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="petroapp_posts"
             )
 
-            image_url = supabase.storage.from_("post-images").get_public_url(filename)
+            image_url = upload_result.get("secure_url")
 
         post = Post(
             user_id=session["user_id"],
@@ -338,9 +321,17 @@ def delete_post(post_id):
 
     post = Post.query.get_or_404(post_id)
 
-    # 🔒 ONLY OWNER CAN DELETE
     if post.user_id != session["user_id"]:
         return "Unauthorized", 403
+
+    # delete image from cloudinary (optional but clean)
+    if post.image:
+        try:
+            import re
+            public_id = post.image.split("/")[-1].split(".")[0]
+            cloudinary.uploader.destroy(f"petroapp_posts/{public_id}")
+        except:
+            pass
 
     db.session.delete(post)
     db.session.commit()
@@ -383,32 +374,15 @@ def edit_post(post_id):
 
         file = request.files.get("image")
 
-        if file and file.filename:
+        if file and file.filename != "":
 
-            filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
-            file_bytes = file.read()
-
-            # upload new image
-            supabase.storage.from_("post-images").upload(
-                filename,
-                file_bytes,
-                {
-                    "content-type": file.content_type,
-                    "upsert": "false"
-                }
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="petroapp_posts"
             )
 
-            new_url = supabase.storage.from_("post-images").get_public_url(filename)
+            post.image = upload_result.get("secure_url")
 
-            # delete old image (optional but good)
-            if post.image:
-                try:
-                    old_file = post.image.split("/")[-1]
-                    supabase.storage.from_("post-images").remove([old_file])
-                except:
-                    pass
-
-            post.image = new_url
 
         db.session.commit()
 

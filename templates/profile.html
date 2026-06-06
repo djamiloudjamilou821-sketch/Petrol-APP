@@ -2,124 +2,151 @@
 <html>
 <head>
     <title>Profile</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-
-        body{
-            margin:0;
-            font-family:Arial;
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Arial;
             background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
-                url("/static/hb.jpg");
-
+                        url("/static/hb.jpg");
             background-size: cover;
             background-position: center;
-            color:white;
+            color: white;
         }
 
-        .container{
-            width:90%;
-            max-width:700px;
-            margin:auto;
-            margin-top:40px;
+        .container {
+            width: 92%;
+            max-width: 420px;
+            margin: auto;
+            padding-top: 60px;
         }
 
-        .card{
-            background:#1e293b;
-            padding:25px;
-            border-radius:20px;
-            text-align:center;
+        /* BACK BUTTON */
+        .back-arrow {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #1e293b;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            transition: 0.2s;
         }
 
-        img{
-            width:130px;
-            height:130px;
-            border-radius:50%;
-            object-fit:cover;
-            border:4px solid #38bdf8;
+        .back-arrow:active {
+            transform: scale(0.95);
         }
 
-        h1{
-            margin-top:15px;
+        /* CARD */
+        .card {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
-        p{
-            color:#cbd5e1;
+        /* PROFILE IMAGE */
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #38bdf8;
+            margin-bottom: 10px;
         }
 
-        .btn{
-            display:inline-block;
-            margin-top:15px;
-            padding:12px 20px;
-            background:#2563eb;
-            color:white;
-            text-decoration:none;
-            border-radius:10px;
+        h1 {
+            margin: 10px 0 5px;
+            font-size: 22px;
         }
 
-        .btn:hover{
-            background:#1d4ed8;
+        p {
+            margin: 6px 0;
+            color: #cbd5e1;
+            font-size: 14px;
         }
 
-        .back-arrow{
-            position:absolute;
-            left:0;
-            top:15px;
-
-            width:42px;
-            height:42px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            text-decoration:none;
-            color:white;
-
-            font-size:22px;
-            border-radius:10px;
-
-            background:#1e293b;
-            transition:.2s;
+        .info {
+            margin-top: 15px;
+            text-align: left;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px;
+            border-radius: 12px;
         }
 
-        .back-arrow:hover{
-            background:#334155;
+        .btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 12px 18px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+
+            /* FIX HERE */
+            width: auto;
+            min-width: 140px;
+            text-align: center;
         }
 
-        
+        .btn:active {
+            transform: scale(0.98);
+        }
 
+        /* MOBILE */
+        @media (max-width: 500px) {
+            .container {
+                padding-top: 70px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
     </style>
-
 </head>
 
 <body>
 
+<a href="/" class="back-arrow">⬅</a>
+
 <div class="container">
-    <a href="/" class="back-arrow">⬅</a>
     <div class="card">
-        <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}"
-     width="150">
+
+        <!-- SAFE IMAGE -->
+        {% if user.profile_pic %}
+            <img class="profile-img" src="{{ user.profile_pic }}">
+        {% else %}
+            <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+        {% endif %}
 
         <h1>{{ user.username }}</h1>
-
         <p>{{ user.email }}</p>
 
-        <p>{{ user.bio }}</p>
+        <div class="info">
+            <p>📝 {{ user.bio or "No bio yet" }}</p>
+            <p>🌍 {{ user.country or "Not set" }}</p>
+            <p>🏫 {{ user.university or "Not set" }}</p>
+            <p>🛢️ {{ user.petroleum_level or "Not set" }}</p>
+        </div>
 
-        <p>🌍 {{ user.country }}</p>
-
-        <p>🏫 {{ user.university }}</p>
-
-        <p>🛢️ {{ user.petroleum_level }}</p>
-
-        <a href="/edit-profile" class="btn">
-            ✏ Edit Profile
-        </a>
+        <a href="/edit-profile" class="btn">Edit Profile</a>
 
     </div>
-
 </div>
 
 </body>

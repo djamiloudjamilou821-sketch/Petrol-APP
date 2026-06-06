@@ -4,4 +4,4 @@ gunicorn
 psycopg2-binary
 python-dotenv
 requests
-supabase==2.6.0
+cloudinary

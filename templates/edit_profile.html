@@ -155,7 +155,7 @@
         <div class="profile-preview">
 
             {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}">
+                <img src="{{ user.profile_pic }}">
             {% else %}
                 <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
             {% endif %}

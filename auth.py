@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from werkzeug.utils import secure_filename
 from models import db, User
+import cloudinary
+import cloudinary.uploader
 
 
 # ADMIN PASSWORD
@@ -145,36 +147,27 @@ def register_auth(app):
         if request.method == "POST":
 
             user.username = request.form["username"]
-
             user.bio = request.form["bio"]
-
             user.country = request.form["country"]
-
             user.university = request.form["university"]
-
             user.petroleum_level = request.form["petroleum_level"]
 
-            file = request.files["profile_pic"]
+            file = request.files.get("profile_pic")
+
             if file and file.filename != "":
 
-                filename = secure_filename(file.filename)
-
-                filepath = os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    filename
+                upload_result = cloudinary.uploader.upload(
+                    file,
+                    folder="petroapp_profiles"
                 )
 
-                file.save(filepath)
-
-                user.profile_pic = filename
+                # ✅ FIX: correct field
+                user.profile_pic = upload_result.get("secure_url")
 
             db.session.commit()
 
             session["username"] = user.username
-           
+
             return redirect("/profile")
 
-        return render_template(
-            "edit_profile.html",
-            user=user
-        )
+        return render_template("edit_profile.html", user=user)
