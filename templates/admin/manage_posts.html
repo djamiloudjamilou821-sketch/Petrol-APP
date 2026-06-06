@@ -2,57 +2,201 @@
 <html>
 <head>
     <title>Manage Posts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:system-ui, -apple-system, Arial;
+        }
+
+        body{
+            background:#0b1220;
+            color:white;
+        }
+
+        .container{
+            width:92%;
+            max-width:800px;
+            margin:auto;
+            padding:20px 10px 60px;
+        }
+
+        /* HEADER */
+        h1{
+            text-align:center;
+            font-size:22px;
+            margin-bottom:20px;
+            color:#38bdf8;
+        }
+
+        /* POST CARD */
+        .post-card{
+            background:#111827;
+            border:1px solid #1f2937;
+            border-radius:16px;
+            padding:15px;
+            margin-bottom:18px;
+            box-shadow:0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .username{
+            font-weight:700;
+            color:#38bdf8;
+            margin-bottom:8px;
+        }
+
+        .content{
+            color:#e5e7eb;
+            line-height:1.6;
+            margin-bottom:10px;
+            word-break:break-word;
+        }
+
+        .post-img{
+            width:100%;
+            border-radius:12px;
+            margin-top:10px;
+            max-height:350px;
+            object-fit:cover;
+        }
+
+        /* BUTTONS */
+        .btn{
+            border:none;
+            padding:10px 14px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.2s;
+        }
+
+        .btn-danger{
+            background:#ef4444;
+            color:white;
+            width:100%;
+            margin-top:10px;
+        }
+
+        .btn-danger:hover{
+            background:#dc2626;
+        }
+
+        /* COMMENTS */
+        .comments{
+            margin-top:15px;
+            padding-top:10px;
+            border-top:1px solid #1f2937;
+        }
+
+        .comment{
+            background:#0f172a;
+            padding:10px;
+            border-radius:10px;
+            margin-top:10px;
+        }
+
+        .comment strong{
+            color:#fbbf24;
+        }
+
+        .comment-delete{
+            background:#ef4444;
+            color:white;
+            border:none;
+            padding:6px 10px;
+            border-radius:8px;
+            margin-top:6px;
+            cursor:pointer;
+            font-size:12px;
+        }
+
+        .comment-delete:hover{
+            background:#dc2626;
+        }
+
+        /* MOBILE */
+        @media(max-width:600px){
+            h1{
+                font-size:18px;
+            }
+
+            .post-card{
+                padding:12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Community Posts</h1>
+<div class="container">
 
-{% for post in posts %}
+    <h1>🛠️ Manage Community Posts</h1>
 
-<div style="border:1px solid gray; padding:15px; margin:15px;">
+    {% for post in posts %}
 
-    <h3>{{ post.user.username }}</h3>
+    <div class="post-card">
 
-    <p>{{ post.content }}</p>
+        <div class="username">
+            👤 {{ post.user.username }}
+        </div>
 
-    {% if post.image %}
-        <img src="{{ post.image }}" width="250">
-    {% endif %}
+        <div class="content">
+            {{ post.content }}
+        </div>
 
-    <br><br>
+        {% if post.image %}
+            <img src="{{ post.image }}" class="post-img">
+        {% endif %}
 
-    <form action="/admin/delete-post/{{ post.id }}" method="POST"
-          onsubmit="return confirm('Delete this post?')">
+        <form action="/admin/delete-post/{{ post.id }}"
+              method="POST"
+              onsubmit="return confirm('Delete this post?')">
 
-        <button type="submit">
-            Delete Post
-        </button>
-
-    </form>
-
-    <h4>Comments</h4>
-
-    {% for comment in post.comments %}
-
-        <p>
-            <strong>{{ comment.user.username }}</strong> :
-            {{ comment.content }}
-        </p>
-
-        <form action="/admin/delete-comment/{{ comment.id }}" method="POST"
-              onsubmit="return confirm('Delete this comment?')">
-
-            <button type="submit">
-                Delete Comment
+            <button class="btn btn-danger" type="submit">
+                🗑 Delete Post
             </button>
 
         </form>
 
+        <!-- COMMENTS -->
+        <div class="comments">
+
+            <strong style="color:#38bdf8;">
+                💬 Comments
+            </strong>
+
+            {% for comment in post.comments %}
+
+            <div class="comment">
+
+                <strong>{{ comment.user.username }}</strong><br>
+                {{ comment.content }}
+
+                <form action="/admin/delete-comment/{{ comment.id }}"
+                      method="POST"
+                      onsubmit="return confirm('Delete this comment?')">
+
+                    <button class="comment-delete" type="submit">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
     {% endfor %}
 
 </div>
-
-{% endfor %}
 
 </body>
 </html>
