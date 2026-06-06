@@ -123,13 +123,13 @@ def register_auth(app):
         return render_template("admin/login.html", error=error)
 
     # profile
-    @app.route("/profile")
-    def profile():
+    @app.route("/profile/<int:user_id>")
+    def profile(user_id):
 
         if "user_id" not in session:
             return redirect("/login")
 
-        user = User.query.get(session["user_id"])
+        user = User.query.get_or_404(user_id)
 
         return render_template(
             "profile.html",

@@ -274,7 +274,7 @@ body {
         <a href="/petroai">🤖 PetroAI</a>
         <a href="/community">📢 Community</a>
         <a href="/subject">subject</a>
-        <a href="/profile">Profile</a>
+        <a href="/profile/{{ session.get('user_id') }}">Profile</a>
 
         <form method="POST" action="/" class="lang-toggle">
         </form>
@@ -297,7 +297,7 @@ body {
         <a href="/petroai">🤖 PetroAI</a>
         <a href="/community">📢 Community</a>
         <a href="/subject">subject</a>
-        <a href="/profile">Profile</a>
+        <a href="/profile/{{ session.get('user_id') }}">Profile</a>
 
         <form method="POST" action="/" class="lang-toggle">
 

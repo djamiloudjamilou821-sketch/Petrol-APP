@@ -144,7 +144,9 @@
             <p>🛢️ {{ user.petroleum_level or "Not set" }}</p>
         </div>
 
-        <a href="/edit-profile" class="btn">Edit Profile</a>
+        {% if session.get("user_id") == user.id %}
+            <a href="/edit-profile" class="btn">Edit Profile</a>
+        {% endif %}
 
     </div>
 </div>

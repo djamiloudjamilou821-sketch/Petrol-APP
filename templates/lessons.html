@@ -4,7 +4,8 @@
     <title>Petroleum Engineering Lessons</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
             margin: 0;
@@ -79,31 +80,6 @@
             margin-bottom: 20px;
         }
 
-        .back-arrow{
-            position:absolute;
-            left:0;
-            top:15px;
-
-            width:42px;
-            height:42px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            text-decoration:none;
-            color:white;
-
-            font-size:22px;
-            border-radius:10px;
-
-            background:#1e293b;
-            transition:.2s;
-        }
-
-        .back-arrow:hover{
-            background:#334155;
-        }
 
     </style>
 </head>
@@ -111,7 +87,12 @@
 <body>
 
 <div class="container">
-    <a href="/" class="back-arrow">⬅</a>
+    <div class="top-nav">
+        <a href="javascript:history.back()" class="back-arrow">
+            ⬅
+        </a>
+    </div>
+
 
     <div class="top-bar">
         <h1>📚 Petroleum Engineering Lessons</h1>

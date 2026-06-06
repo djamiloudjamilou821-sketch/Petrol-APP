@@ -5,7 +5,8 @@
 <title>Create account</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
 <style>
 
 body{
@@ -106,6 +107,12 @@ a{
 <body>
 
 <div class="card">
+    <div class="top-nav">
+        <a href="javascript:history.back()" class="back-arrow">
+            ⬅
+        </a>
+    </div>
+
 
 <h1>Create Account</h1>
 

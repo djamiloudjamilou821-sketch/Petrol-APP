@@ -5,7 +5,8 @@
     <title>Edit Profile</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
     <style>
 
         *{
@@ -118,26 +119,6 @@
             font-size:15px;
         }
 
-        .back-arrow{
-            text-decoration:none;
-            color:white;
-            font-size:22px;
-            font-weight:bold;
-
-            width:40px;
-            height:40px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            border-radius:10px;
-            transition:0.2s;
-        }
-
-        .back-arrow:hover{
-            background:#1e293b;
-        }
 
     </style>
 
@@ -146,7 +127,11 @@
 <body>
 
 <div class="container">
-    <a href="/profile" class="back-arrow">⬅</a>
+    <div class="top-nav">
+        <a href="javascript:history.back()" class="back-arrow">
+            ⬅
+        </a>
+    </div>
 
     <div class="card">
         
