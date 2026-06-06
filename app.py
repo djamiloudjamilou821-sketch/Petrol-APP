@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
 from database import db
-from models import Lesson, Formula
+from supabase_client import supabase
+from models import Lesson, Formula, User, Post, Comment, Like
 from datetime import timedelta
+from werkzeug.utils import secure_filename
 
 import requests
 from dotenv import load_dotenv
@@ -39,6 +41,23 @@ register_converter(app)
 register_admin(app)
 register_auth(app)
 
+import uuid
+
+def upload_to_supabase(file):
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    filename = f"{uuid.uuid4().hex}.{ext}"
+
+    file_bytes = file.read()
+
+    supabase.storage.from_("post-images").upload(
+        filename,
+        file_bytes,
+        {"content-type": file.content_type}
+    )
+
+    public_url = supabase.storage.from_("post-images").get_public_url(filename)
+
+    return public_url
 # 🏠 HOME PAGE
 @app.route("/home")
 def home():
@@ -227,6 +246,209 @@ def ask_petroai():
     session.modified = True
 
     return jsonify({"answer": answer})
+
+# COMMUNITY
+@app.route("/community")
+def community():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    posts = Post.query.order_by(
+        Post.created_at.desc()
+    ).all()
+
+    return render_template(
+        "community.html",
+        posts=posts
+    )
+
+@app.route("/create-p", methods=["GET", "POST"])
+def create_pos():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        content = request.form["content"]
+
+        file = request.files.get("image")
+
+        image_path = None
+
+        if file and file.filename != "":
+            filename = secure_filename(file.filename)
+
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+            image_path = "/static/uploads/" + filename
+
+        post = Post(
+            user_id=session["user_id"],
+            content=content,
+            image=image_path
+        )
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect("/community")
+
+    return render_template("create_post.html")
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route("/create-post", methods=["GET", "POST"])
+def create_post():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        content = request.form["content"]
+        file = request.files.get("image")
+
+        image_url = None  # default (VERY IMPORTANT)
+
+        # -------------------------
+        # UPLOAD IMAGE TO SUPABASE
+        # -------------------------
+        if file and file.filename != "":
+
+            file.seek(0)
+            file_bytes = file.read()
+
+            filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+
+            try:
+                supabase.storage.from_("post-images").upload(
+                    filename,
+                    file_bytes,
+                    {
+                        "content-type": file.content_type
+                    }
+                )
+
+                image_url = supabase.storage.from_("post-images").get_public_url(filename)
+
+            except Exception as e:
+                print("UPLOAD ERROR:", e)
+                image_url = None  # fail safe
+
+        # -------------------------
+        # SAVE POST IN DATABASE
+        # -------------------------
+        post = Post(
+            user_id=session["user_id"],
+            content=content,
+            image=image_url
+        )
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect("/community")
+
+    return render_template("create_post.html")
+@app.route("/add-comment/<int:post_id>", methods=["POST"])
+def add_comment(post_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    content = request.form["content"]
+
+    comment = Comment(
+        post_id=post_id,
+        user_id=session["user_id"],
+        content=content
+    )
+
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect("/community")
+
+@app.route("/delete-post/<int:post_id>", methods=["POST"])
+def delete_post(post_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    post = Post.query.get_or_404(post_id)
+
+    # 🔒 ONLY OWNER CAN DELETE
+    if post.user_id != session["user_id"]:
+        return "Unauthorized", 403
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect("/community")
+
+@app.route("/delete-comment/<int:comment_id>", methods=["POST"])
+def delete_comment(comment_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    comment = Comment.query.get_or_404(comment_id)
+
+    # 🔒 ONLY OWNER CAN DELETE COMMENT
+    if comment.user_id != session["user_id"]:
+        return "Unauthorized", 403
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    return redirect("/community")
+
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    post = Post.query.get_or_404(post_id)
+
+    if post.user_id != session["user_id"]:
+        return "Unauthorized", 403
+
+    if request.method == "POST":
+
+        post.content = request.form.get("content")
+
+        db.session.commit()
+
+        return redirect("/community")
+
+    return render_template("edit_post.html", post=post)
+
+
+@app.route("/like-post/<int:post_id>", methods=["POST"])
+def like_post(post_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user_id = session["user_id"]
+
+    like = Like.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    # 👉 If already liked → remove like (unlike)
+    if like:
+        db.session.delete(like)
+    else:
+        new_like = Like(user_id=user_id, post_id=post_id)
+        db.session.add(new_like)
+
+    db.session.commit()
+
+    return redirect("/community")
 # ▶️ RUN APP
 if __name__ == "__main__":
     

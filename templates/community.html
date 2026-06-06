@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PetroApp Community</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#0b1220;
+            color:white;
+        }
+
+        .container{
+            width:92%;
+            max-width:620px;
+            margin:auto;
+            padding:15px;
+        }
+
+        h1{
+            text-align:center;
+            color:#38bdf8;
+            font-size:22px;
+            margin-bottom:15px;
+        }
+
+        .create-btn{
+            display:block;
+            text-align:center;
+            padding:12px;
+            background:#10b981;
+            color:white;
+            border-radius:10px;
+            text-decoration:none;
+            margin-bottom:20px;
+            font-weight:bold;
+        }
+
+        .post{
+            background:#1e293b;
+            border-radius:14px;
+            padding:15px;
+            margin-bottom:18px;
+        }
+
+        .post-header{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-bottom:10px;
+        }
+
+        .avatar{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:#334155;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:bold;
+            color:#38bdf8;
+            font-size:14px;
+        }
+
+        .username{
+            font-weight:bold;
+            color:#38bdf8;
+            font-size:14px;
+        }
+
+        .date{
+            font-size:11px;
+            color:#94a3b8;
+        }
+
+        .content{
+            font-size:15px;
+            line-height:1.6;
+            color:#e2e8f0;
+            margin:10px 0;
+        }
+
+        /* IMAGE SUPPORT */
+        .post-image{
+            width:100%;
+            max-height:500px;
+            object-fit:contain;
+            border-radius:12px;
+            cursor:pointer;
+        }
+        .actions{
+            display:flex;
+            gap:10px;
+            margin-top:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            background:none;
+            border:none;
+            cursor:pointer;
+            font-size:13px;
+            color:#38bdf8;
+        }
+
+        .btn-like{
+            color:#f43f5e;
+        }
+
+        .btn-danger{
+            color:#ef4444;
+        }
+
+        .comment-form{
+            margin-top:10px;
+            display:flex;
+            gap:8px;
+        }
+
+        .comment-form input{
+            flex:1;
+            padding:10px;
+            border:none;
+            border-radius:10px;
+            background:#0f172a;
+            color:white;
+            font-size:13px;
+        }
+
+        .comment-form button{
+            padding:10px 12px;
+            background:#10b981;
+            border:none;
+            border-radius:10px;
+            color:white;
+            font-size:13px;
+            cursor:pointer;
+        }
+
+        .toggle-btn{
+            margin-top:10px;
+            background:none;
+            border:none;
+            color:#38bdf8;
+            cursor:pointer;
+            font-size:13px;
+        }
+
+        .toggle-btn:hover{
+            text-decoration:underline;
+        }
+
+        .comment-section{
+            margin-top:12px;
+            padding-top:10px;
+            border-top:1px solid #334155;
+        }
+
+        .comment{
+            display:flex;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        .comment-avatar{
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            background:#0f172a;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+            color:#fbbf24;
+        }
+
+        .comment-box{
+            background:#0f172a;
+            padding:8px 10px;
+            border-radius:10px;
+            width:100%;
+            font-size:13px;
+            color:#cbd5e1;
+        }
+
+        .comment-box strong{
+            color:#fbbf24;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top-nav">
+        <a href="javascript:history.back()" class="back-arrow">
+            ⬅
+        </a>
+    </div>
+
+    <h1>📢 PetroApp Community</h1>
+
+    <a href="/create-post" class="create-btn">
+        ➕ Create New Post
+    </a>
+
+    {% for post in posts %}
+
+    <div class="post">
+
+        <!-- HEADER -->
+        <div class="post-header">
+
+            <div class="avatar">
+                {{ post.user.username[0]|upper }}
+            </div>
+
+            <div>
+                <div class="username">{{ post.user.username }}</div>
+                <div class="date">{{ post.created_at }}</div>
+            </div>
+
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            {{ post.content }}
+        </div>
+
+        <!-- IMAGE (READY FOR FUTURE) -->
+        {% if post.image %}
+            <img src="{{ post.image }}" class="post-image" onclick="window.open(this.src)">
+        {% endif %}
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+            <form action="/like-post/{{ post.id }}" method="POST">
+                <button class="btn btn-like" type="submit">
+                    ❤️ {{ post.likes|length }}
+                </button>
+            </form>
+
+            {% if post.user_id == session["user_id"] %}
+            <a href="/edit-post/{{ post.id }}" class="btn">✏ Edit</a>
+
+            <form action="/delete-post/{{ post.id }}" method="POST">
+                <button class="btn btn-danger" type="submit">
+                    🗑 Delete
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+
+        <!-- COMMENT FORM -->
+        <form class="comment-form" action="/add-comment/{{ post.id }}" method="POST">
+            <input type="text" name="content" placeholder="Write a comment..." required>
+            <button type="submit">Reply</button>
+        </form>
+
+        <!-- TOGGLE COMMENTS -->
+        <button class="toggle-btn" onclick="toggleComments('{{ post.id }}')">
+            💬 View comments ({{ post.comments|length }})
+        </button>
+
+        <!-- COMMENTS -->
+        <div class="comment-section" id="comments-{{ post.id }}" style="display:none;">
+
+            {% for comment in post.comments %}
+
+            <div class="comment">
+
+                <div class="comment-avatar">
+                    {{ comment.user.username[0]|upper }}
+                </div>
+
+                <div class="comment-box">
+                    <strong>{{ comment.user.username }}:</strong>
+                    {{ comment.content }}
+                </div>
+
+                {% if comment.user_id == session["user_id"] %}
+                <form action="/delete-comment/{{ comment.id }}" method="POST">
+                    <button class="btn btn-danger" type="submit">🗑</button>
+                </form>
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script>
+function toggleComments(postId){
+    let section = document.getElementById("comments-" + postId);
+    section.style.display = (section.style.display === "block") ? "none" : "block";
+}
+</script>
+
+</body>
+</html>
