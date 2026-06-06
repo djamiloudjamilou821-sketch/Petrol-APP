@@ -411,7 +411,7 @@
         <h1>🌍 PetroApp Community</h1>
 
         <p>
-            Connect with petroleum engineering students worldwide
+            Connect with petroleum engineering students
         </p>
 
     </div>
@@ -476,9 +476,9 @@
         <div class="content">
 
             <span id="short-{{ post.id }}">
-                {{ post.content[:220] }}
+                {{ post.content[:100] }}
 
-                {% if post.content|length > 220 %}
+                {% if post.content|length > 100 %}
                     ...
                 {% endif %}
             </span>
@@ -490,7 +490,7 @@
 
             </span>
 
-            {% if post.content|length > 220 %}
+            {% if post.content|length > 100 %}
             <button
                 class="read-more"
                 onclick="toggleText('{{ post.id }}', this)">
@@ -533,7 +533,7 @@
                     type="submit"
                     class="action-btn">
 
-                    ❤️ Like
+                    Like
 
                 </button>
 
@@ -543,7 +543,7 @@
                 class="action-btn"
                 onclick="toggleComments('{{ post.id }}')">
 
-                💬 Comment
+                Comment
 
             </button>
 
@@ -552,7 +552,7 @@
             <a href="/edit-post/{{ post.id }}"
                class="action-btn">
 
-                ✏ Edit
+                Edit
 
             </a>
 
@@ -564,7 +564,7 @@
                 <button
                     class="action-btn delete-btn">
 
-                    🗑 Delete
+                    Delete
 
                 </button>
 
@@ -619,15 +619,15 @@
                     <br>
 
                     <span id="c-short-{{ comment.id }}">
-                        {{ comment.content[:120] }}
-                        {% if comment.content|length > 120 %}...{% endif %}
+                        {{ comment.content[:80] }}
+                        {% if comment.content|length > 80 %}...{% endif %}
                     </span>
 
                     <span id="c-full-{{ comment.id }}" style="display:none;">
                         {{ comment.content }}
                     </span>
 
-                    {% if comment.content|length > 120 %}
+                    {% if comment.content|length > 80 %}
                     <button
                         type="button"
                         class="read-more"
