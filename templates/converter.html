@@ -1,149 +1,263 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Petroleum Converter</title>
-
+    <meta charset="UTF-8">
+    <title>Petroleum Unit Converter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body {
+        /* =========================
+           CORE RESET & VARIABLES
+        ========================= */
+        * {
             margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================
+           FROSTED APPLICATION SHELL
+        ========================= */
+        .container {
+            width: 92%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            padding: 32px 24px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
             text-align: center;
         }
 
-        .container {
-            width: 90%;
-            max-width: 550px;
-            margin: auto;
-            margin-top: 40px;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
+        /* =========================
+           NAVIGATION BAR ARCHITECTURE
+        ========================= */
+        .top-nav {
+            position: absolute;
+            left: 20px;
+            top: 28px;
         }
 
+        .back-arrow {
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .back-arrow:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* =========================
+           TYPOGRAPHY MODULES
+        ========================= */
         h2 {
-            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            color: #ffffff;
+            padding-top: 6px;
         }
 
         p {
             font-size: 14px;
-            color: #cbd5e1;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        /* =========================
+           FORM CONTROLS INTERFACE
+        ========================= */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         select, input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: #0f172a;
+            color: white;
+            font-size: 16px; /* Prevents auto-zoom scaling on iOS platforms */
             outline: none;
+            transition: all 0.2s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Style tweaks specifically for select dropdown styling */
+        select {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        select:focus, input:focus {
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+        }
+
+        /* System Dropdown Customizations */
+        select option, select optgroup {
+            background: #0f172a;
+            color: white;
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: #2563eb;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            margin-top: 6px;
         }
 
         button:hover {
             background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        /* =========================
+           COMPUTED DATA OUTPUT MODULE
+        ========================= */
+        .card {
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .result {
-            margin-top: 15px;
             font-size: 18px;
+            font-weight: 700;
             color: #38bdf8;
+            letter-spacing: -0.3px;
         }
 
-        .card {
-            margin-top: 15px;
-            padding: 10px;
-            background: #0f172a;
-            border-radius: 8px;
+        /* =========================
+           MOBILE OPTIMIZATIONS
+        ========================= */
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px 16px;
+                width: 94%;
+            }
+
+            h2 {
+                font-size: 20px;
+                padding-top: 32px; /* Shifts header clear of nav button on tiny screens */
+            }
+
+            .top-nav {
+                left: 16px;
+                top: 16px;
+            }
+
+            select, input, button {
+                font-size: 15px;
+                padding: 12px;
+            }
         }
-
-        a {
-            display: block;
-            margin-top: 15px;
-            color: white;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #38bdf8;
-        }
-
-        
-
     </style>
 </head>
-
 <body>
 
 <div class="container">
     <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">
-            ⬅
-        </a>
+        <a href="javascript:history.back()" class="back-arrow">⬅</a>
     </div>
 
     <h2>🛠️ Petroleum Converter</h2>
-
-    <p>Convert oil, gas, pressure and engineering units easily</p>
+    <p>Convert oil, gas, pressure, and engineering units cleanly</p>
 
     <form method="POST">
+        <input name="value" type="number" step="any" placeholder="Enter numerical value..." required autocomplete="off">
 
-        <!-- VALUE INPUT -->
-        <input name="value" type="number" step="any" placeholder="Enter value" required>
-
-        <!-- CONVERSION TYPE -->
         <select name="conversion" required>
-            <option value="">-- Select Conversion --</option>
+            <option value="">-- Select Target System --</option>
 
-            <optgroup label="🌍 Length">
-                <option value="m_to_ft">Meters → Feet</option>
-                <option value="ft_to_m">Feet → Meters</option>
+            <optgroup label="🌍 Length & Depth">
+                <option value="m_to_ft">Meters (m) → Feet (ft)</option>
+                <option value="ft_to_m">Feet (ft) → Meters (m)</option>
             </optgroup>
 
-            <optgroup label="⚖️ Pressure">
+            <optgroup label="⚖️ Pressure Controls">
                 <option value="psi_to_bar">PSI → Bar</option>
                 <option value="bar_to_psi">Bar → PSI</option>
             </optgroup>
 
-            <optgroup label="🛢️ Oil & Gas Volume">
-                <option value="bbl_to_l">Barrel → Liters</option>
-                <option value="l_to_bbl">Liters → Barrels</option>
-                <option value="bbl_to_m3">Barrel → m³</option>
-                <option value="m3_to_bbl">m³ → Barrel</option>
-                <option value="l_to_m3">Liters → m³</option>
-                <option value="m3_to_l">m³ → Liters</option>
+            <optgroup label="🛢️ Volumetric Flow & Yield">
+                <option value="bbl_to_l">Barrels (bbl) → Liters (L)</option>
+                <option value="l_to_bbl">Liters (L) → Barrels (bbl)</option>
+                <option value="bbl_to_m3">Barrels (bbl) → Cubic Meters (m³)</option>
+                <option value="m3_to_bbl">Cubic Meters (m³) → Barrels (bbl)</option>
+                <option value="l_to_m3">Liters (L) → Cubic Meters (m³)</option>
+                <option value="m3_to_l">Cubic Meters (m³) → Liters (L)</option>
             </optgroup>
-
         </select>
 
-        <button type="submit">Convert</button>
-
+        <button type="submit">Execute Conversion</button>
     </form>
 
     {% if result is not none %}
         <div class="card">
             <div class="result">
-                Result: {{ result }}
+                Output Value = {{ result }}
             </div>
         </div>
     {% endif %}
-
-    
 </div>
 
 </body>

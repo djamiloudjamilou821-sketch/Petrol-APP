@@ -1,155 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Create Post</title>
+    <meta charset="UTF-8">
+    <title>Create New Post - PetroApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
-        body{
-            margin:0;
-            font-family:system-ui, -apple-system, Arial;
-            background:#0b1220;
-            color:white;
-            -webkit-font-smoothing:antialiased;
+        /* =========================
+           CORE RESET & VARIABLES
+        ========================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container{
-            width:92%;
-            max-width:600px;
-            margin:auto;
-            padding:20px 14px;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 40px;
         }
 
-        /* TOP BAR */
-        .top-nav{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            margin-bottom:12px;
+        .container {
+            width: 92%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 24px;
+            position: relative;
         }
 
-        .back-arrow{
-            width:42px;
-            height:42px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:12px;
-            text-decoration:none;
-            color:white;
-            font-size:20px;
-            background:#111827;
+        /* =========================
+           NAVIGATION BAR ARCHITECTURE
+        ========================= */
+        .top-nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            min-height: 42px;
         }
 
-        h1{
-            font-size:20px;
-            color:#38bdf8;
-            margin:10px 0 18px;
+        .back-arrow {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
         }
 
-        /* CARD */
-        .card{
-            background:#111827;
-            border-radius:16px;
-            padding:16px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.25);
+        .back-arrow:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        /* TEXTAREA */
-        textarea{
-            width:100%;
-            min-height:130px;
-            padding:12px;
-            border:none;
-            border-radius:12px;
-            background:#0b1220;
-            color:white;
-            font-size:15px;
-            outline:none;
-            resize:none;
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
 
-        /* FILE INPUT */
-        input[type="file"]{
-            width:100%;
-            margin-top:12px;
-            padding:10px;
-            border-radius:12px;
-            background:#0b1220;
-            color:white;
-            font-size:13px;
+        /* =========================
+           FROSTED COMPOSITION CARD
+        ========================= */
+        .card {
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
 
-        /* IMAGE PREVIEW */
-        .preview{
-            width:100%;
-            margin-top:12px;
-            border-radius:12px;
-            display:none;
-            object-fit:cover;
-            max-height:300px;
+        /* =========================
+           INPUT CONTROLS TERMINAL
+        ========================= */
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            background: #0f172a;
+            color: white;
+            font-size: 15px;
+            line-height: 1.6;
+            outline: none;
+            resize: none;
+            transition: all 0.2s ease;
         }
 
-        /* BUTTON */
-        button{
-            width:100%;
-            margin-top:14px;
-            padding:12px;
-            background:#10b981;
-            border:none;
-            border-radius:12px;
-            color:white;
-            font-weight:600;
-            font-size:15px;
-            cursor:pointer;
+        textarea:focus {
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
         }
 
-        button:active{
-            transform:scale(0.98);
+        /* CUSTOM FILE INTERFACE DESIGN */
+        input[type="file"] {
+            width: 100%;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: #94a3b8;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
         }
 
-        /* NOTE */
-        .note{
-            text-align:center;
-            font-size:12px;
-            color:#94a3b8;
-            margin-top:12px;
+        input[type="file"]::file-selector-button {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-right: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        /* RESPONSIVE */
-        @media (min-width:768px){
-            h1{
-                font-size:24px;
+        input[type="file"]::file-selector-button:hover {
+            background: rgba(56, 189, 248, 0.25);
+        }
+
+        /* =========================
+           MEDIA INLINE VISUALIZER
+        ========================= */
+        .preview {
+            width: 100%;
+            margin-top: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: none;
+            object-fit: cover;
+            max-height: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* =========================
+           ACTION SUBMISSION GATEWAY
+        ========================= */
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: #10b981;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        .note {
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           RESPONSIVE RE-PROPORTIONS
+        ========================= */
+        @media (max-width: 600px) {
+            .container {
+                padding-top: 16px;
+            }
+
+            .card {
+                padding: 18px 16px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            textarea {
+                padding: 12px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
-
     <div class="top-nav">
         <a href="javascript:history.back()" class="back-arrow">⬅</a>
-        <h1>📝 Create Post</h1>
+        <h1>Create Post</h1>
     </div>
 
     <form method="POST" enctype="multipart/form-data" class="card">
-
-        <textarea name="content" placeholder="Share something..." required></textarea>
+        <textarea name="content" placeholder="Share field telemetry, operational inquiries, or structural insights..." required autocomplete="off"></textarea>
 
         <input type="file" name="image" id="imageInput" accept="image/*">
 
-        <img id="preview" class="preview">
+        <img id="preview" class="preview" alt="Upload preview">
 
-        <button type="submit">Publish</button>
-
+        <button type="submit">Publish Post</button>
     </form>
 
     <div class="note">
-        Upload photos and share your ideas with the community
+        Attach engineering diagrams, log outputs, or photos to share with the workspace.
     </div>
-
 </div>
 
 <script>
@@ -157,7 +245,6 @@ const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 
 imageInput.addEventListener("change", function () {
-
     const file = this.files[0];
 
     if (file) {
@@ -175,6 +262,5 @@ imageInput.addEventListener("change", function () {
     }
 });
 </script>
-
 </body>
 </html>

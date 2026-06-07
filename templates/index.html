@@ -1,309 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PetroApp Dashboard</title>
+    <meta charset="UTF-8">
+    <title>PetroApp Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* =========================
+           CORE RESET & VARIABLES
+        ========================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #f8fafc;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), url("/static/bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
 
-<style>
-/* =========================
-   BASE
-========================= */
-body {
-    margin: 0;
-    font-family: Arial;
-    color: white;
+        /* =========================
+           DESKTOP SIDEBAR
+        ========================= */
+        .sidebar {
+            width: 200px;
+            background: #0f172a;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 24px 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 100;
+        }
 
-    background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
-                url("/static/bg.jpg");
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 32px;
+            padding-left: 8px;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    background-size: cover;
-    background-position: center;
-}
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
 
+        .nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
 
-/* =========================
-   SIDEBAR (DESKTOP)
-========================= */
-.sidebar {
-    width: 210px;
-    background: #0f172a;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding: 18px 14px;
-    border-right: 1px solid rgba(255,255,255,0.05);
-    transition: 0.3s;
-    overflow-y: auto;
-}
+        .nav a:hover {
+            background: #1e293b;
+            color: #f8fafc;
+            transform: translateX(4px);
+        }
 
-/* LOGO */
-.logo {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    padding-left: 10px;
-    color: white;
-}
+        .nav a.logout {
+            margin-top: auto;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
 
-/* NAVIGATION */
-.nav {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
+        .nav a.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+        }
 
-/* LINKS */
-.nav a {
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
-    border-radius: 10px;
-    text-decoration: none;
-    color: #cbd5e1;
-    font-size: 14px;
-    transition: 0.2s;
-}
+        /* =========================
+           MAIN DASHBOARD LAYOUT
+        ========================= */
+        .main {
+            margin-left: 240px;
+            padding: 32px 40px;
+            max-width: 1400px;
+        }
 
-/* HOVER */
-.nav a:hover {
-    background: #1e293b;
-    color: white;
-}
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
 
-/* =========================
-   MAIN CONTENT
-========================= */
-.main {
-    margin-left: 230px;
-    padding: 20px;
-}
+        .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #f8fafc;
+            background: #1e293b;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-/* TOPBAR */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+        .user {
+            background: rgba(30, 41, 59, 0.7);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(8px);
+        }
 
-.user {
-    background: #1e293b;
-    padding: 8px 12px;
-    border-radius: 10px;
-}
+        /* =========================
+           HERO HEADER COMPONENT
+        ========================= */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-/* =========================
-   STATS
-========================= */
-/* HERO */
-.hero {
-    text-align: center;
-    padding: 40px 15px;
-}
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            
+            /* ADD THIS LINE 👇 */
+            background-clip: text; 
+            
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.hero h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
-}
+        .hero p {
+            color: #94a3b8;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-.hero p {
-    color: #cbd5e1;
-    font-size: 15px;
-}
+        .main-btn {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 14px 28px;
+            background: #2563eb;
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
+        }
 
-.main-btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: #2563eb;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-}
+        .main-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
 
-.main-btn:hover {
-    background: #1d4ed8;
-}
+        /* =========================
+           FUNCTIONAL METRIC CARDS
+        ========================= */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
 
-/* =========================
-   CARDS
-========================= */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-}
+        .card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
+            backdrop-filter: blur(12px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-.card {
-    background: #111827;
-    padding: 15px;
-    border-radius: 12px;
-    text-decoration: none;
-    color: white;
-    transition: 0.3s;
-}
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.card:hover {
-    transform: translateY(-4px);
-}
+        .card p {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+        }
 
-/* =========================
-   HAMBURGER (MOBILE)
-========================= */
-.hamburger {
-    display: none;
-    font-size: 26px;
-    cursor: pointer;
-}
+        .card:hover {
+            transform: translateY(-6px);
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
 
-/* MOBILE SIDEBAR */
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    left: -230px;
-    width: 210px;
-    height: 100vh;
-    background: #0f172a;
-    padding: 18px 14px;
-    border-right: 1px solid rgba(255,255,255,0.05);
-    transition: left 0.3s ease;
-    z-index: 1000;
-    overflow-y: auto;
-}
+        /* =========================
+           MOBILE MENUS & DRAWER
+        ========================= */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100vh;
+            background: #0f172a;
+            padding: 24px 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* OPEN STATE */
-.mobile-menu.active {
-    left: 0;
-}
+        .mobile-menu.active {
+            left: 0;
+        }
 
-/* NAV */
-.mobile-menu .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 20px;
-}
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 999;
+            transition: opacity 0.3s ease;
+        }
 
-/* LINKS */
-.mobile-menu .nav a {
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
-    border-radius: 10px;
-    text-decoration: none;
-    color: #cbd5e1;
-    font-size: 14px;
-    transition: 0.2s;
-}
+        .overlay.active {
+            display: block;
+        }
 
-/* HOVER */
-.mobile-menu .nav a:hover {
-    background: #1e293b;
-    color: white;
-}
+        /* =========================
+           MEDIA RESPONSIVENESS
+        ========================= */
+        @media (max-width: 1024px) {
+            .main {
+                padding: 24px;
+            }
+        }
 
-/* OVERLAY */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    backdrop-filter: blur(2px);
-    display: none;
-    z-index: 999;
-}
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
 
-/* OVERLAY ACTIVE */
-.overlay.active {
-    display: block;
-}
+            .main {
+                margin-left: 0;
+                padding: 20px 16px;
+            }
 
-/* MOBILE RESPONSIVE */
-@media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
 
-    /* hide desktop sidebar */
-    .sidebar {
-        display: none;
-    }
+            .topbar {
+                margin-bottom: 24px;
+            }
 
-    /* full width content */
-    .main {
-        margin-left: 0;
-        padding: 16px;
-    }
+            .hero {
+                padding: 40px 10px 48px;
+            }
 
-    /* show hamburger */
-    .hamburger {
-        display: block;
-    }
+            .hero h1 {
+                font-size: 32px;
+            }
 
-    /* MOBILE MENU SIZE FIX */
-    .mobile-menu {
-        width: 70%;
-        max-width: 200px;
-        left: -70%;
-        padding: 14px;
-    }
-
-    .mobile-menu.active {
-        left: 0;
-    }
-}
-
-.user {
-    background: rgba(30,41,59,0.9);
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-weight: bold;
-    color: #38bdf8;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-</style>
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-
     <div class="logo">🛢️ PetroApp</div>
-
     <div class="nav">
         <a href="/petroai">🤖 PetroAI</a>
         <a href="/community">📢 Community</a>
-        <a href="/subject">subject</a>
-        <a href="/profile/{{ session.get('user_id') }}">Profile</a>
-
-        <form method="POST" action="/" class="lang-toggle">
-        </form>
+        <a href="/subject">📘 Subject</a>
+        <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
+        
         {% if session.get("logged_in") %}
-
             <a href="/logout" class="logout">Logout</a>
         {% else %}
             <a href="/login" class="logout">Login</a>
         {% endif %}
     </div>
-
 </div>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<!-- DESKTOP SIDEBAR -->
 <div class="sidebar">
     <div class="logo">🛢️ PetroApp</div>
     <div class="nav">
         <a href="/petroai">🤖 PetroAI</a>
         <a href="/community">📢 Community</a>
-        <a href="/subject">subject</a>
-        <a href="/profile/{{ session.get('user_id') }}">Profile</a>
+        <a href="/subject">📘 Subject</a>
+        <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
 
-        <form method="POST" action="/" class="lang-toggle">
-
-        </form>
         {% if session.get("logged_in") %}
-
             <a href="/logout" class="logout">Logout</a>
         {% else %}
             <a href="/login" class="logout">Login</a>
@@ -311,133 +335,64 @@ body {
     </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
     <div class="topbar">
         <div class="hamburger" onclick="toggleMenu()">☰</div>
-
         <div class="user">
             {{ session["username"] if session.get("logged_in") else "Guest" }}
         </div>
     </div>
 
-    <!-- STATS -->
-    <!-- HERO -->
     <div class="hero">
-        <h1>
-            {% if lang == "fr" %}
-                Plateforme Pétrolière
-            {% else %}
-                Petroleum Learning Platform
-            {% endif %}
+        <h1>   
+            Petroleum Learning Platform
         </h1>
-
-        <p>
-            {% if lang == "fr" %}
-                Apprenez comme un vrai ingénieur
-            {% else %}
-                Learn, practice, and calculate like a real engineer
-            {% endif %}
+        <p> 
+            Learn, practice, and calculate like a real engineer
         </p>
-
         <a class="main-btn" href="/lessons">
-            {% if lang == "fr" %}
-                Commencer
-            {% else %}
-                Start Learning
-            {% endif %}
+            Start Learning
         </a>
     </div>
 
-    <!-- FEATURES -->
     <div class="grid">
-
         <a href="/lessons" class="card">
             <h3>📘 Lessons</h3>
-            <p>
-                Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals,
-                drilling operations, production systems, and real industry concepts used by engineers.
-            </p>
+            <p>Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals, drilling operations, production systems, and real industry concepts.</p>
         </a>
 
         <a href="/quiz" class="card">
             <h3>🧠 Quiz System</h3>
-            <p>
-                Test your understanding with interactive quizzes based on real petroleum engineering topics.
-                Track your progress and improve your knowledge after each lesson.
-            </p>
+            <p>Test your understanding with interactive quizzes based on real petroleum engineering topics. Track your progress and improve your knowledge after each lesson.</p>
         </a>
 
         <a href="/converter" class="card">
             <h3>⚙️ Engineering Converter</h3>
-            <p>
-                Quickly convert oil & gas units like barrels, liters, pressure (psi/bar), and more.
-                Designed for real field calculations and engineering accuracy.
-            </p>
+            <p>Quickly convert oil & gas units like barrels, liters, pressure (psi/bar), and more. Designed for real field calculations and engineering accuracy.</p>
         </a>
 
         <a href="/formulas" class="card">
             <h3>📊 Petroleum Formulas</h3>
-            <p>
-                Access essential engineering formulas used in production, drilling, and reservoir calculations.
-                Understand how professionals solve real industry problems.
-            </p>
+            <p>Access essential engineering formulas used in production, drilling, and reservoir calculations. Understand how professionals solve real industry problems.</p>
         </a>
-
     </div>
 </div>
-<!-- SCRIPT -->
+
 <script>
 function toggleMenu() {
-
     const menu = document.getElementById("mobileMenu");
     const overlay = document.getElementById("overlay");
-
     menu.classList.toggle("active");
     overlay.classList.toggle("active");
 }
-</script>
-
-<script>
 
 if ("serviceWorker" in navigator) {
-
     window.addEventListener("load", () => {
-
-        navigator.serviceWorker
-        .register("/static/sw.js")
-
-        .then(() => {
-
-            console.log("PWA Ready");
-
-        });
-
+        navigator.serviceWorker.register("/static/sw.js")
+        .then(() => console.log("PWA Ready"))
+        .catch(err => console.log("PWA Fail", err));
     });
-
 }
-
-</script>
-<script>
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", () => {
-
-        navigator.serviceWorker
-        .register("/static/sw.js")
-
-        .then(() => {
-
-            console.log("PWA Ready");
-
-        });
-
-    });
-
-}
-
 </script>
 </body>
 </html>

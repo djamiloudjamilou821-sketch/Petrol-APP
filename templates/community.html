@@ -1,453 +1,499 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>PetroApp Community</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-
-    *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    }
-
-    body{
-        font-family:system-ui,-apple-system,sans-serif;
-        background:#18191a;
-        color:white;
-    }
-
-    /* PAGE */
-
-    .container{
-        width:95%;
-        max-width:700px;
-        margin:auto;
-        padding:20px 12px 100px;
-    }
-
-    /* HEADER */
-
-    .community-header{
-        text-align:center;
-        margin-bottom:20px;
-    }
-
-    .community-header h1{
-        color:#1877f2;
-        font-size:28px;
-        margin-bottom:6px;
-    }
-
-    .community-header p{
-        color:#b0b3b8;
-        font-size:14px;
-    }
-
-    /* CREATE POST CARD */
-
-    .create-post-card{
-        background:#242526;
-        border-radius:18px;
-        padding:15px;
-        margin-bottom:20px;
-        box-shadow:0 2px 10px rgba(0,0,0,.25);
-    }
-
-    .create-row{
-        display:flex;
-        align-items:center;
-        gap:12px;
-    }
-
-    .create-post-input{
-        flex:1;
-        background:#3a3b3c;
-        color:#b0b3b8;
-        text-decoration:none;
-        padding:12px 18px;
-        border-radius:25px;
-        transition:.2s;
-    }
-
-    .create-post-input:hover{
-        background:#4e4f50;
-    }
-
-    /* FLOATING BUTTON */
-
-    .create-btn{
-        position:fixed;
-        right:25px;
-        bottom:25px;
-
-        width:65px;
-        height:65px;
-
-        border-radius:50%;
-        background:#1877f2;
-
-        display:flex;
-        align-items:center;
-        justify-content:center;
-
-        color:white;
-        text-decoration:none;
-        font-size:36px;
-        font-weight:bold;
-
-        box-shadow:0 8px 25px rgba(24,119,242,.5);
-        z-index:999;
-    }
-
-    /* POST CARD */
-
-    .post{
-        background:#242526;
-        border-radius:18px;
-        margin-bottom:20px;
-        overflow:hidden;
-        box-shadow:0 2px 10px rgba(0,0,0,.25);
-        border:1px solid #3a3b3c;
-    }
-
-    .post:hover{
-        border-color:#1877f2;
-    }
-
-    /* HEADER */
-
-    .post-header{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        padding:15px;
-    }
-
-    .avatar,
-    .avatar-img{
-        width:50px;
-        height:50px;
-        border-radius:50%;
-        flex-shrink:0;
-    }
-
-    .avatar{
-        background:linear-gradient(
-            135deg,
-            #1877f2,
-            #38bdf8
-        );
-
-        display:flex;
-        justify-content:center;
-        align-items:center;
-
-        color:white;
-        font-size:18px;
-        font-weight:bold;
-    }
-
-    .avatar-img{
-        object-fit:cover;
-    }
-
-    .post-user{
-        display:flex;
-        flex-direction:column;
-    }
-
-    .username{
-        color:white;
-        text-decoration:none;
-        font-weight:700;
-        font-size:15px;
-    }
-
-    .username:hover{
-        color:#1877f2;
-    }
-
-    .date{
-        color:#b0b3b8;
-        font-size:12px;
-    }
-
-    /* CONTENT */
-
-    .content{
-        padding:0 15px 12px;
-        line-height:1.7;
-        color:#e4e6eb;
-        font-size:15px;
-        word-break:break-word;
-    }
-
-    /* READ MORE */
-
-    .read-more{
-        display:block;
-        margin-top:8px;
-        border:none;
-        background:none;
-        color:#1877f2;
-        cursor:pointer;
-        font-weight:600;
-    }
-
-    /* IMAGE */
-
-    .post-image{
-        width:100%;
-        max-height:650px;
-        object-fit:cover;
-        cursor:pointer;
-        display:block;
-    }
-
-    .post-image:hover{
-        opacity:.95;
-    }
-
-    /* STATS */
-
-    .stats{
-        display:flex;
-        justify-content:space-between;
-        padding:10px 15px;
-        color:#b0b3b8;
-        border-bottom:1px solid #3a3b3c;
-    }
-
-    /* ACTIONS */
-
-    .actions{
-        display:flex;
-        justify-content:space-around;
-        align-items:center;
-        padding:10px;
-    }
-
-    .actions form{
-        margin:0;
-    }
-
-    .action-btn{
-        background:none;
-        border:none;
-        color:#b0b3b8;
-        cursor:pointer;
-        font-size:14px;
-        font-weight:600;
-        text-decoration:none;
-        padding:10px 15px;
-        border-radius:8px;
-        transition:.2s;
-    }
-
-    .action-btn:hover{
-        background:#3a3b3c;
-        color:#1877f2;
-    }
-
-    .delete-btn{
-        color:#ef4444;
-    }
-
-    /* COMMENT FORM */
-
-    .comment-form{
-        display:flex;
-        gap:10px;
-        padding:15px;
-    }
-
-    .comment-form input{
-        flex:1;
-        border:none;
-        border-radius:25px;
-        background:#3a3b3c;
-        color:white;
-        padding:12px 15px;
-        outline:none;
-    }
-
-    .comment-form button{
-        border:none;
-        background:#1877f2;
-        color:white;
-        padding:10px 18px;
-        border-radius:25px;
-        cursor:pointer;
-    }
-
-    /* COMMENT SECTION */
-
-    .comment-section{
-        padding:0 15px 15px;
-    }
-
-    /* COMMENT */
-
-    .comment{
-        display:flex;
-        gap:10px;
-        margin-top:12px;
-    }
-
-    .comment-avatar{
-        width:36px;
-        height:36px;
-        border-radius:50%;
-        background:#3a3b3c;
-
-        display:flex;
-        align-items:center;
-        justify-content:center;
-
-        font-size:13px;
-        font-weight:bold;
-
-        flex-shrink:0;
-    }
-
-    .comment-box{
-        background:#3a3b3c;
-        border-radius:18px;
-        padding:10px 14px;
-        width:100%;
-
-        word-break:break-word;
-        overflow-wrap:break-word;
-
-        color:#e4e6eb;
-    }
-
-    .comment-box strong{
-        color:#38bdf8;
-    }
-
-    /* TOGGLE COMMENTS */
-
-    .toggle-btn{
-        border:none;
-        background:none;
-        color:#1877f2;
-        cursor:pointer;
-        margin-left:15px;
-        margin-bottom:10px;
-        font-size:13px;
-    }
-
-    /* BACK BUTTON */
-
-    .top-nav{
-        margin-bottom:15px;
-    }
-
-    .back-arrow{
-        width:45px;
-        height:45px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-
-        background:#242526;
-
-        border-radius:12px;
-
-        color:white;
-        text-decoration:none;
-
-        font-size:20px;
-    }
-
-    /* MOBILE */
-
-    @media(max-width:768px){
-
-        .container{
-            width:100%;
-            padding:15px 10px 100px;
+        /* BASE RESET & VARIABLE SETTINGS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .community-header h1{
-            font-size:24px;
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #111213; /* Deepened body background for higher contrast */
+            color: #f5f6f7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .post-image{
-            max-height:450px;
+        /* SITE CONTAINER */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            margin: auto;
+            padding: 24px 16px 120px;
         }
 
-        .create-btn{
-            width:60px;
-            height:60px;
-            font-size:32px;
+        /* NAVIGATION ELEMENTS */
+        .top-nav {
+            margin-bottom: 24px;
         }
 
-        .actions{
-            flex-wrap:wrap;
-            gap:5px;
+        .back-arrow {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #242526;
+            border: 1px solid #3a3b3c;
+            border-radius: 12px;
+            color: #e4e6eb;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s ease;
         }
-    }
 
+        .back-arrow:hover {
+            background: #3a3b3c;
+            transform: translateX(-2px);
+        }
 
+        /* CORE APPLICATION HEADER */
+        .community-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .community-header h1 {
+            color: #2185fe;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .community-header p {
+            color: #9ca3af;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* COMPOSER INPUT COMPONENT */
+        .create-post-card {
+            background: #1e1f20;
+            border: 1px solid #2d2f31;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .create-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .create-post-input {
+            flex: 1;
+            background: #2a2b2d;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 28px;
+            font-size: 15px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .create-post-input:hover {
+            background: #333537;
+            color: #e4e6eb;
+            border-color: #3e4144;
+        }
+
+        /* FLOATING ACTION BUTTON */
+        .create-btn {
+            position: fixed;
+            right: 32px;
+            bottom: 32px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1877f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 28px;
+            box-shadow: 0 8px 24px rgba(24, 119, 242, 0.4);
+            z-index: 999;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .create-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 28px rgba(24, 119, 242, 0.5);
+        }
+
+        /* MAIN POST CARD STRUCTURE */
+        .post {
+            background: #1e1f20;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid #2d2f31;
+            transition: border-color 0.2s ease;
+        }
+
+        .post:hover {
+            border-color: #3a3b3c;
+        }
+
+        /* POST AVATARS & USER META */
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .avatar, .avatar-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            background: linear-gradient(135deg, #1877f2, #38bdf8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .avatar-img {
+            object-fit: cover;
+            border: 1px solid #3a3b3c;
+        }
+
+        .post-user {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .username {
+            color: #f5f6f7;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.15s ease;
+        }
+
+        .username:hover {
+            color: #1877f2;
+        }
+
+        .date {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* POST ATTACHMENTS & PARAGRAPHS */
+        .content {
+            padding: 0 16px 16px;
+            line-height: 1.55;
+            color: #e4e6eb;
+            font-size: 15px;
+            word-break: break-word;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 6px;
+            border: none;
+            background: none;
+            color: #1877f2;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 540px;
+            object-fit: cover;
+            cursor: zoom-in;
+            display: block;
+            border-top: 1px solid #2d2f31;
+            border-bottom: 1px solid #2d2f31;
+            transition: opacity 0.2s ease;
+        }
+
+        .post-image:hover {
+            opacity: 0.95;
+        }
+
+        /* USER REACTIONS & COUNT ACTIONS */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            color: #9ca3af;
+            font-size: 14px;
+            border-bottom: 1px solid #2d2f31;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 16px;
+            gap: 8px;
+        }
+
+        .actions form {
+            margin: 0;
+            flex: 1;
+        }
+
+        .action-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #bcbcbc;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            background: #2a2b2d;
+            color: #1877f2;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .delete-btn {
+            color: #f87171;
+        }
+
+        .delete-btn:hover {
+            background: rgba(248, 113, 113, 0.1);
+            color: #ef4444;
+        }
+
+        /* ASYNC COMMENT COMPONENT */
+        .comment-form {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-top: 1px solid #2d2f31;
+            align-items: center;
+        }
+
+        .comment-form input {
+            flex: 1;
+            border: 1px solid #3a3b3c;
+            border-radius: 20px;
+            background: #2a2b2d;
+            color: white;
+            padding: 10px 16px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .comment-form input:focus {
+            border-color: #1877f2;
+        }
+
+        .comment-form button {
+            border: none;
+            background: #1877f2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.15s ease;
+        }
+
+        .comment-form button:hover {
+            background: #166fe5;
+        }
+
+        /* INDIVIDUAL FEEDBACK RESPONSES */
+        .comment-section {
+            padding: 0 16px 16px;
+            border-top: 1px solid #2d2f31;
+            background: #1a1b1c;
+        }
+
+        .comment {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            align-items: flex-start;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #3a3b3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            border: 1px solid #2d2f31;
+        }
+
+        .comment-box-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .comment-box {
+            background: #2a2b2d;
+            border-radius: 16px;
+            padding: 10px 14px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #e4e6eb;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .comment-box strong {
+            color: #f5f6f7;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        .comment-box strong:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .comment-delete-form {
+            margin: 0;
+        }
+
+        .comment-delete-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .comment-delete-btn:hover {
+            background: rgba(248, 113, 113, 0.15);
+            color: #ef4444;
+        }
+
+        /* RESPONSIVE VIEWS */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px 8px 100px;
+            }
+
+            .community-header {
+                margin-bottom: 20px;
+            }
+
+            .community-header h1 {
+                font-size: 26px;
+            }
+
+            .post-image {
+                max-height: 400px;
+            }
+
+            .create-btn {
+                width: 54px;
+                height: 54px;
+                right: 20px;
+                bottom: 20px;
+                font-size: 24px;
+            }
+
+            .actions {
+                padding: 4px 8px;
+            }
+            
+            .action-btn {
+                font-size: 13px;
+                padding: 8px 4px;
+            }
+        }
     </style>
 </head>
-
 <body>
 
 <div class="container">
     <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">
             ⬅
         </a>
     </div>
 
     <div class="community-header">
-
         <h1>🌍 PetroApp Community</h1>
-
-        <p>
-            Connect with petroleum engineering students
-        </p>
-
+        <p>Connect with petroleum engineering students</p>
     </div>
 
-    <!-- CREATE POST CARD -->
-
     <div class="create-post-card">
-
         <div class="create-row">
-
             {% if session.get("profile_pic") %}
-                <img src="{{ session['profile_pic'] }}" class="avatar-img">
+                <img src="{{ session['profile_pic'] }}" class="avatar-img" alt="Profile Picture">
             {% else %}
                 <div class="avatar">
-                    {{ session["username"][0]|upper }}
+                    {{ session["username"][0]|upper if session.get("username") else "P" }}
                 </div>
             {% endif %}
 
             <a href="/create-post" class="create-post-input">
                 What's on your mind?
             </a>
-
         </div>
-
     </div>
 
     {% for post in posts %}
-
     <div class="post">
-
-        <!-- HEADER -->
-
         <div class="post-header">
-
             {% if post.user.profile_pic %}
-                <img src="{{ post.user.profile_pic }}" class="avatar-img">
+                <img src="{{ post.user.profile_pic }}" class="avatar-img" alt="{{ post.user.username }}'s avatar">
             {% else %}
                 <div class="avatar">
                     {{ post.user.username[0]|upper }}
@@ -455,256 +501,130 @@
             {% endif %}
 
             <div class="post-user">
-
-                <a href="/profile/{{ post.user.id }}"
-                   class="username">
-
+                <a href="/profile/{{ post.user.id }}" class="username">
                     {{ post.user.username }}
-
                 </a>
-
                 <div class="date">
                     {{ post.created_at.strftime('%d %b %Y • %H:%M') }}
                 </div>
-
             </div>
-
         </div>
 
-        <!-- CONTENT -->
-
         <div class="content">
-
             <span id="short-{{ post.id }}">
                 {{ post.content[:100] }}
-
-                {% if post.content|length > 100 %}
-                    ...
-                {% endif %}
+                {% if post.content|length > 100 %}...{% endif %}
             </span>
 
-            <span id="full-{{ post.id }}"
-                  style="display:none">
-
+            <span id="full-{{ post.id }}" style="display:none">
                 {{ post.content }}
-
             </span>
 
             {% if post.content|length > 100 %}
-            <button
-                class="read-more"
-                onclick="toggleText('{{ post.id }}', this)">
-
+            <button class="read-more" onclick="toggleText('{{ post.id }}', this)">
                 Read More
-
             </button>
             {% endif %}
-
         </div>
 
         {% if post.image %}
-        <img src="{{ post.image }}"
-             class="post-image"
-             onclick="openImage(this.src)">
+        <img src="{{ post.image }}" class="post-image" onclick="openImage(this.src)" alt="Post media attachment">
         {% endif %}
 
-        <!-- STATS -->
-
         <div class="stats">
-
-            <span>
-                ❤️ {{ post.likes|length }}
-            </span>
-
-            <span>
-                💬 {{ post.comments|length }}
-            </span>
-
+            <span>❤️ {{ post.likes|length }}</span>
+            <span>💬 {{ post.comments|length }} comments</span>
         </div>
 
-        <!-- ACTIONS -->
-
         <div class="actions">
-
-            <form action="/like-post/{{ post.id }}"
-                  method="POST">
-
-                <button
-                    type="submit"
-                    class="action-btn">
-
+            <form action="/like-post/{{ post.id }}" method="POST">
+                <button type="submit" class="action-btn">
                     Like
-
                 </button>
-
             </form>
 
-            <button
-                class="action-btn"
-                onclick="toggleComments('{{ post.id }}')">
-
+            <button class="action-btn" onclick="toggleComments('{{ post.id }}')">
                 Comment
-
             </button>
 
             {% if post.user_id == session["user_id"] %}
-
-            <a href="/edit-post/{{ post.id }}"
-               class="action-btn">
-
+            <a href="/edit-post/{{ post.id }}" class="action-btn">
                 Edit
-
             </a>
 
-            <form
-                action="/delete-post/{{ post.id }}"
-                method="POST"
-                onsubmit="return confirm('Delete this post?')">
-
-                <button
-                    class="action-btn delete-btn">
-
+            <form action="/delete-post/{{ post.id }}" method="POST" onsubmit="return confirm('Delete this post?')">
+                <button class="action-btn delete-btn">
                     Delete
-
                 </button>
+            </form>
+            {% endif %}
+        </div>
 
+        <div class="comment-section" id="comments-{{ post.id }}" style="display:none">
+            
+            <form class="comment-form" action="/add-comment/{{ post.id }}" method="POST">
+                <input type="text" name="content" placeholder="Write a comment..." required>
+                <button type="submit">Post</button>
             </form>
 
-            {% endif %}
-
-        </div>
-
-        <!-- COMMENT FORM -->
-
-        <form
-            class="comment-form"
-            action="/add-comment/{{ post.id }}"
-            method="POST">
-
-            <input
-                type="text"
-                name="content"
-                placeholder="Write a comment..."
-                required>
-
-            <button type="submit">
-                Post
-            </button>
-
-        </form>
-
-        <!-- COMMENTS -->
-
-        <div
-            class="comment-section"
-            id="comments-{{ post.id }}"
-            style="display:none">
-
             {% for comment in post.comments %}
-
             <div class="comment">
-
                 <div class="comment-avatar">
-
                     {{ comment.user.username[0]|upper }}
-
                 </div>
+                
+                <div class="comment-box-wrapper">
+                    <div class="comment-box">
+                        <strong>{{ comment.user.username }}</strong><br>
+                        
+                        <span id="c-short-{{ comment.id }}">
+                            {{ comment.content[:80] }}
+                            {% if comment.content|length > 80 %}...{% endif %}
+                        </span>
 
-                <div class="comment-box">
+                        <span id="c-full-{{ comment.id }}" style="display:none;">
+                            {{ comment.content }}
+                        </span>
 
-                    <strong>
-                        {{ comment.user.username }}
-                    </strong>
+                        {% if comment.content|length > 80 %}
+                        <button type="button" class="read-more" onclick="toggleComment('{{ comment.id }}', this)">
+                            Read More
+                        </button>
+                        {% endif %}
+                    </div>
 
-                    <br>
-
-                    <span id="c-short-{{ comment.id }}">
-                        {{ comment.content[:80] }}
-                        {% if comment.content|length > 80 %}...{% endif %}
-                    </span>
-
-                    <span id="c-full-{{ comment.id }}" style="display:none;">
-                        {{ comment.content }}
-                    </span>
-
-                    {% if comment.content|length > 80 %}
-                    <button
-                        type="button"
-                        class="read-more"
-                        onclick="toggleComment('{{ comment.id }}', this)">
-                        Read More
-                    </button>
+                    {% if comment.user_id == session["user_id"] %}
+                    <form class="comment-delete-form" action="/delete-comment/{{ comment.id }}" method="POST" onsubmit="return confirm('Delete comment?')">
+                        <button class="comment-delete-btn" title="Delete Comment">
+                            🗑️
+                        </button>
+                    </form>
                     {% endif %}
-
                 </div>
-
-                {% if comment.user_id == session["user_id"] %}
-
-                <form
-                    action="/delete-comment/{{ comment.id }}"
-                    method="POST"
-                    onsubmit="return confirm('Delete comment?')">
-
-                    <button
-                        class="delete-btn">
-
-                        🗑
-
-                    </button>
-
-                </form>
-
-                {% endif %}
-
             </div>
-
             {% endfor %}
-
         </div>
-
     </div>
-
     {% endfor %}
-
 </div>
+
 <script>
     function toggleComments(postId){
-
-        let section =
-            document.getElementById(
-                "comments-" + postId
-            );
-
-        section.style.display =
-            section.style.display === "block"
-            ? "none"
-            : "block";
+        let section = document.getElementById("comments-" + postId);
+        section.style.display = section.style.display === "block" ? "none" : "block";
     }
 
     function toggleText(id, btn){
-
-        let shortText =
-            document.getElementById(
-                "short-" + id
-            );
-
-        let fullText =
-            document.getElementById(
-                "full-" + id
-            );
+        let shortText = document.getElementById("short-" + id);
+        let fullText = document.getElementById("full-" + id);
 
         if(fullText.style.display === "none"){
-
             shortText.style.display = "none";
             fullText.style.display = "inline";
-
             btn.innerHTML = "Show Less";
-
         }else{
-
             shortText.style.display = "inline";
             fullText.style.display = "none";
-
             btn.innerHTML = "Read More";
         }
     }
@@ -714,7 +634,6 @@
     }
 
     function toggleComment(id, btn){
-
         let shortText = document.getElementById("c-short-" + id);
         let fullText = document.getElementById("c-full-" + id);
 
