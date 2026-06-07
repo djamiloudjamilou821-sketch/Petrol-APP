@@ -65,6 +65,7 @@
         .nav a {
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Ensures text and badge stay neat */
             padding: 12px 16px;
             border-radius: 12px;
             text-decoration: none;
@@ -72,6 +73,7 @@
             font-size: 14px;
             font-weight: 500;
             transition: all 0.2s ease;
+            position: relative; /* Base anchor for layout metrics */
         }
 
         .nav a:hover {
@@ -89,6 +91,17 @@
         .nav a.logout:hover {
             background: rgba(239, 68, 68, 0.1);
             color: #f87171;
+        }
+
+        /* WhatsApp Notification Badge */
+        .wp-badge {
+            background-color: #25D366;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         /* =========================
@@ -145,10 +158,7 @@
             letter-spacing: -1px;
             margin-bottom: 16px;
             background: linear-gradient(to right, #ffffff, #94a3b8);
-            
-            /* ADD THIS LINE 👇 */
             background-clip: text; 
-            
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -305,7 +315,14 @@
     <div class="logo">🛢️ PetroApp</div>
     <div class="nav">
         <a href="/petroai">🤖 PetroAI</a>
-        <a href="/community">📢 Community</a>
+        
+        <a href="/community">
+            <span>📢 Community</span>
+            {% if new_posts_count > 0 %}
+                <span class="wp-badge">{{ new_posts_count }}</span>
+            {% endif %}
+        </a>
+        
         <a href="/subject">📘 Subject</a>
         <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
         
@@ -323,7 +340,14 @@
     <div class="logo">🛢️ PetroApp</div>
     <div class="nav">
         <a href="/petroai">🤖 PetroAI</a>
-        <a href="/community">📢 Community</a>
+        
+        <a href="/community">
+            <span>📢 Community</span>
+            {% if new_posts_count > 0 %}
+                <span class="wp-badge">{{ new_posts_count }}</span>
+            {% endif %}
+        </a>
+        
         <a href="/subject">📘 Subject</a>
         <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
 
@@ -357,7 +381,7 @@
 
     <div class="grid">
         <a href="/lessons" class="card">
-            <h3>📘 Lessons</h3>
+             Clyde <h3>📘 Lessons</h3>
             <p>Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals, drilling operations, production systems, and real industry concepts.</p>
         </a>
 

@@ -201,20 +201,26 @@ def ask_petroai():
     return jsonify({"answer": answer})
 
 # COMMUNITY
+from datetime import datetime
+
 @app.route("/community")
 def community():
     if "user_id" not in session:
         return redirect("/login")
 
-    # Safety structural check: Validate if account is still live in DB
+    # 1. Check if the user exists in the DB
     current_user = User.query.get(session["user_id"])
     if not current_user:
         session.clear()
         return redirect("/login")
 
-    posts = Post.query.order_by(
-        Post.created_at.desc()
-    ).all()
+    # 2. Get the list of posts to display on the page
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+
+    # 3. Mark this exact moment as their "last visit timestamp"
+    # We save it as an ISO string so the session cookie can store it easily
+    session["last_community_visit"] = datetime.utcnow().isoformat()
+    session.modified = True
 
     return render_template(
         "community.html",
@@ -423,6 +429,29 @@ def like_post(post_id):
 
     return redirect("/community")
 
+from datetime import datetime
+
+@app.context_processor
+def inject_new_posts_count():
+    # If the user isn't logged in, there are 0 new posts
+    if "user_id" not in session:
+        return dict(new_posts_count=0)
+        
+    last_visit_str = session.get("last_community_visit")
+    
+    # If they have NEVER visited the community page before, count all posts from the last 24 hours as new
+    if not last_visit_str:
+        # Change this to Post.query.count() if you want to count every post in the DB instead
+        new_count = Post.query.count() 
+        return dict(new_posts_count=new_count)
+        
+    # Convert the saved string timestamp back into a Python datetime object
+    last_visit = datetime.fromisoformat(last_visit_str)
+    
+    # Query the database: Count how many posts have a created_at time greater than our last visit
+    new_count = Post.query.filter(Post.created_at > last_visit).count()
+    
+    return dict(new_posts_count=new_count)
 # ▶️ RUN APP
 if __name__ == "__main__":
     with app.app_context():
