@@ -58,14 +58,15 @@ def prefers_json():
     )
 
 
-# 🏠 HOME PAGE
+# 🏠 HOME PAGE (Now the default entry point of your app)
+@app.route("/")
 @app.route("/home")
 def home():
     if not session.get("logged_in"):
         return redirect("/login")
 
-    lang = session.get("lang", "en")
-    return render_template("index.html", lang=lang)
+    # We hardcode "en" here so your templates don't break if they still look for the 'lang' variable
+    return render_template("index.html", lang="en")
 
 @app.route("/subject")
 def subject_home():
@@ -85,28 +86,6 @@ def subject_home():
     ]
     return render_template("subject_home.html", subjects=subjects)
 
-# LANGUAGE
-@app.route("/", methods=["GET", "POST"])
-def language():
-    if request.method == "POST":
-        lang = request.form.get("lang")
-        session["lang"] = lang
-        return redirect("/home")
-
-    if "lang" in session:
-        return redirect("/home")
-
-    browser_lang = request.headers.get("Accept-Language")
-
-    if browser_lang:
-        if browser_lang.startswith("fr"):
-            session["lang"] = "fr"
-        else:
-            session["lang"] = "en"
-    else:
-        session["lang"] = "en"
-
-    return render_template("language.html")
 
 @app.route("/petroai")
 def petroai_page():
