@@ -387,15 +387,16 @@
             flex: 1;
         }
 
-        .comment-box strong {
+        .comment-box .comment-author {
             color: #f5f6f7;
-            font-weight: 600;
+            font-weight: 600; /* Makes it look strong without extra HTML tags */
+            text-decoration: none; /* Hides the default ugly browser underline */
             display: inline-block;
             margin-bottom: 2px;
         }
 
-        .comment-box strong:hover {
-            text-decoration: underline;
+        .comment-box .comment-author:hover {
+            text-decoration: underline; /* Underline appears instantly on hover, just like FB */
             cursor: pointer;
         }
 
@@ -575,8 +576,9 @@
                 
                 <div class="comment-box-wrapper">
                     <div class="comment-box">
-                        <strong>{{ comment.user.username }}</strong><br>
-                        
+                        <a href="/profile/{{ comment.user.id }}" class="comment-author">
+                            {{ comment.user.username }}
+                        </a><br>
                         <span id="c-short-{{ comment.id }}">
                             {{ comment.content[:80] }}
                             {% if comment.content|length > 80 %}...{% endif %}
