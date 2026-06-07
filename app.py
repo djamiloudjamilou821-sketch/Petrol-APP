@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, jsonify, request, session, redirect, render_template, url_for
 from database import db
 from models import Lesson, Formula, User, Post, Comment, Like
 from datetime import timedelta
@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 
 import requests
 from dotenv import load_dotenv
-from flask import jsonify
 load_dotenv()
 
 from lessons import register_lessons
@@ -50,20 +49,26 @@ register_admin(app)
 register_auth(app)
 
 
+# Helper function to check if request is looking for a JSON response
+def prefers_json():
+    return (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest" or
+        "application/json" in request.headers.get("Accept", "") or
+        request.is_json
+    )
+
+
 # 🏠 HOME PAGE
 @app.route("/home")
 def home():
-
     if not session.get("logged_in"):
         return redirect("/login")
 
     lang = session.get("lang", "en")
-
     return render_template("index.html", lang=lang)
 
 @app.route("/subject")
 def subject_home():
-
     subjects = [
         {
             "name": "Mathematics",
@@ -78,31 +83,19 @@ def subject_home():
             "description": "Chemistry is essential for understanding the composition of oil, gas, and reservoir fluids. It is used in refining, corrosion control, and understanding reactions between fluids and rocks."
         }
     ]
-
     return render_template("subject_home.html", subjects=subjects)
 
-@app.route("/subject/<subject_name>")
-def subject_index(subject_name):
-
-    lessons = Lesson.query.filter_by(subject=subject_name).all()
-
-    return render_template("subject_index.html",
-                           subject=subject_name,
-                           lessons=lessons)
 # LANGUAGE
 @app.route("/", methods=["GET", "POST"])
 def language():
-    # If user selects manually
     if request.method == "POST":
         lang = request.form.get("lang")
         session["lang"] = lang
         return redirect("/home")
 
-    # If already selected before
     if "lang" in session:
         return redirect("/home")
 
-    # AUTO DETECT LANGUAGE
     browser_lang = request.headers.get("Accept-Language")
 
     if browser_lang:
@@ -117,7 +110,6 @@ def language():
 
 @app.route("/petroai")
 def petroai_page():
-
     if not session.get("logged_in"):
         return redirect("/login")
 
@@ -125,6 +117,19 @@ def petroai_page():
 
 @app.route("/ask_petroai", methods=["POST"])
 def ask_petroai():
+    if "user_id" not in session:
+        return jsonify({"answer": "Please log in to talk with PetroAI."}), 401
+
+    # 🔍 DATABASE LOOKUP: Fetch the real name using the user_id
+    current_user = User.query.get(session["user_id"])
+    
+    # Safely get the username from the DB model, fallback to 'Student' if not found
+    if current_user and hasattr(current_user, 'username'):
+        user_name = current_user.username
+    elif current_user and hasattr(current_user, 'name'):
+        user_name = current_user.name
+    else:
+        user_name = "Student"
 
     question = request.json.get("question")
 
@@ -132,10 +137,7 @@ def ask_petroai():
     if "chat_history" not in session:
         session["chat_history"] = []
 
-    # =========================
     # ADD USER MESSAGE TO MEMORY
-    # =========================
-
     session["chat_history"].append({
         "role": "user",
         "content": question
@@ -144,38 +146,29 @@ def ask_petroai():
     # Keep last 10 messages only
     session["chat_history"] = session["chat_history"][-10:]
 
-    # =========================
-    # SYSTEM MESSAGE
-    # =========================
-
+    # SYSTEM MESSAGE (Now injects the dynamic, real database name!)
     system_message = {
         "role": "system",
         "content": (
             "You are PetroAI, the official assistant of PetroApp, a petroleum engineering learning platform."
-
             "About PetroApp:"
-            "- It teaches petroleum engineering through lessons, quizzes, and calculators"
+            "- It teaches petroleum engineering through lessons, quizzes, and calculators, and community where users share knwoledge"
             "- It helps students understand reservoir engineering, drilling, production, and formulas"
             "- It includes tools like porosity calculator and unit converters"
             "- it was built by Djamilou Harouna Maman nigerien student in Ghana very passionate in Oil and Gaz"
             "- Djamilou was born in Agadez and got SONIDEP's scholarship to study in Ghana in 2025"
             "- SONIDEP is a national oil and gas campany in Niger"
-
             "Your role:"
             "- Act like a tutor inside the PetroApp system"
             "- Help users understand petroleum engineering clearly"
             "- Guide users through app features when needed"
-
             "User information:"
-            f"The current user is called {session.get('user_name', 'Student')}."
-
+             f"The current user is called {user_name}."  # <-- Dynamic Name Check!
             "Your behavior:"
             "- Always respond in a personal way using the user's name when appropriate"
             "- Be friendly and supportive like a tutor"
             "- Act like you are talking directly to this student"
             "- Help them learn petroleum engineering step by step"
-
-
             "Default writing style rules:"
             "- Always answer in clear paragraphs by default"
             "- Do NOT use bullet points unless the user explicitly asks for them"
@@ -195,16 +188,10 @@ def ask_petroai():
         )
     }
 
-    # =========================
     # BUILD MESSAGES
-    # =========================
-
     messages = [system_message] + session["chat_history"]
 
-    # =========================
     # API REQUEST
-    # =========================
-
     headers = {
         "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
         "Content-Type": "application/json"
@@ -223,27 +210,27 @@ def ask_petroai():
     )
 
     data = response.json()
-
     answer = data["choices"][0]["message"]["content"]
 
-    # =========================
     # SAVE ASSISTANT RESPONSE
-    # =========================
-
     session["chat_history"].append({
         "role": "assistant",
         "content": answer
     })
 
     session.modified = True
-
     return jsonify({"answer": answer})
 
 # COMMUNITY
 @app.route("/community")
 def community():
-
     if "user_id" not in session:
+        return redirect("/login")
+
+    # Safety structural check: Validate if account is still live in DB
+    current_user = User.query.get(session["user_id"])
+    if not current_user:
+        session.clear()
         return redirect("/login")
 
     posts = Post.query.order_by(
@@ -255,31 +242,32 @@ def community():
         posts=posts
     )
 
-
-
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route("/create-post", methods=["GET", "POST"])
 def create_post():
-
     if "user_id" not in session:
         return redirect("/login")
 
-    if request.method == "POST":
+    # DB Protection verification guard
+    current_user = User.query.get(session["user_id"])
+    if not current_user:
+        session.clear()
+        return redirect("/login")
 
+    if request.method == "POST":
         content = request.form.get("content")
         file = request.files.get("image")
         image_url = None
 
         if file and file.filename != "":
-
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="petroapp_posts"
             )
-
             image_url = upload_result.get("secure_url")
 
         post = Post(
@@ -294,13 +282,28 @@ def create_post():
         return redirect("/community")
 
     return render_template("create_post.html")
+
+# UPDATED ASYNC COMMENT CREATION (FIXED INTERCEPT ENGINE)
 @app.route("/add-comment/<int:post_id>", methods=["POST"])
 def add_comment(post_id):
-
     if "user_id" not in session:
+        if prefers_json():
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
         return redirect("/login")
 
-    content = request.form["content"]
+    # Verify session active in DB map context
+    current_user = User.query.get(session["user_id"])
+    if not current_user:
+        session.clear()
+        if prefers_json():
+            return jsonify({"success": False, "error": "User does not exist"}), 401
+        return redirect("/login")
+
+    # Accept both standard forms and incoming JSON payload configurations
+    if request.is_json:
+        content = request.json.get("content")
+    else:
+        content = request.form.get("content")
 
     comment = Comment(
         post_id=post_id,
@@ -311,11 +314,21 @@ def add_comment(post_id):
     db.session.add(comment)
     db.session.commit()
 
+    if prefers_json():
+        post = Post.query.get(post_id)
+        return jsonify({
+            "success": True,
+            "comment_id": comment.id,
+            "content": comment.content,
+            "username": current_user.username if hasattr(current_user, 'username') else session.get("user_name", "Student"),
+            "user_id": session["user_id"],
+            "comment_count": len(post.comments) if post else 0
+        })
+
     return redirect("/community")
 
 @app.route("/delete-post/<int:post_id>", methods=["POST"])
 def delete_post(post_id):
-
     if "user_id" not in session:
         return redirect("/login")
 
@@ -324,7 +337,6 @@ def delete_post(post_id):
     if post.user_id != session["user_id"]:
         return "Unauthorized", 403
 
-    # delete image from cloudinary (optional but clean)
     if post.image:
         try:
             import re
@@ -338,82 +350,102 @@ def delete_post(post_id):
 
     return redirect("/community")
 
+# UPDATED ASYNC COMMENT DELETION (FIXED INTERCEPT ENGINE)
 @app.route("/delete-comment/<int:comment_id>", methods=["POST"])
 def delete_comment(comment_id):
-
     if "user_id" not in session:
+        if prefers_json():
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
         return redirect("/login")
 
     comment = Comment.query.get_or_404(comment_id)
+    post_id = comment.post_id
 
-    # 🔒 ONLY OWNER CAN DELETE COMMENT
     if comment.user_id != session["user_id"]:
+        if prefers_json():
+            return jsonify({"success": False, "error": "Forbidden"}), 403
         return "Unauthorized", 403
 
     db.session.delete(comment)
     db.session.commit()
 
+    if prefers_json():
+        post = Post.query.get(post_id)
+        return jsonify({
+            "success": True,
+            "comment_count": len(post.comments) if post else 0
+        })
+
     return redirect("/community")
 
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
-
     if "user_id" not in session:
         return redirect("/login")
 
     post = Post.query.get_or_404(post_id)
 
-    # ONLY OWNER CAN EDIT
     if post.user_id != session["user_id"]:
         return "Unauthorized", 403
 
     if request.method == "POST":
-
-        # update text
         post.content = request.form.get("content")
-
         file = request.files.get("image")
 
         if file and file.filename != "":
-
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="petroapp_posts"
             )
-
             post.image = upload_result.get("secure_url")
 
-
         db.session.commit()
-
         return redirect("/community")
 
     return render_template("edit_post.html", post=post)
 
-
+# UPDATED ASYNC LIKE ENGINE (FIXED INTERCEPT ENGINE)
 @app.route("/like-post/<int:post_id>", methods=["POST"])
 def like_post(post_id):
-
     if "user_id" not in session:
+        if prefers_json():
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return redirect("/login")
+
+    # DB Protection verification guard
+    current_user = User.query.get(session["user_id"])
+    if not current_user:
+        session.clear()
+        if prefers_json():
+            return jsonify({"success": False, "error": "User does not exist"}), 401
         return redirect("/login")
 
     user_id = session["user_id"]
-
     like = Like.query.filter_by(user_id=user_id, post_id=post_id).first()
+    status = ""
 
-    # 👉 If already liked → remove like (unlike)
     if like:
         db.session.delete(like)
+        status = "unliked"
     else:
         new_like = Like(user_id=user_id, post_id=post_id)
         db.session.add(new_like)
+        status = "liked"
 
     db.session.commit()
 
+    if prefers_json():
+        post = Post.query.get(post_id)
+        return jsonify({
+            "success": True,
+            "status": status,
+            "like_count": len(post.likes) if post else 0
+        })
+
     return redirect("/community")
+
 # ▶️ RUN APP
 if __name__ == "__main__":
-    
     with app.app_context():
         db.create_all()
         

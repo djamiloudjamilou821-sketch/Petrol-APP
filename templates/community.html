@@ -15,7 +15,7 @@
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #111213; /* Deepened body background for higher contrast */
+            background: #111213;
             color: #f5f6f7;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -106,31 +106,6 @@
             background: #333537;
             color: #e4e6eb;
             border-color: #3e4144;
-        }
-
-        /* FLOATING ACTION BUTTON */
-        .create-btn {
-            position: fixed;
-            right: 32px;
-            bottom: 32px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #1877f2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 28px;
-            box-shadow: 0 8px 24px rgba(24, 119, 242, 0.4);
-            z-index: 999;
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .create-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 12px 28px rgba(24, 119, 242, 0.5);
         }
 
         /* MAIN POST CARD STRUCTURE */
@@ -258,7 +233,7 @@
             gap: 8px;
         }
 
-        .actions form {
+        .actions .like-form-wrapper {
             margin: 0;
             flex: 1;
         }
@@ -283,6 +258,11 @@
 
         .action-btn:hover {
             background: #2a2b2d;
+            color: #1877f2;
+        }
+
+        /* Active styling rule for dynamically highlighed like actions */
+        .action-btn.liked {
             color: #1877f2;
         }
 
@@ -389,14 +369,14 @@
 
         .comment-box .comment-author {
             color: #f5f6f7;
-            font-weight: 600; /* Makes it look strong without extra HTML tags */
-            text-decoration: none; /* Hides the default ugly browser underline */
+            font-weight: 600;
+            text-decoration: none;
             display: inline-block;
             margin-bottom: 2px;
         }
 
         .comment-box .comment-author:hover {
-            text-decoration: underline; /* Underline appears instantly on hover, just like FB */
+            text-decoration: underline;
             cursor: pointer;
         }
 
@@ -422,51 +402,13 @@
             background: rgba(248, 113, 113, 0.15);
             color: #ef4444;
         }
-
-        /* RESPONSIVE VIEWS */
-        @media (max-width: 768px) {
-            .container {
-                padding: 12px 8px 100px;
-            }
-
-            .community-header {
-                margin-bottom: 20px;
-            }
-
-            .community-header h1 {
-                font-size: 26px;
-            }
-
-            .post-image {
-                max-height: 400px;
-            }
-
-            .create-btn {
-                width: 54px;
-                height: 54px;
-                right: 20px;
-                bottom: 20px;
-                font-size: 24px;
-            }
-
-            .actions {
-                padding: 4px 8px;
-            }
-            
-            .action-btn {
-                font-size: 13px;
-                padding: 8px 4px;
-            }
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">
-            ⬅
-        </a>
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">⬅</a>
     </div>
 
     <div class="community-header">
@@ -484,14 +426,12 @@
                 </div>
             {% endif %}
 
-            <a href="/create-post" class="create-post-input">
-                What's on your mind?
-            </a>
+            <a href="/create-post" class="create-post-input">What's on your mind?</a>
         </div>
     </div>
 
     {% for post in posts %}
-    <div class="post">
+    <div class="post" id="post-card-{{ post.id }}">
         <div class="post-header">
             {% if post.user.profile_pic %}
                 <img src="{{ post.user.profile_pic }}" class="avatar-img" alt="{{ post.user.username }}'s avatar">
@@ -522,9 +462,7 @@
             </span>
 
             {% if post.content|length > 100 %}
-            <button class="read-more" onclick="toggleText('{{ post.id }}', this)">
-                Read More
-            </button>
+            <button class="read-more" onclick="toggleText('{{ post.id }}', this)">Read More</button>
             {% endif %}
         </div>
 
@@ -533,84 +471,156 @@
         {% endif %}
 
         <div class="stats">
-            <span>❤️ {{ post.likes|length }}</span>
-            <span>💬 {{ post.comments|length }} comments</span>
+            <span id="like-count-{{ post.id }}">❤️ {{ post.likes|length }}</span>
+            <span id="comment-count-{{ post.id }}">💬 {{ post.comments|length }} comments</span>
         </div>
 
         <div class="actions">
-            <form action="/like-post/{{ post.id }}" method="POST">
-                <button type="submit" class="action-btn">
-                    Like
-                </button>
-            </form>
+            <div class="like-form-wrapper">
+                <button type="button" class="action-btn" onclick="submitLike('{{ post.id }}', this)">Like</button>
+            </div>
 
-            <button class="action-btn" onclick="toggleComments('{{ post.id }}')">
-                Comment
-            </button>
+            <button class="action-btn" onclick="toggleComments('{{ post.id }}')">Comment</button>
 
             {% if post.user_id == session["user_id"] %}
-            <a href="/edit-post/{{ post.id }}" class="action-btn">
-                Edit
-            </a>
+            <a href="/edit-post/{{ post.id }}" class="action-btn">Edit</a>
 
             <form action="/delete-post/{{ post.id }}" method="POST" onsubmit="return confirm('Delete this post?')">
-                <button class="action-btn delete-btn">
-                    Delete
-                </button>
+                <button class="action-btn delete-btn">Delete</button>
             </form>
             {% endif %}
         </div>
 
         <div class="comment-section" id="comments-{{ post.id }}" style="display:none">
             
-            <form class="comment-form" action="/add-comment/{{ post.id }}" method="POST">
-                <input type="text" name="content" placeholder="Write a comment..." required>
+            <form class="comment-form" onsubmit="submitComment(event, '{{ post.id }}')">
+                <input type="text" id="comment-input-{{ post.id }}" placeholder="Write a comment..." required autocomplete="off">
                 <button type="submit">Post</button>
             </form>
 
-            {% for comment in post.comments %}
-            <div class="comment">
-                <div class="comment-avatar">
-                    {{ comment.user.username[0]|upper }}
-                </div>
-                
-                <div class="comment-box-wrapper">
-                    <div class="comment-box">
-                        <a href="/profile/{{ comment.user.id }}" class="comment-author">
-                            {{ comment.user.username }}
-                        </a><br>
-                        <span id="c-short-{{ comment.id }}">
-                            {{ comment.content[:80] }}
-                            {% if comment.content|length > 80 %}...{% endif %}
-                        </span>
+            <div id="comment-feed-target-{{ post.id }}">
+                {% for comment in post.comments %}
+                <div class="comment" id="comment-container-{{ comment.id }}">
+                    <div class="comment-avatar">
+                        {{ comment.user.username[0]|upper }}
+                    </div>
+                    
+                    <div class="comment-box-wrapper">
+                        <div class="comment-box">
+                            <a href="/profile/{{ comment.user.id }}" class="comment-author">
+                                {{ comment.user.username }}
+                            </a><br>
+                            <span id="c-short-{{ comment.id }}">
+                                {{ comment.content[:80] }}
+                                {% if comment.content|length > 80 %}...{% endif %}
+                            </span>
 
-                        <span id="c-full-{{ comment.id }}" style="display:none;">
-                            {{ comment.content }}
-                        </span>
+                            <span id="c-full-{{ comment.id }}" style="display:none;">
+                                {{ comment.content }}
+                            </span>
 
-                        {% if comment.content|length > 80 %}
-                        <button type="button" class="read-more" onclick="toggleComment('{{ comment.id }}', this)">
-                            Read More
+                            {% if comment.content|length > 80 %}
+                            <button type="button" class="read-more" onclick="toggleComment('{{ comment.id }}', this)">Read More</button>
+                            {% endif %}
+                        </div>
+
+                        {% if comment.user_id == session["user_id"] %}
+                        <button type="button" class="comment-delete-btn" title="Delete Comment" onclick="deleteComment('{{ comment.id }}', '{{ post.id }}')">
+                            🗑️
                         </button>
                         {% endif %}
                     </div>
-
-                    {% if comment.user_id == session["user_id"] %}
-                    <form class="comment-delete-form" action="/delete-comment/{{ comment.id }}" method="POST" onsubmit="return confirm('Delete comment?')">
-                        <button class="comment-delete-btn" title="Delete Comment">
-                            🗑️
-                        </button>
-                    </form>
-                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
     {% endfor %}
 </div>
 
 <script>
+    // 1. ASYNC BACKGROUND LIKE TRANSACTIONS
+    function submitLike(postId, buttonElement) {
+        fetch(`/like-post/${postId}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`like-count-${postId}`).innerHTML = `❤️ ${data.like_count}`;
+                if (data.status === 'liked') {
+                    buttonElement.classList.add('liked');
+                } else {
+                    buttonElement.classList.remove('liked');
+                }
+            }
+        })
+        .catch(err => console.error("Error executing background metric sync: ", err));
+    }
+
+    // 2. ASYNC INSTANT COMMENT RENDERING
+    function submitComment(event, postId) {
+        event.preventDefault();
+        const inputField = document.getElementById(`comment-input-${postId}`);
+        const textContent = inputField.value.trim();
+        if (!textContent) return;
+
+        const formData = new FormData();
+        formData.append('content', textContent);
+
+        fetch(`/add-comment/${postId}`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Instantly construct Facebook dynamic content string
+                const targetCommentNodeHTML = `
+                    <div class="comment" id="comment-container-${data.comment_id}">
+                        <div class="comment-avatar">${data.username[0].toUpperCase()}</div>
+                        <div class="comment-box-wrapper">
+                            <div class="comment-box">
+                                <a href="/profile/${data.user_id}" class="comment-author">${data.username}</a><br>
+                                <span id="c-short-${data.comment_id}">${data.content}</span>
+                            </div>
+                            <button type="button" class="comment-delete-btn" title="Delete Comment" onclick="deleteComment('${data.comment_id}', '${postId}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Inject the comment seamlessly onto the top of the comment feed
+                document.getElementById(`comment-feed-target-${postId}`).insertAdjacentHTML('afterbegin', targetCommentNodeHTML);
+                document.getElementById(`comment-count-${postId}`).innerHTML = `💬 ${data.comment_count} comments`;
+                inputField.value = ''; // Clean input track line
+            }
+        })
+        .catch(err => console.error("Error pushing async telemetry tracking: ", err));
+    }
+
+    // 3. ASYNC BACKGROUND COMMENT REMOVAL
+    function deleteComment(commentId, postId) {
+        if (!confirm('Delete comment?')) return;
+
+        fetch(`/delete-comment/${commentId}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Wipe the element directly out of the DOM view
+                const commentNode = document.getElementById(`comment-container-${commentId}`);
+                if (commentNode) commentNode.remove();
+                document.getElementById(`comment-count-${postId}`).innerHTML = `💬 ${data.comment_count} comments`;
+            }
+        })
+        .catch(err => console.error("Error processing dynamic data cleanup: ", err));
+    }
+
+    /* STANDARD RE-RENDER INTERFACE COMPONENT LOGICS */
     function toggleComments(postId){
         let section = document.getElementById("comments-" + postId);
         section.style.display = section.style.display === "block" ? "none" : "block";
