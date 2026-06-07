@@ -402,6 +402,62 @@
             background: rgba(248, 113, 113, 0.15);
             color: #ef4444;
         }
+
+        /* =========================
+        MOBILE FRIENDLY COMMENT FORM
+        ========================= */
+        .comment-form.mobile-optimized-form {
+            display: flex;
+            align-items: flex-end; /* Aligns button to the bottom if textarea expands */
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 12px;
+            border-radius: 24px; /* WhatsApp style pill shape */
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .comment-form.mobile-optimized-form textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f8fafc;
+            font-size: 16px; /* ⚠️ CRITICAL: Minimum 16px prevents iOS Safari from auto-zooming the page */
+            font-family: inherit;
+            padding: 6px 4px;
+            resize: none; /* Disables manual desktop resizing handle */
+            max-height: 120px; /* Limits growth so it doesn't cover the whole phone screen */
+            line-height: 1.4;
+        }
+
+        .comment-form.mobile-optimized-form textarea::placeholder {
+            color: #64748b;
+        }
+
+        .comment-form.mobile-optimized-form button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            outline: none;
+            padding: 8px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 36px; /* Large enough touch target for thumbs */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .comment-form.mobile-optimized-form button:active {
+            background: #1d4ed8;
+            transform: scale(0.96); /* Small haptic feedback on press */
+        }
     </style>
 </head>
 <body>
@@ -493,8 +549,15 @@
 
         <div class="comment-section" id="comments-{{ post.id }}" style="display:none">
             
-            <form class="comment-form" onsubmit="submitComment(event, '{{ post.id }}')">
-                <input type="text" id="comment-input-{{ post.id }}" placeholder="Write a comment..." required autocomplete="off">
+            <form class="comment-form mobile-optimized-form" onsubmit="submitComment(event, '{{ post.id }}')">
+                <textarea 
+                    id="comment-input-{{ post.id }}" 
+                    placeholder="Write a comment..." 
+                    required 
+                    autocomplete="off"
+                    rows="1"
+                    oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
+                ></textarea>
                 <button type="submit">Post</button>
             </form>
 
