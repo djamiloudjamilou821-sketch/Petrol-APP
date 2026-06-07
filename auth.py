@@ -123,51 +123,49 @@ def register_auth(app):
         return render_template("admin/login.html", error=error)
 
     # profile
+    # profile
     @app.route("/profile/<int:user_id>")
     def profile(user_id):
-
         if "user_id" not in session:
             return redirect("/login")
 
         user = User.query.get_or_404(user_id)
 
-        return render_template(
-            "profile.html",
-            user=user
-        )
+        return render_template("profile.html", user=user)
+
 
     @app.route("/edit-profile", methods=["GET", "POST"])
     def edit_profile():
-
         if "user_id" not in session:
             return redirect("/login")
 
         user = User.query.get(session["user_id"])
 
         if request.method == "POST":
+            # Using .get() prevents KeyError and handles form inputs safely
+            user.username = request.form.get("username", user.username)
+            user.bio = request.form.get("bio", "")
+            user.country = request.form.get("country", "")
+            user.university = request.form.get("university", "")
+            user.petroleum_level = request.form.get("petroleum_level", "")
 
-            user.username = request.form["username"]
-            user.bio = request.form["bio"]
-            user.country = request.form["country"]
-            user.university = request.form["university"]
-            user.petroleum_level = request.form["petroleum_level"]
-
+            # Handle Cloudinary upload
             file = request.files.get("profile_pic")
-
             if file and file.filename != "":
-
-                upload_result = cloudinary.uploader.upload(
+                upload_result = cloudinary.uploader.uploader.upload(
                     file,
                     folder="petroapp_profiles"
                 )
-
-                # ✅ FIX: correct field
                 user.profile_pic = upload_result.get("secure_url")
 
+            # Save updates to DB
             db.session.commit()
 
+            # Keep session sync updated
             session["username"] = user.username
 
-            return redirect("/profile")
+            # ✅ FIX: Redirecting to the dynamic user profile page path
+            return redirect(f"/profile/{user.id}")
 
-        return render_template("edit_profile.html", user=user)
+        # Make sure this matches your exact HTML file name (underscore vs dash)
+        return render_template("edit-profile.html", user=user)

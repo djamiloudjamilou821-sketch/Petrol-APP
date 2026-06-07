@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* =========================
+           CORE RESET & VARIABLES
+        ========================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), url("/static/hb.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 40px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 64px;
+            position: relative;
+        }
+
+        /* BACK NAVIGATION BUTTON */
+        .back-arrow {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .back-arrow:hover {
+            color: white;
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* =========================
+           FORM LAYOUT COMPONENT
+        ========================= */
+        .card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        /* PREMIUM AVATAR WRAPPER */
+        .profile-preview {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .profile-preview img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #1e293b;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+            background: #0f172a;
+        }
+
+        /* FORM INPUT GRID LABELS */
+        .label {
+            margin-top: 16px;
+            margin-bottom: 6px;
+            display: block;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #38bdf8;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+        }
+
+        /* FACEBOOK BIO EXTENSION TYPE */
+        textarea {
+            min-height: 80px;
+            resize: none;
+            line-height: 1.5;
+        }
+
+        .bio-counter {
+            text-align: right;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* FILE UPLOADER COMPONENT */
+        .file-upload-wrapper {
+            position: relative;
+            margin-top: 8px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.3);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            padding: 14px;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input[type="file"]:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            color: white;
+        }
+
+        /* CTA SAVE SUBMISSION ACTIONS */
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 32px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-size: 15.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* SPLIT METADATA LAYOUT FOR WIDESCREEN */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* =========================
+           MOBILE TUNING
+        ========================= */
+        @media (max-width: 600px) {
+            .container {
+                padding-top: 60px;
+            }
+            .back-arrow {
+                top: 10px;
+            }
+            .card {
+                padding: 24px 16px;
+                border-radius: 16px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- TOP NAVIGATION -->
+    <a href="javascript:history.back()" class="back-arrow">⬅</a>
+
+    <!-- MAIN FORM MODULE CARD -->
+    <div class="card">
+        <h1>Edit Profile</h1>
+
+        <!-- REALTIME PROFILE IMAGE PREVIEW OVERLAY -->
+        <div class="profile-preview">
+            {% if user.profile_pic %}
+                <img src="{{ user.profile_pic }}" alt="Current Avatar">
+            {% else %}
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Default Avatar">
+            {% endif %}
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <!-- USERNAME INPUT -->
+            <label class="label">Username</label>
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter your username"
+                value="{{ user.username }}"
+                required
+            >
+
+            <!-- FACEBOOK-STYLE BIO INPUT WITH CAP INDICATOR -->
+            <label class="label">Bio</label>
+            <textarea
+                id="bioInput"
+                name="bio"
+                maxlength="101"
+                placeholder="Tell people about yourself (e.g., Reservoir Engineer Trainee)..."
+                oninput="updateCount()"
+            >{{ user.bio or '' }}</textarea>
+            <div class="bio-counter"><span id="charCount">101</span> characters remaining</div>
+
+            <!-- RESPONSIVE GRID ROW FOR META DATA -->
+            <div class="form-row">
+                <div>
+                    <label class="label">Country</label>
+                    <input
+                        type="text"
+                        name="country"
+                        placeholder="Your country"
+                        value="{{ user.country or '' }}"
+                    >
+                </div>
+                <div>
+                    <label class="label">Petroleum Level</label>
+                    <input
+                        type="text"
+                        name="petroleum_level"
+                        placeholder="e.g., Student, Specialist"
+                        value="{{ user.petroleum_level or '' }}"
+                    >
+                </div>
+            </div>
+
+            <!-- UNIVERSITY INPUT -->
+            <label class="label">University / Institute</label>
+            <input
+                type="text"
+                name="university"
+                placeholder="Your university"
+                value="{{ user.university or '' }}"
+            >
+
+            <!-- AVATAR FILE SELECTOR -->
+            <label class="label">Update Profile Picture</label>
+            <div class="file-upload-wrapper">
+                <input
+                    type="file"
+                    name="profile_pic"
+                    accept="image/*"
+                >
+            </div>
+
+            <!-- ACTION CTA BUTTON -->
+            <button type="submit">
+                💾 Save Changes
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script>
+function updateCount() {
+    const textarea = document.getElementById("bioInput");
+    const countDisplay = document.getElementById("charCount");
+    const maxLength = 101; // Classic sweet-spot limit for clean FB bio formatting
+    
+    const remaining = maxLength - textarea.value.length;
+    countDisplay.textContent = remaining;
+    
+    if (remaining <= 10) {
+        countDisplay.style.color = "#f87171"; // Turns red when close to limit
+    } else {
+        countDisplay.style.color = "#64748b";
+    }
+}
+// Run on layout initialization to handle pre-populated variables cleanly
+window.addEventListener('DOMContentLoaded', updateCount);
+</script>
+
+</body>
+</html>

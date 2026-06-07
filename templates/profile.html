@@ -1,120 +1,258 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body {
+        /* =========================
+            CORE RESET & VARIABLES
+        ========================= */
+        * {
             margin: 0;
-            font-family: system-ui, -apple-system, Arial;
-            background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
-                        url("/static/hb.jpg");
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+            background: linear-gradient(rgba(15,23,42,0.9), rgba(15,23,42,0.95)), url("/static/hb.jpg");
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
             color: white;
+            min-height: 100vh;
+            padding-bottom: 30px;
         }
 
         .container {
-            width: 92%;
-            max-width: 420px;
-            margin: auto;
-            padding-top: 60px;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            padding-top: 0; /* Let cover photo hit the top screen edge */
         }
 
-        /* BACK BUTTON */
+        /* BACK NAVIGATION BUTTON */
         .back-arrow {
             position: fixed;
             top: 15px;
             left: 15px;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            background: #1e293b;
+            border-radius: 50%; /* Rounded circular button like FB */
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
             color: white;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 18px;
             transition: 0.2s;
+            z-index: 1000;
         }
 
         .back-arrow:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
         }
 
-        /* CARD */
-        .card {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
+        /* =========================
+            FACEBOOK PROFILE ARCHITECTURE
+        ========================= */
+        .profile-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0 0 20px 20px; /* Curve only the bottom edge */
+            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            margin-bottom: 16px;
         }
 
-        /* PROFILE IMAGE */
+        /* COVER BANNER HEADER */
+        .cover-photo {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #1e3a8a, #0369a1); /* Tech default gradient */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        /* HEADER AVATAR WRAPPER */
+        .avatar-container {
+            width: 100%;
+            height: 60px; /* Offset spacing context */
+            position: relative;
+            margin-bottom: 12px;
+        }
+
         .profile-img {
             width: 120px;
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #38bdf8;
-            margin-bottom: 10px;
+            border: 4px solid #0f172a; /* Frame outline separation */
+            position: absolute;
+            top: -60px; /* Push exactly halfway up into the banner area */
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* HEADER TEXT HEADINGS */
+        .profile-header-text {
+            text-align: center;
+            padding: 0 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         h1 {
-            margin: 10px 0 5px;
-            font-size: 22px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
         }
 
-        p {
-            margin: 6px 0;
-            color: #cbd5e1;
+        .email-subtext {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        /* =========================
+            FACEBOOK COHESIVE BIO COMPONENT (FIXED FOR MULTI-LINE)
+        ========================= */
+        .fb-bio-section {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 10px;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .bio-text {
+            font-size: 14.5px;
+            color: #e2e8f0;
+            line-height: 1.5;
+            font-style: italic;
+            display: block;
+            white-space: pre-line; /* Keeps multi-line breaks formatted cleanly */
+        }
+
+        .bio-placeholder {
+            color: #64748b;
             font-size: 14px;
         }
 
-        .info {
-            margin-top: 15px;
-            text-align: left;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 12px;
-            border-radius: 12px;
+        .inline-bio-btn {
+            display: inline-block;
+            margin-top: 8px;
+            background: transparent;
+            border: none;
+            color: #38bdf8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .inline-bio-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+            FACEBOOK "INTRO" BACKGROUND CARD
+        ========================= */
+        .intro-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 16px;
+        }
+
+        .intro-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #ffffff;
+        }
+
+        .intro-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14.5px;
+            color: #cbd5e1;
+        }
+
+        .intro-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .intro-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .intro-highlight {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        /* PRIMARY FOOTER CTA ACTION BUTTON */
+        .profile-actions {
+            padding: 0 16px;
         }
 
         .btn {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 12px;
             background: #2563eb;
             color: white;
             text-decoration: none;
             border-radius: 10px;
             font-weight: 600;
+            font-size: 14.5px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
 
-            /* FIX HERE */
-            width: auto;
-            min-width: 140px;
-            text-align: center;
+        .btn:hover {
+            background: #1d4ed8;
         }
 
         .btn:active {
             transform: scale(0.98);
         }
 
-        /* MOBILE */
-        @media (max-width: 500px) {
-            .container {
-                padding-top: 70px;
+        /* RESPONSIVE DESIGN TUNING */
+        @media (max-width: 550px) {
+            .profile-card {
+                border-radius: 0; /* Full bleed edge on mobile screens */
             }
-
-            .card {
-                padding: 18px;
+            .intro-card {
+                margin-left: 8px;
+                margin-right: 8px;
             }
-
-            h1 {
-                font-size: 20px;
+            .profile-actions {
+                padding: 0 8px;
+            }
+            .cover-photo {
+                height: 130px;
             }
         }
     </style>
@@ -122,32 +260,65 @@
 
 <body>
 
-<a href="/" class="back-arrow">⬅</a>
-
 <div class="container">
-    <div class="card">
+    <a href="javascript:history.back()" class="back-arrow">⬅</a>
 
-        <!-- SAFE IMAGE -->
-        {% if user.profile_pic %}
-            <img class="profile-img" src="{{ user.profile_pic }}">
-        {% else %}
-            <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-        {% endif %}
-
-        <h1>{{ user.username }}</h1>
-        <p>{{ user.email }}</p>
-
-        <div class="info">
-            <p>📝 {{ user.bio or "No bio yet" }}</p>
-            <p>🌍 {{ user.country or "Not set" }}</p>
-            <p>🏫 {{ user.university or "Not set" }}</p>
-            <p>🛢️ {{ user.petroleum_level or "Not set" }}</p>
+    <div class="profile-card">
+        <div class="cover-photo"></div>
+        
+        <div class="avatar-container">
+            {% if user.profile_pic %}
+                <img class="profile-img" src="{{ user.profile_pic }}" alt="Avatar">
+            {% else %}
+                <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Default Avatar">
+            {% endif %}
         </div>
 
-        {% if session.get("user_id") == user.id %}
-            <a href="/edit-profile" class="btn">Edit Profile</a>
-        {% endif %}
+        <div class="profile-header-text">
+            <h1>{{ user.username }}</h1>
+            <div class="email-subtext">{{ user.email }}</div>
+            
+            <div class="fb-bio-section">
+                {% if user.bio %}
+                    <div class="bio-text">“{{ user.bio }}”</div>
+                    {% if session.get("user_id") == user.id %}
+                        <a href="/edit-profile" class="inline-bio-btn">Edit Bio</a>
+                    {% endif %}
+                {% else %}
+                    <p class="bio-placeholder">No bio added yet.</p>
+                    {% if session.get("user_id") == user.id %}
+                        <a href="/edit-profile" class="inline-bio-btn">✍️ Add Bio</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
+    <div class="intro-card">
+        <h3>Intro</h3>
+        
+        <div class="intro-row">
+            <span class="intro-icon">🛢️</span>
+            <span>Level: <span class="intro-highlight">{{ user.petroleum_level or "Engineering Student" }}</span></span>
+        </div>
+
+        <div class="intro-row">
+            <span class="intro-icon">🏫</span>
+            <span>Studies at <span class="intro-highlight">{{ user.university or "Petroleum School" }}</span></span>
+        </div>
+
+        <div class="intro-row">
+            <span class="intro-icon">🌍</span>
+            <span>From <span class="intro-highlight">{{ user.country or "Earth" }}</span></span>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        {% if session.get("user_id") == user.id %}
+            <a href="/edit-profile" class="btn">
+                <span>⚙️</span> Edit Profile Details
+            </a>
+        {% endif %}
     </div>
 </div>
 
