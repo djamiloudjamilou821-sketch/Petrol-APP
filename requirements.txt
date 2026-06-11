@@ -7,3 +7,4 @@ requests
 cloudinary
 google-genai
 protobuf
+google
