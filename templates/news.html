@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>🛢️ PetroApp - Industry News Feed</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#0F172A] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+    <nav class="bg-[#1E293B] border-b border-slate-800/80 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-6">
+                    <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">⬅</a>
+                </div>
+                
+                <div>
+                    <span class="text-[11px] font-bold bg-slate-900 text-[#38BDF8] border border-[#38BDF8]/20 px-2.5 py-1 rounded-full whitespace-nowrap shadow-inner">
+                        Student View
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6 animate-fade-in">
+        
+        <div class="border-b border-slate-800 pb-5 space-y-2">
+            <div class="inline-flex items-center gap-2 text-[10px] font-bold text-[#38BDF8] uppercase tracking-widest bg-[#38BDF8]/10 px-2.5 py-1 rounded-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Market Feed
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Oil & Gas Intelligence
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-xl leading-relaxed">
+                Real-time global streams covering exploration updates, reservoir engineering breakthroughs, and upstream operations.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for article in articles %}
+                <article class="bg-[#1E293B] border border-slate-800/60 rounded-xl overflow-hidden shadow-lg flex flex-col hover:border-slate-700/80 transition-all duration-200 group">
+                    
+                    <div class="relative h-44 sm:h-48 bg-slate-900 overflow-hidden w-full select-none">
+                        {% if article.urlToImage %}
+                            <img src="{{ article.urlToImage }}" 
+                                 alt="Industry Update" 
+                                 class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                                 onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-600\'><span class=\'text-4xl mb-1\'>🛢️</span><span class=\'text-[9px] font-bold uppercase tracking-widest text-slate-500\'>PetroApp Wire</span></div>';">
+                        {% else %}
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-600">
+                                <span class="text-4xl mb-1">🛢️</span>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500">PetroApp Wire</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="absolute top-3 left-3 max-w-[75%]">
+                            <span class="block bg-[#0F172A]/90 border border-slate-800/80 text-[#38BDF8] text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider backdrop-blur-md truncate shadow-sm">
+                                {{ article.source.name or "Global News" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            
+                            <div class="flex items-center gap-2 text-[11px] text-slate-500 font-semibold">
+                                <time datetime="{{ article.publishedAt }}">
+                                    {{ article.publishedAt[:10] if article.publishedAt else "Recent" }}
+                                </time>
+                                <span>•</span>
+                                <span class="text-slate-400 bg-slate-800/60 border border-slate-700 px-2 py-0.5 rounded-sm">
+                                    {{ article.read_time or 2 }} min read
+                                </span>
+                            </div>
+                            
+                            <h2 class="text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-[#38BDF8] transition-colors duration-150">
+                                {{ article.title }}
+                            </h2>
+                            
+                            <p class="text-slate-400 text-xs sm:text-[13px] leading-relaxed line-clamp-3">
+                                {{ article.description or "No secondary outline summarized by metadata providers. Tap the original platform dispatch wire link beneath to parse the complete data stream records." }}
+                            </p>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-800/60 flex items-center justify-between">
+                            <a href="{{ article.url }}" 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               class="inline-flex items-center gap-1 text-xs font-bold text-[#38BDF8] hover:text-blue-400 py-2 transition-colors group/link active:scale-98">
+                                Read Full Dispatch 
+                                <span class="inline-block transform group-hover/link:translate-x-0.5 transition-transform">➔</span>
+                            </a>
+                            
+                            <span class="text-slate-600 text-[10px] tracking-wider select-none font-medium">
+                                #{{ loop.index }}
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            {% else %}
+                <div class="col-span-full bg-[#1E293B] border border-dashed border-slate-800 rounded-xl p-8 text-center text-slate-400 max-w-sm mx-auto mt-4 shadow-xl">
+                    <span class="text-3xl block mb-2">📡</span>
+                    <h3 class="font-bold text-white text-sm">No Active Industry Updates Found</h3>
+                    <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                        The external network link may be temporarily down or your key tier limit is exhausted.
+                    </p>
+                    <div class="mt-4">
+                        <a href="/news" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-slate-700 shadow-sm transition active:scale-95">
+                            Refresh Feed 🔄
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer class="bg-[#0F172A] border-t border-slate-900/80 mt-12 py-6 text-center text-[10px] sm:text-xs text-slate-500 px-4">
+        &copy; 2026 PetroApp. Engineered for reservoir exploration and field development study.
+    </footer>
+
+</body>
+</html>

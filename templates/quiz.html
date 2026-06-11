@@ -1,274 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Petroleum Engineering Quiz</title>
-
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{{ subject | capitalize }} Quiz - PetroApp</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            text-align: center;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .container {
-            width: 92%;
-            max-width: 700px;
-            margin: auto;
-            margin-top: 30px;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        h1 {
-            margin-bottom: 5px;
-        }
-
-        p {
-            color: #cbd5e1;
-            font-size: 14px;
-        }
-
-        .question {
-            text-align: left;
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .question h3 {
-            margin: 0 0 10px 0;
-        }
-
-        label {
-            display: block;
-            margin: 6px 0;
-            cursor: pointer;
-        }
-
-        input[type="radio"] {
-            margin-right: 8px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #2563eb;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #0f172a;
-            border-radius: 10px;
-        }
-
-        .correct {
-            color: #22c55e;
-            font-weight: bold;
-        }
-
-        .wrong {
-            color: #ef4444;
-            font-weight: bold;
-        }
-
-        .score {
-            font-size: 20px;
-            color: #38bdf8;
-            margin-bottom: 10px;
-        }
-
-        .explanation {
-            font-size: 13px;
-            color: #cbd5e1;
-            margin-top: 5px;
-        }
-
-        a {
-            display: block;
-            margin-top: 15px;
-            color: white;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #38bdf8;
-        }
-
-        .back-arrow{
-            position:absolute;
-            left:0;
-            top:15px;
-
-            width:42px;
-            height:42px;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            text-decoration:none;
-            color:white;
-
-            font-size:22px;
-            border-radius:10px;
-
-            background:#1e293b;
-            transition:.2s;
-        }
-
-        .back-arrow:hover{
-            background:#334155;
+        .animate-slide-up {
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
+<body class="bg-[#0F172A] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-<body>
-
-<div class="container">
-     <a href="/" class="back-arrow">⬅</a>
-    <!-- HEADER -->
-    <div class="header">
-        <h1>🧠 Petroleum Engineering Quiz</h1>
-        <p>
-            Test your knowledge in drilling, reservoir engineering,
-            production, pressure, porosity, and petroleum calculations.
-        </p>
-    </div>
-
-    <!-- QUIZ FORM -->
-    <form method="POST">
-
-        {% for q in questions %}
-        <div class="question-card">
-
-            <div class="question-number">
-                Question {{ loop.index }}
-            </div>
-
-            <h3 class="question-title">
-                {{ q.q }}
-            </h3>
-
-            <div class="options">
-
-                {% for key, value in q.options.items() %}
-                <label class="option">
-
-                    <input
-                        type="radio"
-                        name="question{{ q.q }}"
-                        value="{{ key }}"
-                        required
-                    >
-
-                    <span class="option-text">
-                        <strong>{{ key }}.</strong> {{ value }}
-                    </span>
-
-                </label>
-                {% endfor %}
-
-            </div>
-
+    <nav class="bg-[#1E293B] border-b border-slate-800/80 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">⬅</a>
+            <span class="text-[11px] font-bold bg-slate-900 text-[#38BDF8] border border-[#38BDF8]/20 px-2.5 py-1 rounded-full shadow-inner">
+                {{ subject | capitalize }} Assessment
+            </span>
         </div>
-        {% endfor %}
+    </nav>
 
-        <button type="submit" class="submit-btn">
-            🚀 Submit Quiz
-        </button>
-
-    </form>
-
-    <!-- RESULTS -->
-    {% if results %}
-
-    <div class="result-box">
-
-        <div class="score-box">
-
-            <h2>🏆 Quiz Result</h2>
-
-            <div class="score">
-                {{ score }} / {{ total }}
+    <main class="flex-grow flex items-center justify-center px-3 py-6 sm:py-12">
+        <div class="w-full max-w-xl bg-[#1E293B] border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl space-y-6 animate-slide-up">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h2 class="text-sm font-black uppercase text-[#38BDF8] tracking-widest">
+                    {{ subject }} Module
+                </h2>
             </div>
 
-            {% if score == total %}
-                <p class="score-message">Excellent work Engineer 👏</p>
-
-            {% elif score >= total / 2 %}
-                <p class="score-message">Good job! Keep improving 🔥</p>
-
+            {% if quiz.error %}
+                <div class="bg-rose-950/40 border border-rose-500/20 text-rose-200 p-5 rounded-xl text-center space-y-4">
+                    <span class="text-3xl block">⚠️</span>
+                    <p class="text-sm font-medium"><strong class="font-bold text-white">Oops!</strong> {{ quiz.error }}</p>
+                    <a href="{{ url_for('quizzes') }}" class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-slate-700 transition active:scale-95">
+                        Back to Selection
+                    </a>
+                </div>
             {% else %}
-                <p class="score-message">
-                    Keep practicing and try again 💪
-                </p>
+                <div class="space-y-1.5">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Active Inquiry</span>
+                    <p class="text-base sm:text-lg font-bold text-white leading-snug">
+                        {{ quiz.question }}
+                    </p>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('A', this)">
+                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">A)</strong> {{ quiz.A }}
+                    </button>
+                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('B', this)">
+                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">B)</strong> {{ quiz.B }}
+                    </button>
+                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('C', this)">
+                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">C)</strong> {{ quiz.C }}
+                    </button>
+                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('D', this)">
+                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">D)</strong> {{ quiz.D }}
+                    </button>
+                </div>
+
+                <div id="result-section" class="hidden border rounded-xl p-4 sm:p-5 space-y-3 transition-all duration-300">
+                    <p id="feedback" class="text-sm font-bold flex items-center gap-1.5"></p>
+                    <div class="text-xs sm:text-sm space-y-1.5 text-slate-300 border-t border-white/10 pt-3">
+                        <p><strong class="text-white">Correct Answer:</strong> <span id="correct-letter-display" class="text-[#38BDF8] font-bold">{{ quiz.answer }}</span></p>
+                        <p class="leading-relaxed"><strong class="text-white">Explanation:</strong> {{ quiz.explanation }}</p>
+                    </div>
+                </div>
+                
+                <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                    <a href="{{ url_for('quizzes') }}" class="w-full sm:w-auto text-center order-2 sm:order-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs sm:text-sm font-bold py-3 px-5 rounded-xl transition active:scale-95">
+                        Change Subject
+                    </a>
+                    <a href="{{ url_for('quiz', subject=subject) }}" class="w-full sm:w-auto text-center order-1 sm:order-2 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-blue-500/10 transition active:scale-95">
+                        Next Question ➔
+                    </a>
+                </div>
             {% endif %}
-
         </div>
+    </main>
 
-        <!-- ANSWERS -->
-        {% for r in results %}
+    <footer class="bg-[#0F172A] border-t border-slate-900/60 py-5 text-center text-[10px] text-slate-500 select-none">
+        &copy; 2026 PetroApp. Engineered for digital field analysis review.
+    </footer>
 
-        <div class="answer-card">
+    <script>
+        // Grab correct answer string value from Python backend execution compiler
+        const correctAnswer = "{{ quiz.answer | default('A') }}".trim().toUpperCase();
 
-            <h3>
-                {{ loop.index }}. {{ r.question }}
-            </h3>
+        function checkAnswer(selectedOption, targetButton) {
+            const resultDiv = document.getElementById('result-section');
+            const feedbackText = document.getElementById('feedback');
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Lock out further button interactions to maintain scoring integrity
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedOption === correctAnswer) {
+                // Apply green success borders and subtle background fills to selected button
+                targetButton.classList.remove('border-slate-800/80', 'hover:border-[#38BDF8]/60');
+                targetButton.classList.add('border-emerald-500', 'bg-emerald-950/20');
+                
+                feedbackText.innerHTML = "🎉 <strong>Correct Option!</strong> Well calculated.";
+                resultDiv.className = "block bg-emerald-950/30 border-emerald-500/20 text-emerald-300 p-4 rounded-xl space-y-2 animate-slide-up";
+            } else {
+                // Apply red highlight configurations to clicked button
+                targetButton.classList.remove('border-slate-800/80', 'hover:border-[#38BDF8]/60');
+                targetButton.classList.add('border-rose-500', 'bg-rose-950/20');
+                
+                // Highlight the actual correct option text button so user sees what they missed
+                buttons.forEach(btn => {
+                    const btnText = btn.innerText.trim();
+                    if (btnText.startsWith(correctAnswer + ")") || btnText.startsWith(correctAnswer)) {
+                        btn.classList.remove('border-slate-800/80');
+                        btn.classList.add('border-emerald-500/60', 'bg-emerald-950/10');
+                    }
+                });
 
-            <p>
-                Your Answer:
-                <span class="{{ 'correct' if r.is_correct else 'wrong' }}">
-                    {{ r.your_answer }}
-                </span>
-            </p>
-
-            <p>
-                Correct Answer:
-                <span class="correct">
-                    {{ r.correct_answer }}
-                </span>
-            </p>
-
-            <div class="explanation">
-                💡 {{ r.explanation }}
-            </div>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    {% endif %}
-
-    <!-- FOOTER -->
-    <div class="footer-buttons">
-
-        <a href="/quiz" class="retry-btn">
-            🔄 Retry Quiz
-        </a>
-
-
-    </div>
-
-</div>
+                feedbackText.innerHTML = "❌ <strong>Incorrect Assessment.</strong> Review documentation analysis below:";
+                resultDiv.className = "block bg-rose-950/30 border-rose-500/20 text-rose-300 p-4 rounded-xl space-y-2 animate-slide-up";
+            }
+        }
+    </script>
 
 </body>
 </html>

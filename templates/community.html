@@ -15,8 +15,8 @@
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #111213;
-            color: #f5f6f7;
+            background: #f5f7fa; /* Clean light gray canvas */
+            color: #333333; /* Dark charcoal text for accessibility */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -40,17 +40,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #242526;
-            border: 1px solid #3a3b3c;
+            background: #ffffff;
+            border: 1px solid #e1e4e8;
             border-radius: 12px;
-            color: #e4e6eb;
+            color: #4a90e2;
             text-decoration: none;
             font-size: 16px;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .back-arrow:hover {
-            background: #3a3b3c;
+            background: #f0f4f8;
+            border-color: #4a90e2;
             transform: translateX(-2px);
         }
 
@@ -61,7 +63,7 @@
         }
 
         .community-header h1 {
-            color: #2185fe;
+            color: #4a90e2; /* Matching professional tech blue */
             font-size: 32px;
             font-weight: 800;
             letter-spacing: -0.5px;
@@ -69,19 +71,19 @@
         }
 
         .community-header p {
-            color: #9ca3af;
+            color: #666666; /* Secondary muted gray */
             font-size: 15px;
             font-weight: 400;
         }
 
         /* COMPOSER INPUT COMPONENT */
         .create-post-card {
-            background: #1e1f20;
-            border: 1px solid #2d2f31;
+            background: #ffffff; /* Crisp white panel */
+            border: 1px solid #e1e4e8;
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
         }
 
         .create-row {
@@ -92,8 +94,8 @@
 
         .create-post-input {
             flex: 1;
-            background: #2a2b2d;
-            color: #9ca3af;
+            background: #f0f2f5; /* Light capsule field tint */
+            color: #666666;
             text-decoration: none;
             padding: 14px 20px;
             border-radius: 28px;
@@ -103,24 +105,24 @@
         }
 
         .create-post-input:hover {
-            background: #333537;
-            color: #e4e6eb;
-            border-color: #3e4144;
+            background: #e4e6eb;
+            color: #333333;
+            border-color: #d1d5db;
         }
 
         /* MAIN POST CARD STRUCTURE */
         .post {
-            background: #1e1f20;
+            background: #ffffff;
             border-radius: 16px;
             margin-bottom: 24px;
             overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-            border: 1px solid #2d2f31;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e1e4e8;
             transition: border-color 0.2s ease;
         }
 
         .post:hover {
-            border-color: #3a3b3c;
+            border-color: #4a90e2;
         }
 
         /* POST AVATARS & USER META */
@@ -139,7 +141,7 @@
         }
 
         .avatar {
-            background: linear-gradient(135deg, #1877f2, #38bdf8);
+            background: linear-gradient(135deg, #4a90e2, #357abd);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -150,7 +152,7 @@
 
         .avatar-img {
             object-fit: cover;
-            border: 1px solid #3a3b3c;
+            border: 1px solid #e1e4e8;
         }
 
         .post-user {
@@ -160,7 +162,7 @@
         }
 
         .username {
-            color: #f5f6f7;
+            color: #333333;
             text-decoration: none;
             font-weight: 600;
             font-size: 15px;
@@ -168,11 +170,11 @@
         }
 
         .username:hover {
-            color: #1877f2;
+            color: #4a90e2;
         }
 
         .date {
-            color: #9ca3af;
+            color: #666666;
             font-size: 12px;
         }
 
@@ -180,7 +182,7 @@
         .content {
             padding: 0 16px 16px;
             line-height: 1.55;
-            color: #e4e6eb;
+            color: #333333;
             font-size: 15px;
             word-break: break-word;
         }
@@ -190,7 +192,7 @@
             margin-top: 6px;
             border: none;
             background: none;
-            color: #1877f2;
+            color: #4a90e2;
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
@@ -206,8 +208,8 @@
             object-fit: cover;
             cursor: zoom-in;
             display: block;
-            border-top: 1px solid #2d2f31;
-            border-bottom: 1px solid #2d2f31;
+            border-top: 1px solid #e1e4e8;
+            border-bottom: 1px solid #e1e4e8;
             transition: opacity 0.2s ease;
         }
 
@@ -220,50 +222,55 @@
             display: flex;
             justify-content: space-between;
             padding: 12px 16px;
-            color: #9ca3af;
+            color: #666666;
             font-size: 14px;
-            border-bottom: 1px solid #2d2f31;
+            border-bottom: 1px solid #e1e4e8;
         }
 
         .actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 16px;
-            gap: 8px;
+            padding: 6px 8px;
+            gap: 4px;
+            flex-wrap: wrap; /* Wraps components down beautifully if screen is ultra narrow */
         }
 
-        .actions .like-form-wrapper {
+        .actions .like-form-wrapper,
+        .actions .action-item-wrapper,
+        .actions form {
             margin: 0;
             flex: 1;
+            min-width: 60px; /* Guarantees layout blocks split responsively and evenly */
         }
 
         .action-btn {
             width: 100%;
             background: none;
             border: none;
-            color: #bcbcbc;
+            color: #555555;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
             text-decoration: none;
-            padding: 10px;
+            padding: 10px 4px;
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 6px;
             transition: all 0.15s ease;
+            white-space: nowrap; /* Keeps "Delete" and "Comment" unified without text wrapping */
         }
 
         .action-btn:hover {
-            background: #2a2b2d;
-            color: #1877f2;
+            background: #f0f4f8;
+            color: #4a90e2;
         }
 
-        /* Active styling rule for dynamically highlighed like actions */
+        /* Active styling rule for dynamically highlighted like actions */
         .action-btn.liked {
-            color: #1877f2;
+            color: #4a90e2;
         }
 
         .action-btn:active {
@@ -271,12 +278,12 @@
         }
 
         .delete-btn {
-            color: #f87171;
+            color: #ef4444;
         }
 
         .delete-btn:hover {
-            background: rgba(248, 113, 113, 0.1);
-            color: #ef4444;
+            background: rgba(239, 68, 68, 0.08);
+            color: #dc2626;
         }
 
         /* ASYNC COMMENT COMPONENT */
@@ -284,29 +291,30 @@
             display: flex;
             gap: 12px;
             padding: 16px;
-            border-top: 1px solid #2d2f31;
+            border-top: 1px solid #e1e4e8;
             align-items: center;
         }
 
         .comment-form input {
             flex: 1;
-            border: 1px solid #3a3b3c;
+            border: 1px solid #e1e4e8;
             border-radius: 20px;
-            background: #2a2b2d;
-            color: white;
+            background: #f0f2f5;
+            color: #333333;
             padding: 10px 16px;
             outline: none;
             font-size: 14px;
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .comment-form input:focus {
-            border-color: #1877f2;
+            border-color: #4a90e2;
+            background: #ffffff;
         }
 
         .comment-form button {
             border: none;
-            background: #1877f2;
+            background: #4a90e2;
             color: white;
             padding: 10px 20px;
             border-radius: 20px;
@@ -317,14 +325,14 @@
         }
 
         .comment-form button:hover {
-            background: #166fe5;
+            background: #357abd;
         }
 
         /* INDIVIDUAL FEEDBACK RESPONSES */
         .comment-section {
             padding: 0 16px 16px;
-            border-top: 1px solid #2d2f31;
-            background: #1a1b1c;
+            border-top: 1px solid #e1e4e8;
+            background: #f8fafc; /* Shaded light sub-panel background */
         }
 
         .comment {
@@ -338,15 +346,15 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: #3a3b3c;
+            background: #e1e4e8;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             font-weight: 700;
-            color: white;
+            color: #333333;
             flex-shrink: 0;
-            border: 1px solid #2d2f31;
+            border: 1px solid #d1d5db;
         }
 
         .comment-box-wrapper {
@@ -357,18 +365,18 @@
         }
 
         .comment-box {
-            background: #2a2b2d;
+            background: #e4e6eb; /* Soft native reply capsule background */
             border-radius: 16px;
             padding: 10px 14px;
             font-size: 14px;
             line-height: 1.4;
-            color: #e4e6eb;
+            color: #333333;
             word-break: break-word;
             flex: 1;
         }
 
         .comment-box .comment-author {
-            color: #f5f6f7;
+            color: #333333;
             font-weight: 600;
             text-decoration: none;
             display: inline-block;
@@ -387,7 +395,7 @@
         .comment-delete-btn {
             background: none;
             border: none;
-            color: #9ca3af;
+            color: #666666;
             cursor: pointer;
             font-size: 14px;
             padding: 6px;
@@ -399,23 +407,22 @@
         }
 
         .comment-delete-btn:hover {
-            background: rgba(248, 113, 113, 0.15);
+            background: rgba(239, 68, 68, 0.08);
             color: #ef4444;
         }
 
-        /* =========================
-        MOBILE FRIENDLY COMMENT FORM
-        ========================= */
+        /* MOBILE OPTIMIZED FORM PILL */
         .comment-form.mobile-optimized-form {
             display: flex;
-            align-items: flex-end; /* Aligns button to the bottom if textarea expands */
+            align-items: flex-end;
             gap: 8px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #ffffff;
+            border: 1px solid #e1e4e8;
             padding: 8px 12px;
-            border-radius: 24px; /* WhatsApp style pill shape */
+            border-radius: 24px;
             margin-top: 12px;
             width: 100%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
         }
 
         .comment-form.mobile-optimized-form textarea {
@@ -423,21 +430,21 @@
             background: transparent;
             border: none;
             outline: none;
-            color: #f8fafc;
-            font-size: 16px; /* ⚠️ CRITICAL: Minimum 16px prevents iOS Safari from auto-zooming the page */
+            color: #333333;
+            font-size: 16px;
             font-family: inherit;
             padding: 6px 4px;
-            resize: none; /* Disables manual desktop resizing handle */
-            max-height: 120px; /* Limits growth so it doesn't cover the whole phone screen */
+            resize: none;
+            max-height: 120px;
             line-height: 1.4;
         }
 
         .comment-form.mobile-optimized-form textarea::placeholder {
-            color: #64748b;
+            color: #9ca3af;
         }
 
         .comment-form.mobile-optimized-form button {
-            background: #2563eb;
+            background: #4a90e2;
             color: white;
             border: none;
             outline: none;
@@ -446,17 +453,16 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            min-height: 36px; /* Large enough touch target for thumbs */
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.2s ease, transform 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .comment-form.mobile-optimized-form button:active {
-            background: #1d4ed8;
-            transform: scale(0.96); /* Small haptic feedback on press */
+            background: #357abd;
+            transform: scale(0.96);
         }
     </style>
 </head>
@@ -536,10 +542,14 @@
                 <button type="button" class="action-btn" onclick="submitLike('{{ post.id }}', this)">Like</button>
             </div>
 
-            <button class="action-btn" onclick="toggleComments('{{ post.id }}')">Comment</button>
+            <div class="action-item-wrapper">
+                <button class="action-btn" onclick="toggleComments('{{ post.id }}')">Comment</button>
+            </div>
 
             {% if post.user_id == session["user_id"] %}
-            <a href="/edit-post/{{ post.id }}" class="action-btn">Edit</a>
+            <div class="action-item-wrapper">
+                <a href="/edit-post/{{ post.id }}" class="action-btn">Edit</a>
+            </div>
 
             <form action="/delete-post/{{ post.id }}" method="POST" onsubmit="return confirm('Delete this post?')">
                 <button class="action-btn delete-btn">Delete</button>
@@ -602,7 +612,6 @@
 </div>
 
 <script>
-    // 1. ASYNC BACKGROUND LIKE TRANSACTIONS
     function submitLike(postId, buttonElement) {
         fetch(`/like-post/${postId}`, {
             method: 'POST',
@@ -622,7 +631,6 @@
         .catch(err => console.error("Error executing background metric sync: ", err));
     }
 
-    // 2. ASYNC INSTANT COMMENT RENDERING
     function submitComment(event, postId) {
         event.preventDefault();
         const inputField = document.getElementById(`comment-input-${postId}`);
@@ -640,7 +648,6 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Instantly construct Facebook dynamic content string
                 const targetCommentNodeHTML = `
                     <div class="comment" id="comment-container-${data.comment_id}">
                         <div class="comment-avatar">${data.username[0].toUpperCase()}</div>
@@ -654,16 +661,14 @@
                     </div>
                 `;
                 
-                // Inject the comment seamlessly onto the top of the comment feed
                 document.getElementById(`comment-feed-target-${postId}`).insertAdjacentHTML('afterbegin', targetCommentNodeHTML);
                 document.getElementById(`comment-count-${postId}`).innerHTML = `💬 ${data.comment_count} comments`;
-                inputField.value = ''; // Clean input track line
+                inputField.value = '';
             }
         })
         .catch(err => console.error("Error pushing async telemetry tracking: ", err));
     }
 
-    // 3. ASYNC BACKGROUND COMMENT REMOVAL
     function deleteComment(commentId, postId) {
         if (!confirm('Delete comment?')) return;
 
@@ -674,7 +679,6 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Wipe the element directly out of the DOM view
                 const commentNode = document.getElementById(`comment-container-${commentId}`);
                 if (commentNode) commentNode.remove();
                 document.getElementById(`comment-count-${postId}`).innerHTML = `💬 ${data.comment_count} comments`;
@@ -683,7 +687,6 @@
         .catch(err => console.error("Error processing dynamic data cleanup: ", err));
     }
 
-    /* STANDARD RE-RENDER INTERFACE COMPONENT LOGICS */
     function toggleComments(postId){
         let section = document.getElementById("comments-" + postId);
         section.style.display = section.style.display === "block" ? "none" : "block";

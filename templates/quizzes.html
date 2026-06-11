@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Learning Hub - Select a Quiz | PetroApp</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <style>
+        @keyframes fadeInGrid {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-grid {
+            animation: fadeInGrid 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#0F172A] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+    <nav class="bg-[#1E293B] border-b border-slate-800/80 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">⬅</a>
+            <span class="text-[11px] font-bold bg-slate-900 text-[#38BDF8] border border-[#38BDF8]/20 px-2.5 py-1 rounded-full shadow-inner">
+                Learning Hub
+            </span>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 space-y-8 animate-fade-in-grid">
+        
+        <div class="text-center max-w-xl mx-auto space-y-3">
+            <div class="inline-flex items-center gap-2 text-[10px] font-bold text-[#38BDF8] uppercase tracking-widest bg-[#38BDF8]/10 px-2.5 py-1 rounded-md">
+                ⚡ Interactive Modules
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Interactive Quiz Dashboard
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Choose a discipline below to challenge your engineering knowledge or baseline communication proficiencies.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            
+            <a href="{{ url_for('quiz', subject='math') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🔢</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Math</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Algebra, calculus, statistics, and numerical problems.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='physics') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">⚡</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Physics</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Mechanics, thermodynamics, and electromagnetism concepts.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='chemistry') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🧪</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Chemistry</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Organic reactions, states of matter, and periodic trends.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='geology') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">💎</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Geology</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Mineral identification, plate tectonics, and structural rock analysis.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='petroleum engineering') }}" class="group bg-[#1E293B] border-2 border-[#38BDF8]/30 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8] hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#38BDF8]/5">
+                <div class="text-2xl bg-slate-900 border border-[#38BDF8]/20 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🛢️</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-[#38BDF8] text-base tracking-tight flex items-center gap-1.5 truncate">
+                        Petroleum Eng. <span class="text-[9px] bg-[#38BDF8]/10 text-[#38BDF8] px-1.5 py-0.5 rounded-sm uppercase tracking-wider font-extrabold">Core</span>
+                    </h3>
+                    <p class="text-xs text-slate-300 leading-relaxed line-clamp-2">Drilling dynamics, reservoir characterization, and production engineering parameters.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='philosophy') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🏛️</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Philosophy</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Logic, ethics, existentialism, and historical core thinkers.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='english') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">📚</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">English</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Grammar conventions, idioms, vocabulary, and sentence structures.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='french') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🥐</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">French</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Conjugation exercises, translation mechanics, and syntax structures.</p>
+                </div>
+            </a>
+            <a href="{{ url_for('quiz', subject='history') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🥐</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">History</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Understanding the pass, and make the better future</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('quiz', subject='arabic') }}" class="group bg-[#1E293B] border border-slate-800/80 rounded-xl p-5 flex items-start gap-4 hover:border-[#38BDF8]/50 hover:bg-[#1E293B]/80 transition-all duration-200 active:scale-[0.98]">
+                <div class="text-2xl bg-slate-900 p-3 rounded-lg group-hover:scale-105 transition-transform shrink-0">🇲🇦</div>
+                <div class="space-y-1 min-w-0">
+                    <h3 class="font-bold text-white text-base group-hover:text-[#38BDF8] transition-colors truncate">Arabic</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">Grammar syntax (Nahw), morphology (Sarf), and rich traditional literature.</p>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer class="bg-[#0F172A] border-t border-slate-900/60 py-6 text-center text-[10px] text-slate-500 select-none px-4">
+        &copy; 2026 PetroApp. Engineered for reservoir exploration and field development study.
+    </footer>
+
+</body>
+</html>

@@ -3,18 +3,19 @@ from database import db
 from models import Lesson, Formula, User, Post, Comment, Like
 from datetime import timedelta
 from werkzeug.utils import secure_filename
+from hf_quiz import generate_quiz
 
 import requests
 from dotenv import load_dotenv
 load_dotenv()
 
 from lessons import register_lessons
-from quiz import register_quiz
 from formulas import register_formulas
 from converter import register_converter
 from admin import register_admin
 from auth import register_auth
 import os
+import logging
 import cloudinary
 import cloudinary.uploader
 
@@ -42,7 +43,6 @@ db.init_app(app)
 
 # REGISTER ROUTES
 register_lessons(app)
-register_quiz(app)
 register_formulas(app)
 register_converter(app)
 register_admin(app)
@@ -452,6 +452,106 @@ def inject_new_posts_count():
     new_count = Post.query.filter(Post.created_at > last_visit).count()
     
     return dict(new_posts_count=new_count)
+# Fallback mockup database in case NewsAPI is down or your daily free key tier is exhausted
+MOCK_NEWS_FALLBACK = [
+    {
+        "title": "Advancements in High-Pressure High-Temperature (HPHT) Drilling Fluids",
+        "description": "Exploration teams are utilizing optimized synthetic polymer blends to manage deepwater well stability and pressure containment boundaries safely.",
+        "source": {"name": "PetroApp Global Ledger"},
+        "url": "#",
+        "urlToImage": None,
+        "publishedAt": "2026-06-10T14:30:00Z"
+    },
+    {
+        "title": "Digital Twin Implementations in Brownfield Reservoir Management",
+        "description": "Production operations report an estimated 12% boost in recovery tracking optimization using interconnected downhole sensors and continuous reservoir fluid modeling.",
+        "source": {"name": "Energy Engineering Daily"},
+        "url": "#",
+        "urlToImage": None,
+        "publishedAt": "2026-06-09T09:15:00Z"
+    }
+]
+
+@app.route("/news")
+def news():
+    # 🔐 SECURE KEY MANAGEMENT: Pull from environment or fallback to your current key string
+    api_key = os.environ.get("NEWS_API_KEY", "912b63c6b9554ff5ad722603d2cd8587")
+    
+    # Target oil, gas, or petroleum industries while explicitly filtering out unrelated junk keywords
+    query_string = "(oil OR gas OR petroleum OR reservoir) NOT (cooking OR olive OR vegetable OR gas-prices)"
+    
+    url = f"https://newsapi.org/v2/everything?q={query_string}&language=en&sortBy=publishedAt&apiKey={api_key}"
+    articles = []
+
+    try:
+        # Timeout at 5 seconds so your website doesn't hang endlessly if NewsAPI is lagging
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            # Safely verify that 'articles' is present inside the payload map dictionary
+            if "articles" in data:
+                raw_articles = data["articles"]
+                
+                # 🧼 DATA CLEANING FILTER LAYER
+                for art in raw_articles:
+                    # Drop articles that have been removed or contain empty content fields
+                    if art.get("title") == "[Removed]" or not art.get("title"):
+                        continue
+                        
+                    # Calculate an approximate reading timeline metric for the template view
+                    word_count = len(art.get("description") or art.get("content") or "")
+                    art["read_time"] = max(1, round(word_count / 150))
+                    
+                    articles.append(art)
+            else:
+                logging.error(f"NewsAPI error payload structural response: {data}")
+                articles = MOCK_NEWS_FALLBACK
+        else:
+            logging.warning(f"NewsAPI returned status code {response.status_code}. Using backup feed.")
+            articles = MOCK_NEWS_FALLBACK
+
+    except Exception as e:
+        logging.error(f"Network error trying to fetch news updates: {e}")
+        articles = MOCK_NEWS_FALLBACK
+
+    # Slice list down to the best 12 stories so the dashboard doesn't become overly long
+    return render_template("news.html", articles=articles[:12])
+
+@app.route("/quiz/<subject>")
+def quiz(subject):
+    # Initialize a history log list for this subject if it doesn't exist yet
+    session_key = f"history_{subject.lower()}"
+    if session_key not in session:
+        session[session_key] = []
+        
+    # Retrieve the user's question tracking history log list from memory
+    past_questions = session[session_key]
+    
+    # 🎲 Generate a brand-new, tier-calibrated quiz question
+    quiz_data = generate_quiz(subject, history_list=past_questions)
+    
+    # If the question was built successfully, add it to our daily history logs list
+    if quiz_data.get("error") is None and quiz_data.get("question"):
+        # We append just the question text to keep the session token data light
+        past_questions.append(quiz_data["question"])
+        session[session_key] = past_questions # Save it back into active memory
+        session.modified = True
+        
+    return render_template(
+        "quiz.html",
+        subject=subject,
+        quiz=quiz_data
+    )
+
+# Optional reset route if a student wants to clear progress and restart from Easy level
+@app.route("/quiz/<subject>/reset")
+def reset_quiz(subject):
+    session.pop(f"history_{subject.lower()}", None)
+    return redirect(url_for('quiz', subject=subject))
+@app.route("/quizzes")
+def quizzes():
+    return render_template("quizzes.html")
 # ▶️ RUN APP
 if __name__ == "__main__":
     with app.app_context():
