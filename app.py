@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request, session, redirect, render_template, url_for
 from database import db
-from models import Lesson, Formula, User, Post, Comment, Like
+from models import Lesson, Formula, User, Post, Comment, Like, Quiz
 from datetime import timedelta
 from werkzeug.utils import secure_filename
-from hf_quiz import generate_quiz
+from gemini_quiz import generate_quiz
 
 import requests
 from dotenv import load_dotenv
@@ -520,35 +520,27 @@ def news():
 
 @app.route("/quiz/<subject>")
 def quiz(subject):
-    # Initialize a history log list for this subject if it doesn't exist yet
+    # Initialize a clean session history array identifier unique to this specific subject selection
     session_key = f"history_{subject.lower()}"
     if session_key not in session:
         session[session_key] = []
         
-    # Retrieve the user's question tracking history log list from memory
     past_questions = session[session_key]
     
-    # 🎲 Generate a brand-new, tier-calibrated quiz question
+    # 🧠 Run Gemini with history injection tracking
     quiz_data = generate_quiz(subject, history_list=past_questions)
     
-    # If the question was built successfully, add it to our daily history logs list
+    # If the response loaded properly, add the question string text to prevent duplicates later
     if quiz_data.get("error") is None and quiz_data.get("question"):
-        # We append just the question text to keep the session token data light
         past_questions.append(quiz_data["question"])
-        session[session_key] = past_questions # Save it back into active memory
-        session.modified = True
+        session[session_key] = past_questions
+        session.modified = True  # Signal Flask to save state changes inside cookies
         
     return render_template(
         "quiz.html",
         subject=subject,
         quiz=quiz_data
     )
-
-# Optional reset route if a student wants to clear progress and restart from Easy level
-@app.route("/quiz/<subject>/reset")
-def reset_quiz(subject):
-    session.pop(f"history_{subject.lower()}", None)
-    return redirect(url_for('quiz', subject=subject))
 @app.route("/quizzes")
 def quizzes():
     return render_template("quizzes.html")

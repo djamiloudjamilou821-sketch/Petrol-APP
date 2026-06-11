@@ -1,4 +1,5 @@
 from database import db
+from datetime import datetime
 
 # =========================
 # LESSON MODEL
@@ -164,3 +165,26 @@ class Like(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False)
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+class Quiz(db.Model):
+    __tablename__ = "quizzes"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    subject = db.Column(db.String(100), nullable=False)
+
+    question = db.Column(db.Text, nullable=False)
+
+    option_a = db.Column(db.String(500), nullable=False)
+    option_b = db.Column(db.String(500), nullable=False)
+    option_c = db.Column(db.String(500), nullable=False)
+    option_d = db.Column(db.String(500), nullable=False)
+
+    correct_answer = db.Column(db.String(1), nullable=False)
+
+    explanation = db.Column(db.Text)
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
