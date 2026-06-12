@@ -1,22 +1,23 @@
 import os
 import re
-import time
 import random
 from google import genai
 from google.genai import types
 from google.genai.errors import ClientError
 
 def generate_quiz(subject: str, history_list: list = None) -> dict:
+    # 1. Initialize client using the key from your .env or Render dashboard
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return {"error": "Missing GEMINI_API_KEY in your local environment configuration."}
         
     client = genai.Client(api_key=api_key)
-    model = "gemini-2.5-flash" 
+    primary_model = "gemini-2.5-flash" 
 
     if history_list is None:
         history_list = []
 
+    # Calculate current difficulty tier dynamically based on progress history length
     count = len(history_list)
     if count <= 2:
         difficulty = "Beginner / Concept Introduction level (straightforward foundational rules or simple equations)"
@@ -25,6 +26,7 @@ def generate_quiz(subject: str, history_list: list = None) -> dict:
     else:
         difficulty = "Advanced level (complex field scenarios, deep engineering troubleshooting, or nuanced communication structures)"
 
+    # 📚 DYNAMIC CONTENT SWITCH: Tailor system context instructions based on topic selected
     language_subjects = ['english', 'french', 'arabic']
     
     if subject.lower() in language_subjects:
@@ -33,7 +35,7 @@ The user is an intermediate language student working on communication fluency.
 
 CRITICAL LEARNING INSTRUCTIONS:
 1. NEVER ask for dry academic definition terms (e.g., NEVER ask "What is the term for a word that has the same spelling...").
-2. Instead, you MUST randomly focus the question text block on one of these 4 practical pillars:
+2. Instead, you MUST randomly focus the question text block on one of these 4 vital practical pillars:
    - GRAMMAR: Practical sentence structures, preposition corrections, or word assemblies.
    - CONJUGATION: Choosing correct verb tenses inside the context of an active sentence (especially critical for French/Arabic).
    - VOCABULARY IN CONTEXT: Fill-in-the-blanks using real-world conversation expressions, professional idioms, or key vocabulary phrases.
@@ -49,6 +51,7 @@ Target Topic Selection:
 - Treat terms like 'ptroleeum enginieering', 'petrolieum engeniering', or typical typo variations as 'Petroleum Engineering' (drilling dynamics, reservoir fluid characterization, extraction).
 - Stay focused on the technical core data. Do not wander off into general trivia knowledge."""
 
+    # Construct the final strict formatting user instruction
     prompt_text = f"""Generate ONE highly effective multiple-choice evaluation task following these boundaries.
 
 Difficulty Steering System:
@@ -89,15 +92,18 @@ Explanation: [Provide a high-quality explanation breaking down the logic, rules,
     )
 
     # =========================================================
-    # ⏳ AUTOMATIC RETRY / QUOTA & OVERLOAD WAITING LOOP
+    # ⚡ AUTOMATIC MODEL FALLBACK & RETRY LOOP (NON-BLOCKING)
     # =========================================================
-    max_retries = 5
-    base_delay = 2.0  # Initial wait time in seconds
-
+    max_retries = 3
+    text = None
+    
     for attempt in range(max_retries):
         try:
+            # Dynamic Model Swap: On the final attempt, shift to the quiet 1.5 generation backup line
+            active_model = primary_model if attempt < 2 else "gemini-2.5-flash-lite"
+            
             response = client.models.generate_content(
-                model=model,
+                model=active_model,
                 contents=contents,
                 config=generate_content_config,
             )
@@ -106,28 +112,25 @@ Explanation: [Provide a high-quality explanation breaking down the logic, rules,
             if not text:
                 return {"error": "No data returned from the PetroAI link engine."}
 
-            # Success! Break out of the loop safely
-            break
+            break  # Success! Exit the retry loop
 
         except ClientError as e:
-            # 🔄 Catch BOTH 429 (Rate Limit) and 503 (Server Overloaded / High Demand)
+            # Catch Rate Limits (429) and Overloads (503)
             if (e.code == 429 or e.code == 503) and attempt < max_retries - 1:
-                # Exponential backoff: waits 2s, 4s, 8s, 16s... + a tiny random jitter
-                wait_time = (base_delay ** (attempt + 1)) + random.uniform(0, 1)
-                
-                error_type = "Quota Limit (429)" if e.code == 429 else "Google Server Overload (503)"
-                print(f"⚠️ {error_type} detected. Retrying attempt {attempt + 1}/{max_retries} in {wait_time:.2f} seconds...")
-                
-                time.sleep(wait_time)
-                continue
+                print(f"⚠️ Track traffic status {e.code} hit. Re-routing attempt {attempt + 1} instantly...")
+                continue  # Retries immediately without using server-freezing time.sleep()
             else:
-                # If it's a different error (like a 400 bad request) or we ran out of retries
                 return {"error": f"API Error: {e.message} (Status Code: {e.code})"}
         except Exception as e:
             return {"error": f"An unexpected error occurred: {str(e)}"}
+
+    if not text:
+        return {"error": "PetroAI core generation link timed out. Please try again."}
+
     # =========================================================
     # 🧼 TEXT PARSING ENGINE
     # =========================================================
+    # Strip out accidental markdown code fences if the model prints them
     if text.startswith("```"):
         text = re.sub(r"^```[a-zA-Z]*\n|```$", "", text).strip()
 
@@ -140,6 +143,7 @@ Explanation: [Provide a high-quality explanation breaking down the logic, rules,
     ans_match = re.search(r"Answer:\s*([A-D])", text, re.IGNORECASE)
     exp_match = re.search(r"Explanation:\s*(.*)", text, re.DOTALL | re.IGNORECASE)
 
+    # Fallback strings if regex capture groups miss structural markers
     quiz_data['question'] = q_match.group(1).strip() if q_match else "Inquiry parameter formatting error. Tap Next to reload."
     quiz_data['A'] = a_match.group(1).strip() if a_match else "Option value missing."
     quiz_data['B'] = b_match.group(1).strip() if b_match else "Option value missing."
