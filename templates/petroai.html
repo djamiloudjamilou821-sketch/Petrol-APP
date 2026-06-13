@@ -22,7 +22,8 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             width: 100%;
             height: 100%;
         }
@@ -32,8 +33,8 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100%;
-            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
@@ -215,6 +216,12 @@
             width: 100%;
         }
 
+        .footer-container {
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+        }
+
         .input-area {
             display: flex;
             max-width: 760px;
@@ -282,8 +289,11 @@
             #chat-box { padding: 14px 10px; }
             
             /* ⚡ KEY FIX FOR STANDALONE DOWNLOADED MODE: Forces native OS spacing fallback safety offset */
-            .footer-container { 
-                padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 12px)) 12px; 
+            .footer-container {
+                padding-bottom: max(
+                    12px,
+                    env(safe-area-inset-bottom)
+                );
             }
         }
     </style>
@@ -492,6 +502,12 @@ window.onload = () => {
     }
     chatBox.scrollTop = chatBox.scrollHeight;
 };
+
+window.visualViewport?.addEventListener("resize", () => {
+    setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 100);
+});
 </script>
 
 </body>
