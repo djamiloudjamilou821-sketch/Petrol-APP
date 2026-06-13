@@ -240,7 +240,7 @@
         ========================================================================== */
         @media (max-width: 480px) {
             .header { 
-                padding: 16px 12px 12px 12px; /* Extra top margin protects layout from status bars */
+                padding: 16px 12px 12px 12px; 
             }
             .header-title { font-size: 14px; margin-right: 44px; }
             .back-arrow { padding: 5px 10px; font-size: 12px; }
@@ -248,7 +248,11 @@
             .bubble { max-width: 90%; font-size: 14px; padding: 10px 14px; }
             #chat-box { padding: 14px 10px; gap: 12px; }
             
-            .footer-container { padding: 10px 12px 24px 12px; } /* Safety layout buffer for navigation keys */
+            /* ⚡ FIXED FOR DOWNLOADED APP: Safe area padding fallback */
+            .footer-container { 
+                padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 16px)) 12px; 
+            } 
+            
             .input-area { padding: 3px 4px 3px 10px; border-radius: 20px; }
             #question { font-size: 14px; padding: 8px 0; }
             button { padding: 8px 14px; font-size: 13px; border-radius: 16px; }
@@ -274,7 +278,7 @@
 
 <div class="footer-container">
     <div class="input-area">
-        <input id="question" placeholder="Ask a petroleum engineering question..." autocomplete="off" />
+        <input id="question" placeholder="Ask a question..." autocomplete="off" />
         <button onclick="askAI()">Send</button>
     </div>
 </div>
