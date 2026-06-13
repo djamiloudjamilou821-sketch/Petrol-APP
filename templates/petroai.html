@@ -3,261 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <title>PetroAI Chat Assistant</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ==========================================================================
+        CORE RESET & VARIABLE CONFIGURATION
+        ========================================================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/hb.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #f8fafc;
+            background: #0b0f19;
+            color: #f1f5f9;
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport fallback for mobile Safari/Chrome */
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
         }
 
-        /* =========================
-           TOP APPLICATION HEADER
-        ========================= */
+        /* ==========================================================================
+        TOP NAVIGATION HEADER (FIXED OVERLAP BUG)
+        ========================================================================== */
         .header {
-            background: #0f172a;
-            padding: 16px 20px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            position: relative;
+            background: #111827;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            border-bottom: 1px solid #1f2937;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between; /* Pushes back button left and title center */
             flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            gap: 12px;
+        }
+
+        /* Container helper to keep title centered even with side buttons */
+        .header-title {
+            flex: 1;
+            text-align: center;
+            margin-right: 60px; /* Balances out the width of the back button perfectly */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .top-nav {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
         }
 
         .back-arrow {
             text-decoration: none;
-            color: #94a3b8;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.05);
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            background: #1f2937;
             padding: 6px 12px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid #374151;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
         }
 
         .back-arrow:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+            color: #f3f4f6;
+            background: #374151;
+            border-color: #4b5563;
         }
 
-        /* =========================
-           STREAMING CHAT WORKSPACE
-        ========================= */
+        /* ==========================================================================
+        STREAMING CHAT WORKSPACE
+        ========================================================================== */
         #chat-box {
             flex: 1;
             overflow-y: auto;
-            padding: 24px 20px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            max-width: 900px;
+            max-width: 800px;
             width: 100%;
             margin: 0 auto;
-            /* Scrollbar optimization */
             scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+            scrollbar-color: #2d3748 transparent;
         }
 
         #chat-box::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         #chat-box::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            background: #2d3748;
+            border-radius: 10px;
         }
 
-        /* =========================
-           CHAT BUBBLES GRAPHICS
-        ========================= */
+        /* ==========================================================================
+        CHAT BUBBLES GRAPHICS FRAMEWORK
+        ========================================================================== */
+        .bubble-wrapper {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
+
         .bubble {
-            max-width: 80%;
-            padding: 14px 18px;
-            border-radius: 16px;
-            line-height: 1.6;
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.55;
             font-size: 15px;
             word-wrap: break-word;
-            white-space: pre-wrap;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
+        .user-wrapper { align-items: flex-end; }
         .user {
-            align-self: flex-end;
             background: #2563eb;
-            color: white;
+            color: #ffffff;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
+        .ai-wrapper { align-items: flex-start; }
         .ai {
-            align-self: flex-start;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: #111827;
+            border: 1px solid #1f2937;
             border-bottom-left-radius: 4px;
-            backdrop-filter: blur(12px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* =========================
-           AI MARKDOWN RENDER COMPONENT
-        ========================= */
-        .ai h3 {
-            margin: 14px 0 6px;
-            font-size: 17px;
-            font-weight: 700;
-            color: #38bdf8;
+        /* MARKDOWN RENDER CONTEXTS */
+        .ai-content p { margin-bottom: 10px; }
+        .ai-content p:last-child { margin-bottom: 0; }
+        .ai-content h3 { margin: 14px 0 6px; font-size: 16px; color: #38bdf8; }
+        .ai-content b { color: #f59e0b; }
+        .ai-content ul { padding-left: 20px; margin: 8px 0; }
+        .ai-content li { margin-bottom: 4px; }
+
+        /* TYPING INDICATOR */
+        .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 4px 0; }
+        .typing-indicator span {
+            width: 7px; height: 7px; background: #9ca3af; border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
-        .ai h3:first-child {
-            margin-top: 0;
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+            40% { transform: scale(1.0); opacity: 1; }
         }
 
-        .ai b {
-            color: #f59e0b;
-            font-weight: 600;
-        }
-
-        .ai ul, .ai ol {
-            padding-left: 20px;
-            margin: 8px 0;
-        }
-
-        .ai li {
-            margin-bottom: 4px;
-        }
-
-        .typing {
-            font-style: italic;
-            color: #94a3b8;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* =========================
-           CONSOLIDATED INPUT TERMINAL
-        ========================= */
+        /* ==========================================================================
+        CONSOLIDATED FOOTER TERMINAL (FIXED OVERFLOW BUG)
+        ========================================================================== */
         .footer-container {
-            background: #0f172a;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 16px;
+            background: #111827;
+            border-top: 1px solid #1f2937;
+            padding: 12px 16px;
             flex-shrink: 0;
         }
 
         .input-area {
             display: flex;
-            max-width: 860px;
+            max-width: 760px;
             margin: 0 auto;
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 6px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 24px;
+            padding: 4px 6px 4px 14px;
             gap: 8px;
+            align-items: center;
             transition: all 0.2s ease;
+            width: 100%;
         }
 
         .input-area:focus-within {
-            border-color: rgba(37, 99, 235, 0.6);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+            background: #111827;
         }
 
         #question {
             flex: 1;
-            padding: 12px 14px;
+            padding: 10px 0;
             border: none;
             background: transparent;
-            color: #f8fafc;
+            color: #f9fafb;
             font-size: 15px;
             outline: none;
+            font-family: inherit;
+            min-width: 0; /* ⚡ CRITICAL: Stops HTML inputs from breaking layouts on small windows */
         }
 
         #question::placeholder {
-            color: #64748b;
+            color: #6b7280;
         }
 
         button {
-            padding: 0 22px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 10px;
-            background: #10b981;
-            color: white;
+            border-radius: 18px;
+            background: #2563eb;
+            color: #ffffff;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* ⚡ Prevents button from squishing on tiny displays */
         }
 
-        button:hover {
-            background: #059669;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
-        }
+        button:hover { background: #1d4ed8; }
+        button:active { transform: scale(0.96); }
 
-        button:active {
-            transform: scale(0.97);
-        }
-
-        /* =========================
-           RESPONSIVE RE-PROPORTIONS
-        ========================= */
-        @media (max-width: 600px) {
-            .bubble {
-                max-width: 88%;
-                font-size: 14px;
-                padding: 12px 14px;
-            }
-
-            #chat-box {
-                padding: 16px 12px;
-                gap: 12px;
-            }
-
-            .footer-container {
-                padding: 12px;
-            }
-
-            .input-area {
-                padding: 4px;
-            }
-
-            #question {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            button {
-                padding: 0 16px;
-                font-size: 13px;
-            }
+        /* ==========================================================================
+        SMALL SMARTPHONE MEDIA RESPONSIVENESS RULES
+        ========================================================================== */
+        @media (max-width: 480px) {
+            .header { padding: 10px 12px; }
+            .header-title { font-size: 14px; margin-right: 50px; }
+            .back-arrow { padding: 5px 10px; font-size: 12px; }
+            
+            .bubble { max-width: 90%; font-size: 14px; padding: 10px 14px; }
+            #chat-box { padding: 14px 10px; gap: 12px; }
+            
+            .footer-container { padding: 10px 12px 20px 12px; }
+            .input-area { padding: 3px 4px 3px 10px; border-radius: 20px; }
+            #question { font-size: 14px; padding: 8px 0; }
+            button { padding: 8px 14px; font-size: 13px; border-radius: 16px; }
         }
     </style>
 </head>
@@ -265,42 +251,71 @@
 
 <div class="header">
     <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">⬅</a>
+        <a href="javascript:history.back()" class="back-arrow">←</a>
     </div>
-    🤖 PetroAI Engine
+    <div class="header-title">🤖 PetroAI Chat Terminal</div>
 </div>
-
 <div id="chat-box">
-    <div class="bubble ai">
-        Hello 👋 I’m PetroAI. Ask me anything about reservoir fundamentals, production systems, or drilling calculations!
+    <div class="bubble-wrapper ai-wrapper">
+        <div class="bubble ai ai-content">
+            <p>Hello 👋 I am PetroAI, your engineering tutor.</p>
+        </div>
     </div>
 </div>
 
 <div class="footer-container">
     <div class="input-area">
-        <input id="question" placeholder="Type a question..." autocomplete="off" />
+        <input id="question" placeholder="Ask a petroleum engineering question..." autocomplete="off" />
         <button onclick="askAI()">Send</button>
     </div>
 </div>
 
 <script>
-// ADVANCED MARKDOWN PARSER FOR TECHNICAL FORMATTING
+// ADVANCED MARKDOWN PARSER FOR MODERN SAAS COMPLIANCE
 function formatAI(text) {
     if (!text) return "";
 
-    // Clean text transformations cleanly
-    let html = text
-        .replace(/### (.*?)(?:\n|$)/g, "<h3>$1</h3>") // Headers
-        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")       // Bold
-        .replace(/^- (.*?)(?:\n|$)/gm, "<li>$1</li>"); // List tags
+    let cleanText = text.trim();
+    
+    // Convert Headers safely
+    cleanText = cleanText.replace(/^### (.*?)(?:\n|$)/gm, "<h3>$1</h3>");
+    
+    // Convert Bold syntax
+    cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+    
+    // Process Bullet point lists cleanly
+    let lines = cleanText.split('\n');
+    let inList = false;
+    let finalPayload = [];
 
-    // Wrap list items nicely
-    if (html.includes("<li>")) {
-        html = html.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
+    for (let i = 0; i < lines.length; i++) {
+        let currentLine = lines[i].trim();
+        
+        if (currentLine.startsWith('- ')) {
+            if (!inList) {
+                finalPayload.push('<ul>');
+                inList = true;
+            }
+            finalPayload.push(`<li>${currentLine.substring(2)}</li>`);
+        } else {
+            if (inList) {
+                finalPayload.push('</ul>');
+                inList = false;
+            }
+            // Group normal prose sentences directly inside native paragraph tags
+            if (currentLine.length > 0 && !currentLine.startsWith('<h3')) {
+                finalPayload.push(`<p>${currentLine}</p>`);
+            } else {
+                finalPayload.push(currentLine);
+            }
+        }
+    }
+    
+    if (inList) {
+        finalPayload.push('</ul>');
     }
 
-    // Retain spacing cleanly without splitting blocks
-    return html.replace(/\n/g, "<br>");
+    return finalPayload.join('\n');
 }
 
 async function askAI() {
@@ -312,14 +327,24 @@ async function askAI() {
     const chatBox = document.getElementById("chat-box");
 
     // RENDER USER PROMPT
-    chatBox.innerHTML += `<div class="bubble user">${question}</div>`;
+    chatBox.innerHTML += `
+        <div class="bubble-wrapper user-wrapper">
+            <div class="bubble user">${question}</div>
+        </div>
+    `;
     input.value = "";
 
-    // SETUP LOADING ANIMATIONS
+    // SETUP PREMIUM TYPING ACCENT PIPELINE
     const loadingId = "loading_" + Date.now();
     chatBox.innerHTML += `
-        <div class="bubble ai typing" id="${loadingId}">
-            PetroAI is running calculations...
+        <div class="bubble-wrapper ai-wrapper" id="${loadingId}">
+            <div class="bubble ai">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
         </div>
     `;
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -338,10 +363,12 @@ async function askAI() {
         const loader = document.getElementById(loadingId);
         if (loader) loader.remove();
 
-        // APPEND INTERPRETATION
+        // INJECT RENDER DATA STRINGS CLEANLY
         chatBox.innerHTML += `
-            <div class="bubble ai">
-                ${formatAI(data.answer)}
+            <div class="bubble-wrapper ai-wrapper">
+                <div class="bubble ai ai-content">
+                    ${formatAI(data.answer)}
+                </div>
             </div>
         `;
     } catch (err) {
@@ -349,8 +376,10 @@ async function askAI() {
         if (loader) loader.remove();
 
         chatBox.innerHTML += `
-            <div class="bubble ai" style="color: #f87171;">
-                ❌ Connection timeout. Please verify backend application services.
+            <div class="bubble-wrapper ai-wrapper">
+                <div class="bubble ai" style="color: #f87171; border-color: rgba(248, 113, 113, 0.2);">
+                    ❌ Request connection timed out. Please verify data link signals.
+                </div>
             </div>
         `;
     }
@@ -358,7 +387,7 @@ async function askAI() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// REGISTER KEYBOARD RETURN ACTIONS
+// ATTACH EVENT LISTENER FOR PRESSING RETURN KEYS
 document.getElementById("question").addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
         askAI();

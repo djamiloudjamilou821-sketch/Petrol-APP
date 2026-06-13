@@ -15,6 +15,8 @@ from converter import register_converter
 from admin import register_admin
 from auth import register_auth
 import os
+import random
+import time
 import logging
 import cloudinary
 import cloudinary.uploader
@@ -93,112 +95,6 @@ def petroai_page():
         return redirect("/login")
 
     return render_template("petroai.html")
-
-@app.route("/ask_petroai", methods=["POST"])
-def ask_petroai():
-    if "user_id" not in session:
-        return jsonify({"answer": "Please log in to talk with PetroAI."}), 401
-
-    # 🔍 DATABASE LOOKUP: Fetch the real name using the user_id
-    current_user = User.query.get(session["user_id"])
-    
-    # Safely get the username from the DB model, fallback to 'Student' if not found
-    if current_user and hasattr(current_user, 'username'):
-        user_name = current_user.username
-    elif current_user and hasattr(current_user, 'name'):
-        user_name = current_user.name
-    else:
-        user_name = "Student"
-
-    question = request.json.get("question")
-
-    # 🧠 INIT MEMORY
-    if "chat_history" not in session:
-        session["chat_history"] = []
-
-    # ADD USER MESSAGE TO MEMORY
-    session["chat_history"].append({
-        "role": "user",
-        "content": question
-    })
-
-    # Keep last 10 messages only
-    session["chat_history"] = session["chat_history"][-10:]
-
-    # SYSTEM MESSAGE (Now injects the dynamic, real database name!)
-    system_message = {
-        "role": "system",
-        "content": (
-            "You are PetroAI, the official assistant of PetroApp, a petroleum engineering learning platform."
-            "About PetroApp:"
-            "- It teaches petroleum engineering through lessons, quizzes, and calculators, and community where users share knwoledge"
-            "- It helps students understand reservoir engineering, drilling, production, and formulas"
-            "- It includes tools like porosity calculator and unit converters"
-            "- it was built by Djamilou Harouna Maman nigerien student in Ghana very passionate in Oil and Gaz"
-            "- Djamilou was born in Agadez and got SONIDEP's scholarship to study in Ghana in 2025"
-            "- SONIDEP is a national oil and gas campany in Niger"
-            "Your role:"
-            "- Act like a tutor inside the PetroApp system"
-            "- Help users understand petroleum engineering clearly"
-            "- Guide users through app features when needed"
-            "User information:"
-             f"The current user is called {user_name}."  # <-- Dynamic Name Check!
-            "Your behavior:"
-            "- Always respond in a personal way using the user's name when appropriate"
-            "- Be friendly and supportive like a tutor"
-            "- Act like you are talking directly to this student"
-            "- Help them learn petroleum engineering step by step"
-            "Default writing style rules:"
-            "- Always answer in clear paragraphs by default"
-            "- Do NOT use bullet points unless the user explicitly asks for them"
-            "- Do NOT use tables unless requested"
-            "- Keep explanations simple, structured, and natural like a teacher speaking"
-            "- Maximum 2–5 short paragraphs per answer"
-            "- Use bullet points ONLY if the user says: 'use bullets', 'list', or 'steps'"
-            "- Make answers easy to read on mobile"
-            "- Avoid textbook or report style formatting"
-            "- Ask to the user if they need more clarification after answer"
-            "- Always write formulas in simple text format, not LaTeX"
-            "- Use formats like: V = m/t, φ = Vp/Vt, Q = A × v"
-            "- NEVER use fractions like \\frac{}{} or LaTeX math symbols"
-            "- Keep formulas readable on mobile screens"
-            "- Use plain ASCII math only"
-            "- Explain formulas in words below if needed"
-        )
-    }
-
-    # BUILD MESSAGES
-    messages = [system_message] + session["chat_history"]
-
-    # API REQUEST
-    headers = {
-        "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "openai/gpt-oss-20b",
-        "messages": messages
-    }
-
-    response = requests.post(
-        "https://router.huggingface.co/v1/chat/completions",
-        headers=headers,
-        json=payload,
-        timeout=60
-    )
-
-    data = response.json()
-    answer = data["choices"][0]["message"]["content"]
-
-    # SAVE ASSISTANT RESPONSE
-    session["chat_history"].append({
-        "role": "assistant",
-        "content": answer
-    })
-
-    session.modified = True
-    return jsonify({"answer": answer})
 
 # COMMUNITY
 from datetime import datetime
@@ -544,6 +440,230 @@ def quiz(subject):
 @app.route("/quizzes")
 def quizzes():
     return render_template("quizzes.html")
+# ASK_PETROAI
+def call_groq(messages):
+    headers = {
+        "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    # Groq serves these incredibly fast (under 1 second)
+    models = [
+        "llama-3.3-70b-versatile",
+        "deepseek-r1-distill-llama-70b"
+    ]
+
+    for model in models:
+        try:
+            response = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 400  # Slightly lower tokens for faster generation speed
+                },
+                timeout=3  # ⏱️ Super aggressive timeout. Fast or skip!
+            )
+
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+
+        except Exception:
+            pass
+
+    return None
+
+def call_openrouter(messages):
+    headers = {
+        "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    models = [
+        "qwen/qwen2.5-72b-instruct:free",
+        "meta-llama/llama-3.3-70b-instruct:free"
+    ]
+
+    for model in models:
+        try:
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 400
+                },
+                timeout=3  # ⏱️ Quick check fallback
+            )
+
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+
+        except Exception:
+            pass
+
+    return None
+
+def call_huggingface(messages):
+    headers = {
+        "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
+        "Content-Type": "application/json"
+    }
+
+    models = [
+        "Qwen/Qwen2.5-72B-Instruct",
+        "meta-llama/Llama-3.3-70B-Instruct"
+    ]
+
+    for model in models:
+        try:
+            response = requests.post(
+                "https://router.huggingface.co/v1/chat/completions",
+                headers=headers,
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 400
+                },
+                timeout=3  # ⏱️ Quick check fallback
+            )
+
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+
+        except Exception:
+            pass
+
+    return None
+
+@app.route("/ask_petroai", methods=["POST"])
+def ask_petroai():
+    if "user_id" not in session:
+        return jsonify({"answer": "Please log in to talk with PetroAI."}), 401
+
+    current_user = User.query.get(session["user_id"])
+
+    if current_user and hasattr(current_user, "username"):
+        user_name = current_user.username
+    elif current_user and hasattr(current_user, "name"):
+        user_name = current_user.name
+    else:
+        user_name = "Student"
+
+    question = request.json.get("question", "").strip()
+
+    if not question:
+        return jsonify({"answer": "Please enter a question."})
+
+    if "chat_history" not in session:
+        session["chat_history"] = []
+
+    session["chat_history"].append({
+        "role": "user",
+        "content": question
+    })
+
+    session["chat_history"] = session["chat_history"][-10:]
+
+    system_message = {
+        "role": "system",
+        "content": (
+            "You are PetroAI, the official assistant of PetroApp, a petroleum engineering learning platform."
+            "About PetroApp:"
+            "- It teaches petroleum engineering through lessons, quizzes, and calculators, and community where users share knwoledge"
+            "- It helps students understand reservoir engineering, drilling, production, and formulas"
+            "- It includes tools like porosity calculator and unit converters"
+            "- it was built by Djamilou Harouna Maman nigerien student in Ghana very passionate in Oil and Gaz"
+            "- Djamilou was born in Agadez and got SONIDEP's scholarship to study in Ghana in 2025"
+            "- SONIDEP is a national oil and gas campany in Niger"
+            "Your role:"
+            "- Act like a tutor inside the PetroApp system"
+            "- Help users understand petroleum engineering clearly"
+            "- Guide users through app features when needed"
+            "User information:"
+             f"The current user is called {user_name}."  # <-- Dynamic Name Check!
+            "Your behavior:"
+            "- Always respond in a personal way using the user's name when appropriate"
+            "- Be friendly and supportive like a tutor"
+            "- Act like you are talking directly to this student"
+            "- Help them learn petroleum engineering step by step"
+            "Default writing style rules:"
+            "- Always answer in clear paragraphs by default"
+            "- Do NOT use bullet points unless the user explicitly asks for them"
+            "- Do NOT use tables unless requested"
+            "- Keep explanations simple, structured, and natural like a teacher speaking"
+            "- Maximum 2–5 short paragraphs per answer"
+            "- Use bullet points ONLY if the user says: 'use bullets', 'list', or 'steps'"
+            "- Make answers easy to read on mobile"
+            "- Avoid textbook or report style formatting"
+            "- Ask to the user if they need more clarification after answer"
+            "- Always write formulas in simple text format, not LaTeX"
+            "- Use formats like: V = m/t, φ = Vp/Vt, Q = A × v"
+            "- NEVER use fractions like \\frac{}{} or LaTeX math symbols"
+            "- Keep formulas readable on mobile screens"
+            "- Use plain ASCII math only"
+            "- Explain formulas in words below if needed"
+        )
+    }
+
+    messages = [system_message] + session["chat_history"]
+    answer = None
+
+    # ==========================================================
+    # 🏎️ 1. GROQ FIRST (Ultra-fast performance lane)
+    # ==========================================================
+    try:
+        answer = call_groq(messages)
+        if answer:
+            print("✅ Answered instantly by Groq")
+    except Exception as e:
+        print(f"Groq Route Skipped: {e}")
+
+    # ==========================================================
+    # 🥈 2. OPENROUTER BACKUP
+    # ==========================================================
+    if not answer:
+        try:
+            answer = call_openrouter(messages)
+            if answer:
+                print("✅ Answered by OpenRouter Backup")
+        except Exception as e:
+            print(f"OpenRouter Route Skipped: {e}")
+
+    # ==========================================================
+    # 🥉 3. HUGGING FACE BACKUP
+    # ==========================================================
+    if not answer:
+        try:
+            answer = call_huggingface(messages)
+            if answer:
+                print("✅ Answered by Hugging Face Backup")
+        except Exception as e:
+            print(f"HF Route Skipped: {e}")
+
+    # ==========================================================
+    # ALL PROVIDERS TIED UP
+    # ==========================================================
+    if not answer:
+        return jsonify({
+            "answer": (
+                f"Sorry {user_name}, PetroAI is experiencing heavy traffic "
+                "right now. Please try again in a moment."
+            )
+        })
+
+    session["chat_history"].append({
+        "role": "assistant",
+        "content": answer
+    })
+
+    session["chat_history"] = session["chat_history"][-10:]
+    session.modified = True
+
+    return jsonify({"answer": answer})
+
 # ▶️ RUN APP
 if __name__ == "__main__":
     with app.app_context():
