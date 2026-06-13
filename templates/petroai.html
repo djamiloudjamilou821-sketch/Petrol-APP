@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         /* ==========================================================================
-           CORE RESET & VARIABLE CONFIGURATION
+           1. CORE RESET & VARIABLE CONFIGURATION
            ========================================================================== */
         * {
             margin: 0;
@@ -30,26 +30,24 @@
         }
 
         /* ==========================================================================
-           TOP METRIC NAVIGATION HEADER
+           2. NAVIGATION HEADER
            ========================================================================== */
         .header {
             background: #111827;
-            padding: 16px 20px;
+            padding: 12px 16px;
             font-size: 15px;
             font-weight: 600;
             letter-spacing: -0.2px;
             border-bottom: 1px solid #1f2937;
-            display: flex;
+            display: grid;
+            grid-template-columns: 80px 1fr 80px; /* Forces mathematical centering for title */
             align-items: center;
-            justify-content: space-between;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            gap: 12px;
             width: 100%;
         }
 
         .header-title {
-            flex: 1;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -58,12 +56,13 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            color: #fff;
         }
 
         .top-nav {
             display: flex;
             align-items: center;
-            flex-shrink: 0;
+            justify-content: flex-start;
         }
 
         .back-arrow {
@@ -78,13 +77,17 @@
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            white-space: nowrap;
         }
 
-        .back-arrow:hover {
+        .back-arrow:active {
             color: #f3f4f6;
             background: #374151;
             border-color: #4b5563;
+        }
+
+        .new-chat-btn-wrapper {
+            display: flex;
+            justify-content: flex-end;
         }
 
         .new-chat-btn {
@@ -93,8 +96,6 @@
             border: 1px solid #374151;
             width: 32px;
             height: 32px;
-            min-height: 32px !important;
-            min-width: 32px !important;
             border-radius: 8px;
             font-size: 18px;
             font-weight: 500;
@@ -105,14 +106,15 @@
             transition: all 0.2s ease;
         }
 
-        .new-chat-btn:hover {
+        .new-chat-btn:active {
             color: #f3f4f6;
             background: #374151;
             border-color: #4b5563;
+            transform: scale(0.95);
         }
 
         /* ==========================================================================
-           STREAMING CHAT WORKSPACE
+           3. STREAMING CHAT WORKSPACE
            ========================================================================== */
         #chat-box {
             flex: 1;
@@ -129,16 +131,13 @@
         }
 
         #chat-box::-webkit-scrollbar {
-            width: 5px;
+            width: 4px;
         }
         #chat-box::-webkit-scrollbar-thumb {
             background: #2d3748;
             border-radius: 10px;
         }
 
-        /* ==========================================================================
-           CHAT BUBBLES GRAPHICS FRAMEWORK
-           ========================================================================== */
         .bubble-wrapper {
             display: flex;
             width: 100%;
@@ -170,37 +169,37 @@
             border: 1px solid #1f2937;
             border-bottom-left-radius: 4px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            width: 100%;
         }
 
         /* RENDERING MARKDOWN INTERIOR TARGETS */
         .ai-content p { margin-bottom: 10px; }
         .ai-content p:last-child { margin-bottom: 0; }
-        .ai-content h3 { margin: 14px 0 6px; font-size: 16px; color: #38bdf8; }
-        .ai-content b { color: #f59e0b; }
+        .ai-content h3 { margin: 16px 0 8px; font-size: 16px; color: #38bdf8; font-weight: 700; }
+        .ai-content b { color: #f59e0b; font-weight: 600; }
         .ai-content ul, .ai-content ol { padding-left: 20px; margin: 8px 0; }
-        .ai-content li { margin-bottom: 4px; }
-        .ai-content pre { background: #0f172a; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 10px 0; }
-        .ai-content code { color: #38bdf8; font-family: monospace; }
+        .ai-content li { margin-bottom: 6px; }
+        .ai-content pre { background: #0f172a; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 10px 0; border: 1px solid #1f2937; }
+        .ai-content code { color: #38bdf8; font-family: monospace; font-size: 14px; }
 
         .copy-btn {
             display: block;
-            margin-top: 8px;
+            margin-top: 10px;
             background: #1f2937;
             color: #9ca3af;
             border: 1px solid #374151;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 6px;
             font-size: 11px;
+            font-weight: 500;
             cursor: pointer;
             width: fit-content;
             transition: all 0.15s ease;
-            min-height: auto !important;
-            min-width: auto !important;
         }
-        .copy-btn:hover { background: #374151; color: #f3f4f6; }
+        .copy-btn:active { background: #374151; color: #f3f4f6; }
 
         /* TYPING INDICATOR */
-        .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 4px 0; }
+        .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 6px 0; }
         .typing-indicator span {
             width: 7px; height: 7px; background: #9ca3af; border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
@@ -214,19 +213,18 @@
         }
 
         /* ==========================================================================
-           CONSOLIDATED FOOTER INPUT CONTAINER
+           4. FOOTER & INPUT LAYOUT CONTEXT
            ========================================================================== */
         .footer-container {
             background: #111827;
             border-top: 1px solid #1f2937;
-            padding: 12px 16px;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        /* QUICK SUGGESTIONS ROW */
         .quick-prompts {
             display: flex;
             gap: 8px;
@@ -235,30 +233,28 @@
             max-width: 760px;
             width: 100%;
             margin: 0 auto;
-            scrollbar-width: none; /* Hide standard scrollbar scroll tracks */
+            scrollbar-width: none;
         }
-        .quick-prompts::-webkit-scrollbar { display: none; } /* Hide Chrome/Safari scroll tracks */
+        .quick-prompts::-webkit-scrollbar { display: none; }
 
         .quick-prompts button {
             background: #1f2937;
             color: #9ca3af;
             border: 1px solid #374151;
-            padding: 6px 12px;
-            border-radius: 14px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 12px;
+            font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             transition: all 0.2s ease;
-            min-height: auto !important;
-            min-width: auto !important;
         }
-        .quick-prompts button:hover {
-            background: #374151;
-            color: #f3f4f6;
-            border-color: #4b5563;
+        .quick-prompts button:active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
         }
 
-        /* ENTRY CONTAINER TERMINAL GRID */
         .input-area {
             display: flex;
             max-width: 760px;
@@ -268,7 +264,7 @@
             border-radius: 24px;
             padding: 4px 6px 4px 14px;
             gap: 8px;
-            align-items: center;
+            align-items: flex-end; /* Locks send button cleanly when field expands */
             transition: all 0.2s ease;
             width: 100%;
         }
@@ -279,21 +275,8 @@
             background: #111827;
         }
 
-        /* master framework component container */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            height: 100dvh;
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-
         #question {
             flex: 1;
-            padding: 10px 0;
             border: none;
             background: transparent;
             color: #f9fafb;
@@ -302,24 +285,25 @@
             font-family: inherit;
             resize: none;
             min-width: 0;
-            height: 40px;
+            height: 24px; /* Default uniform spacing setup */
+            max-height: 120px;
+            line-height: 24px;
+            padding: 6px 0;
         }
 
         #question::placeholder {
             color: #6b7280;
         }
 
-        /* PRIMARY SEND BUTTON */
         .send-btn {
-            min-width: 65px;
-            height: 38px;
+            height: 36px;
             padding: 0 16px;
             border: none;
             border-radius: 18px;
             background: #2563eb;
             color: #ffffff;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
@@ -327,29 +311,29 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
         .send-btn:hover { background: #1d4ed8; }
         .send-btn:active { transform: scale(0.96); }
 
         /* ==========================================================================
-        SMALL SMARTPHONE MEDIA RESPONSIVENESS RULES
-        ========================================================================== */
+           5. MEDIA RESPONSIVENESS OVERRIDES
+           ========================================================================== */
         @media (max-width: 480px) {
-            .header { padding: 12px 12px; }
-            .header-title { font-size: 14px; margin-right: 44px; }
-            .back-arrow { padding: 5px 10px; font-size: 12px; }
+            .header { padding: 10px 12px; grid-template-columns: 60px 1fr 60px; }
+            .header-title { font-size: 15px; }
             
-            .bubble { max-width: 90%; font-size: 14px; padding: 10px 14px; }
-            #chat-box { padding: 14px 10px; gap: 12px; }
+            .bubble { max-width: 88%; font-size: 14px; padding: 10px 14px; }
+            #chat-box { padding: 14px 12px; gap: 14px; }
             
-            /* ⚡ KEY FIX: Safe area bottom margin prevents overlaps across standalone wrappers */
             .footer-container { 
-                padding: 12px 12px calc(14px + env(safe-area-inset-bottom, 12px)) 12px; 
+                padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 12px)) 12px; 
             }
             
-            .input-area { padding: 3px 4px 3px 10px; border-radius: 20px; }
-            #question { font-size: 14px; padding: 8px 0; }
-            button { padding: 8px 14px; font-size: 13px; border-radius: 16px; }
+            .input-area { padding: 4px 4px 4px 12px; border-radius: 22px; }
+            #question { font-size: 14px; height: 22px; line-height: 22px; }
+            
+            /* Specific targets instead of broad 'button' selector to prevent breaks */
+            .quick-prompts button { padding: 6px 12px; font-size: 12px; }
+            .send-btn { height: 32px; padding: 0 14px; font-size: 13px; border-radius: 16px; }
         }
     </style>
 </head>
@@ -360,11 +344,12 @@
         <a href="javascript:history.back()" class="back-arrow">←</a>
     </div>
     <div class="header-title">🤖 PetroAI</div>
-    <button class="new-chat-btn" onclick="clearChat()">+</button>
+    <div class="new-chat-btn-wrapper">
+        <button class="new-chat-btn" onclick="clearChat()">+</button>
+    </div>
 </div>
 
-<div id="chat-box">
-    </div>
+<div id="chat-box"></div>
 
 <div class="footer-container">
     <div class="quick-prompts">
@@ -382,16 +367,24 @@
 <script>
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("question");
+
+// UPGRADE: Professional & Friendly greeting
 const welcomeMessage = `
     <div class="bubble-wrapper ai-wrapper">
         <div class="bubble ai ai-content">
-            <p>Hello 👋 I am PetroAI, your engineering tutor.</p>
+            <p>Hi there! 👋 I'm PetroAI, your petroleum engineering assistant. Ask me anything about drilling mud, reservoir dynamics, or log analysis, and let's solve it together!</p>
             <button class="copy-btn" onclick="copyText(this)">Copy</button>
         </div>
     </div>
 `;
 
-// CORE LOCALSTORAGE INITIALIZATION ON RUNTIME LOAD
+// FIX: Auto-grow logic implementation for textarea resizing
+input.addEventListener("input", function() {
+    this.style.height = "24px"; 
+    const basePadding = 12;
+    this.style.height = (this.scrollHeight - basePadding) + "px";
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const savedChat = localStorage.getItem("petroai_chat");
     if (savedChat && savedChat.trim() !== "") {
@@ -407,7 +400,8 @@ function syncStorage() {
 }
 
 function clearChat() {
-    if(confirm("Start a clean conversation window?")) {
+    // UPGRADE: Descriptive workspace clear alert
+    if(confirm("Are you sure you want to clear this chat? This will erase our current conversation history.")) {
         localStorage.removeItem("petroai_chat");
         chatBox.innerHTML = welcomeMessage;
     }
@@ -424,10 +418,10 @@ function copyText(buttonElement) {
 
 function quickAsk(promptText) {
     input.value = promptText;
-    askAI();
+    input.dispatchEvent(new Event('input')); // Recalculates input area height tracking
+    input.focus();
 }
 
-// ADVANCED MARKDOWN PARSER FOR MODERN SAAS COMPLIANCE
 function formatAI(text) {
     if (!text) return "";
 
@@ -468,20 +462,19 @@ async function askAI() {
     const question = input.value.trim();
     if (question === "") return;
 
-    // RENDER USER PROMPT
     chatBox.innerHTML += `
         <div class="bubble-wrapper user-wrapper">
             <div class="bubble user">${question}</div>
         </div>
     `;
     input.value = "";
+    input.style.height = "24px"; 
     syncStorage();
 
-    // SETUP TYPING INDICATOR ACCENT PIPELINE
     const loadingId = "loading_" + Date.now();
     chatBox.innerHTML += `
         <div class="bubble-wrapper ai-wrapper" id="${loadingId}">
-            <div class="bubble ai">
+            <div class="bubble ai" style="padding-bottom: 12px; max-width: 80px;">
                 <div class="typing-indicator">
                     <span></span>
                     <span></span>
@@ -503,7 +496,6 @@ async function askAI() {
         const loader = document.getElementById(loadingId);
         if (loader) loader.remove();
 
-        // INJECT RENDER DATA STRINGS CLEANLY WITH COPY STRAP
         chatBox.innerHTML += `
             <div class="bubble-wrapper ai-wrapper">
                 <div class="bubble ai ai-content">
@@ -517,10 +509,11 @@ async function askAI() {
         const loader = document.getElementById(loadingId);
         if (loader) loader.remove();
 
+        // UPGRADE: Friendly drop-out fallback text block
         chatBox.innerHTML += `
             <div class="bubble-wrapper ai-wrapper">
-                <div class="bubble ai" style="color: #f87171; border-color: rgba(248, 113, 113, 0.2);">
-                    ❌ Request connection timed out. Please verify data link signals.
+                <div class="bubble ai" style="color: #f87171; border-color: rgba(248, 113, 113, 0.2); padding-bottom: 12px;">
+                    ⚠️ Connection lost. I couldn't reach the server. Please check your internet connection and try asking again!
                 </div>
             </div>
         `;
@@ -528,7 +521,6 @@ async function askAI() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// MICRO-INTERACTIONS AND FOCUS EVENTS PIPELINE
 input.addEventListener("keypress", function(e) {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
