@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>PetroAI Chat Assistant</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         /* ==========================================================================
@@ -279,6 +279,18 @@
             background: #111827;
         }
 
+        /* master framework component container */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+
         #question {
             flex: 1;
             padding: 10px 0;
@@ -320,24 +332,24 @@
         .send-btn:active { transform: scale(0.96); }
 
         /* ==========================================================================
-           RESPONSIVE RE-PROPORTIONS FOR PHONE SCREENS
-           ========================================================================== */
-        @media (max-width: 640px) {
-            .header { 
-                padding: 16px 12px 12px 12px; 
-            }
-            .header-title { font-size: 14px; }
+        SMALL SMARTPHONE MEDIA RESPONSIVENESS RULES
+        ========================================================================== */
+        @media (max-width: 480px) {
+            .header { padding: 12px 12px; }
+            .header-title { font-size: 14px; margin-right: 44px; }
             .back-arrow { padding: 5px 10px; font-size: 12px; }
             
             .bubble { max-width: 90%; font-size: 14px; padding: 10px 14px; }
             #chat-box { padding: 14px 10px; gap: 12px; }
             
+            /* ⚡ KEY FIX: Safe area bottom margin prevents overlaps across standalone wrappers */
             .footer-container { 
-                padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 16px)) 12px; 
+                padding: 12px 12px calc(14px + env(safe-area-inset-bottom, 12px)) 12px; 
             }
-            .input-area { padding: 3px 4px 3px 12px; border-radius: 20px; }
-            #question { font-size: 14px; padding: 10px 0; height: 36px; }
-            .send-btn { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 14px; min-width: auto; }
+            
+            .input-area { padding: 3px 4px 3px 10px; border-radius: 20px; }
+            #question { font-size: 14px; padding: 8px 0; }
+            button { padding: 8px 14px; font-size: 13px; border-radius: 16px; }
         }
     </style>
 </head>
@@ -362,7 +374,7 @@
     </div>
     
     <div class="input-area">
-        <textarea id="question" rows="1" placeholder="Ask a petroleum engineering question..."></textarea>
+        <textarea id="question" rows="1" placeholder="Ask a question..."></textarea>
         <button class="send-btn" onclick="askAI()">Send</button>
     </div>
 </div>
