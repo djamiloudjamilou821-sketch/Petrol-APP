@@ -22,12 +22,11 @@ import cloudinary
 import cloudinary.uploader
 
 cloudinary.config(
-    cloud_name="deo1uyu3z",   # ← replace this
-    api_key="795759859987232",         # ← replace this
-    api_secret="PDpz-mXnbGfPWVZH4e7aU-hP0gY",   # ← replace this
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True
 )
-
 app = Flask(__name__)
 app.permanent_session_lifetime = timedelta(days=365)
 
@@ -35,10 +34,9 @@ app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-app.secret_key = "secret123"
-
+app.secret_key = os.getenv("SECRET_KEY")
 # DATABASE
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.qmwbvuspqepsmhirdgqk:C,s-L7Q47st?2M,@aws-0-eu-west-1.pooler.supabase.com:6543/postgres"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)

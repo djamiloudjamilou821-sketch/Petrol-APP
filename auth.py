@@ -8,7 +8,8 @@ import cloudinary.uploader
 
 
 # ADMIN PASSWORD
-ADMIN_PASSWORD = "mydjamilou1"
+ADMIN_PASSWORD = os.getenv("SECRET_ADMIN_KEY")
+
 
 
 def register_auth(app):
