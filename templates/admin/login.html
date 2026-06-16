@@ -1,79 +1,202 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Admin Authentication Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-
-        body{
-            margin:0;
-            font-family:Arial;
-            background:#0f172a;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-            color:white;
+        /* ==========================================================================
+           1. HARD CORE MOBILE LAYOUT ENG RESET
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .box{
-            background:#1e293b;
-            padding:30px;
-            width:90%;
-            max-width:350px;
-            border-radius:15px;
-            text-align:center;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            /* ⚡ FIX: Implemented dynamic viewport-height to protect bottom controls from browser bar overlap */
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        input{
-            width:100%;
-            padding:12px;
-            margin-top:15px;
-            border:none;
-            border-radius:8px;
-            background:#0f172a;
-            color:white;
+        /* ==========================================================================
+           2. CENTRAL CONTROL BOX LAYOUT
+           ========================================================================== */
+        .box {
+            background: #1e293b;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 360px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        button{
-            width:100%;
-            padding:12px;
-            margin-top:20px;
-            border:none;
-            border-radius:8px;
-            background:#2563eb;
-            color:white;
-            font-size:16px;
-            cursor:pointer;
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ==========================================================================
+           3. SECURE PASS INPUT FIELD & EYE SYSTEM TOGGLE
+           ========================================================================== */
+        .input-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ⚡ FIX: Locked tracking font at 16px to instantly neutralize destructive iOS webview scaling */
+        .password-input {
+            width: 100%;
+            padding: 14px 46px 14px 14px; /* Balanced spacing so the text does not crash into the eye button */
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 16px; 
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .password-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            background: #090d16;
+        }
+
+        /* Interactive visibility tracking node button placement */
+        .visibility-toggle {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: color 0.15s ease;
+        }
+
+        .visibility-toggle:active {
+            color: #38bdf8;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* ==========================================================================
+           4. SUBMIT ACTION DECK
+           ========================================================================== */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: all 0.1s ease;
+            margin-top: 4px;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+            background: #1d4ed8;
+        }
+
+        /* ==========================================================================
+           5. ULTRA COMPACT DEVICES OVERRIDES
+           ========================================================================== */
+        @media (max-width: 360px) {
+            .box { padding: 20px 16px; }
+            h2 { font-size: 18px; margin-bottom: 18px; }
+            .password-input { padding: 12px 42px 12px 12px; }
+        }
     </style>
 </head>
-
 <body>
 
 <div class="box">
 
     <h2>🔐 Admin Login</h2>
 
-    <form method="POST">
+    <form method="POST" class="auth-form">
 
-        <input
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            required
-        >
+        <div class="input-container">
+            <input
+                type="password"
+                id="admin-password"
+                name="password"
+                class="password-input"
+                placeholder="Enter admin password"
+                autocomplete="current-password"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
+                required
+            >
+            
+            <button type="button" id="toggle-button" class="visibility-toggle" aria-label="Toggle password visibility">
+                👁️
+            </button>
+        </div>
 
-        <button type="submit">
-            Login
+        <button type="submit" class="btn-submit">
+            Authorize Account
         </button>
 
     </form>
 
 </div>
 
+<script>
+    const passwordField = document.getElementById('admin-password');
+    const toggleButton = document.getElementById('toggle-button');
+
+    toggleButton.addEventListener('click', () => {
+        // Evaluate dynamic input string types directly upon execution 
+        const isProtected = passwordField.type === 'password';
+        passwordField.type = isProtected ? 'text' : 'password';
+        
+        // Adjust interface button parameters 
+        toggleButton.textContent = isProtected ? '🙈' : '👁️';
+        
+        // Re-focus the field immediately so the user can continue typing seamlessly
+        passwordField.focus();
+    });
+</script>
 </body>
 </html>

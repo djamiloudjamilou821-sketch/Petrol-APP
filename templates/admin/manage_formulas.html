@@ -1,140 +1,237 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage Formulas</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Manage Formulas Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-        body {
+        /* ==========================================================================
+           1. CORE RESET & TOUCH ENGINE OPTIMIZATION
+           ========================================================================== */
+        * {
             margin: 0;
-            font-family: Arial;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0f172a;
-            color: white;
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            width: 92%;
+            width: 100%;
             max-width: 1000px;
-            margin: auto;
-            margin-top: 30px;
+            margin: 0 auto;
+            padding: 24px 16px calc(32px + env(safe-area-inset-bottom, 0px)) 16px;
+            flex: 1;
+        }
+
+        /* ==========================================================================
+           2. HEADER TYPOGRAPHY BLOCK
+           ========================================================================== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 5px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            margin-bottom: 6px;
         }
 
-        p {
-            text-align: center;
-            color: #cbd5e1;
+        .subtitle {
+            color: #94a3b8;
             font-size: 14px;
+            line-height: 1.5;
         }
 
+        /* ==========================================================================
+           3. UNIFIED GRID CONFIGURATION
+           ========================================================================== */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 16px;
         }
 
+        /* ==========================================================================
+           4. CARD STRUCTURE & ALIGNMENT FIX
+           ========================================================================== */
         .card {
             background: #1e293b;
-            padding: 15px;
-            border-radius: 12px;
-            transition: 0.3s;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Keeps buttons locked at the bottom uniformly */
+            gap: 14px;
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
 
-        .card:hover {
-            transform: scale(1.02);
-            background: #273449;
+        /* ⚡ FIX: Tap interaction states replace layout-shifting scale properties */
+        .card:active {
+            background: #243147;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .title {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 700;
             color: #38bdf8;
+            line-height: 1.4;
         }
 
-        .formula {
+        .formula-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: 600;
             color: #fbbf24;
-            margin: 8px 0;
+            background: rgba(251, 191, 36, 0.05);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            word-break: break-all; /* Prevents long equations from spilling out of the card */
         }
 
+        /* ⚡ FIX: Set text alignment to left for technical descriptions */
+        .description {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: left; 
+        }
+
+        /* ==========================================================================
+           5. ACTION CONTAINER AND SEPARATED BUTTON ZONE
+           ========================================================================== */
         .actions {
             display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+            margin-top: auto; /* Forces action buttons down if text heights vary */
         }
 
         .btn {
-            padding: 8px 12px;
-            border-radius: 8px;
+            flex: 1; /* Ensures buttons scale evenly across the card width */
+            padding: 11px 14px; /* Expanded touch zone space for mobile screens */
+            border-radius: 10px;
             text-decoration: none;
             font-size: 13px;
-            color: white;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.15s ease, transform 0.1s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
         }
 
         .edit {
             background: #2563eb;
+            color: #ffffff;
         }
 
         .delete {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .delete:active {
             background: #ef4444;
+            color: #ffffff;
         }
 
         .top-btn {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #38bdf8;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 24px;
+            color: #94a3b8;
             text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s ease;
         }
 
+        .top-btn:active {
+            color: #38bdf8;
+        }
+
+        /* ==========================================================================
+           6. COMPACT SCREENS OVERRIDES
+           ========================================================================== */
+        @media (max-width: 480px) {
+            .container { padding: 16px 12px; }
+            h1 { font-size: 19px; }
+            .grid { gap: 12px; }
+            .card { padding: 14px; gap: 12px; }
+        }
     </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1>🧮 Manage Formulas</h1>
-    <p>Edit or delete engineering formulas</p>
+    <div class="page-header">
+        <h1>🧮 Manage Formulas</h1>
+        <p class="subtitle">Modify, review calculation arrays, or remove structural template items</p>
+    </div>
 
     <div class="grid">
 
         {% for f in formulas %}
-
         <div class="card">
-
-            <div class="title">{{ f.name }}</div>
-
-            <div class="formula">{{ f.formula }}</div>
-
-            <p style="color:#cbd5e1; font-size:13px;">
-                {{ f.desc }}
-            </p>
-
-            <div class="actions">
-
-                <a class="btn edit" href="/admin/edit-formula/{{ f.id }}">
-                    ✏ Edit
-                </a>
-
-                <a class="btn delete"
-                   href="/admin/delete-formula/{{ f.id }}"
-                   onclick="return confirm('⚠ Are you sure you want to delete this formula?')">
-                    🗑 Delete
-                </a>
-
+            <div class="card-body">
+                <div class="title">{{ f.name }}</div>
+                <div class="formula-display">{{ f.formula }}</div>
+                <p class="description">{{ f.desc }}</p>
             </div>
 
+            <div class="actions">
+                <a class="btn edit" href="/admin/edit-formula/{{ f.id }}">
+                    ✏️ Edit
+                </a>
+                <a class="btn delete" 
+                   href="/admin/delete-formula/{{ f.id }}" 
+                   onclick="return confirm('⚠ Are you sure you want to permanently delete this equation profile?')">
+                    🗑️ Delete
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+            No equations found in the database. Add new profiles to populate the index.
+        </div>
+        {% endfor %}
         </div>
 
-        {% endfor %}
-
-    </div>
-
-    <a class="top-btn" href="/admin">⬅ Back to Admin</a>
+    <a class="top-btn" href="/admin">← Back to Admin Console</a>
 
 </div>
 

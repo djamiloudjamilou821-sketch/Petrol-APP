@@ -1,82 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage Lessons</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Manage Syllabus Lessons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-        body {
+        /* ==========================================================================
+           1. CORE RESET & TOUCH ENGINE OPTIMIZATION
+           ========================================================================== */
+        * {
             margin: 0;
-            font-family: Arial;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0f172a;
-            color: white;
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            width: 92%;
+            width: 100%;
             max-width: 900px;
-            margin: auto;
-            margin-top: 30px;
+            margin: 0 auto;
+            padding: 24px 16px calc(32px + env(safe-area-inset-bottom, 0px)) 16px;
+            flex: 1;
+        }
+
+        /* ==========================================================================
+           2. HEADER BLOCK
+           ========================================================================== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         h1 {
-            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            margin-bottom: 6px;
         }
 
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           3. RESPONSIVE GRID MATRIX (Prevents full-screen stretching)
+           ========================================================================== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        /* ==========================================================================
+           4. CARD COMPONENT STRUCTURE
+           ========================================================================== */
         .card {
             background: #1e293b;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:active {
+            background: #243147;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           5. SYSTEM TOUCH ACTION TARGETS
+           ========================================================================== */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 14px;
         }
 
         .btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #2563eb;
-            color: white;
-            border-radius: 8px;
+            flex: 1; /* Split actions evenly inside the viewport card */
+            padding: 12px 14px; /* Generous touch target area */
+            border-radius: 10px;
             text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.15s ease, transform 0.1s ease;
         }
 
-        .btn:hover {
-            background: #1d4ed8;
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .edit-btn {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .delete-btn:active {
+            background: #dc2626;
+            color: #ffffff;
         }
 
         .back {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 24px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .back:active {
             color: #38bdf8;
+        }
+
+        /* ==========================================================================
+           6. COMPACT PHONE CONTROLS
+           ========================================================================== */
+        @media (max-width: 480px) {
+            .container { padding: 16px 12px; }
+            h1 { font-size: 19px; }
+            .grid { gap: 12px; }
+            .card { padding: 16px; gap: 14px; }
+            .btn { padding: 11px; font-size: 13px; }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1>🛠 Manage Lessons</h1>
-
-    {% for lesson in lessons %}
-    <div class="card">
-        <h3>{{ lesson.title }}</h3>
-
-        <a href="/admin/edit-lesson/{{ lesson.id }}" class="btn edit-btn">
-            ✏️ Edit Lesson
-        </a>
-
-        <a href="/admin/delete-lesson/{{ lesson.id }}"
-            class="btn delete-btn"
-            style="background:#dc2626;"
-            onclick="return confirm('⚠️ Are you sure you want to delete this lesson? This cannot be undone.')">
-            🗑️ Delete
-        </a>
+    <div class="page-header">
+        <h1>🛠️ Manage Lessons</h1>
+        <p class="subtitle">Modify, restructure metadata items, or delete active course syllabus modules</p>
     </div>
-    {% endfor %}
 
-    <a class="back" href="/admin">⬅ Back to Admin</a>
+    <div class="grid">
+
+        {% for lesson in lessons %}
+        <div class="card">
+            <h3>{{ lesson.title }}</h3>
+
+            <div class="actions">
+                <a href="/admin/edit-lesson/{{ lesson.id }}" class="btn edit-btn">
+                    ✏️ Edit
+                </a>
+
+                <a href="/admin/delete-lesson/{{ lesson.id }}"
+                   class="btn delete-btn"
+                   onclick="return confirm('⚠️ Are you sure you want to permanently delete this lesson? This action cannot be undone.')">
+                    🗑️ Delete
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+            No syllabus records or modules found in the active database stream.
+        </div>
+        {% endfor %}
+        </div>
+
+    <a class="back" href="/admin">← Back to Admin Console</a>
 
 </div>
 

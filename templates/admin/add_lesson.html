@@ -1,118 +1,210 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Lesson</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Create New Lesson Pathway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-        body {
+        /* ==========================================================================
+           1. HARD CORE RESET & SAFE-AREA PARAMETERS
+           ========================================================================== */
+        * {
             margin: 0;
-            font-family: Arial;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0f172a;
-            color: white;
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            width: 92%;
-            max-width: 700px;
-            margin: auto;
-            margin-top: 30px;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px 16px calc(32px + env(safe-area-inset-bottom, 0px)) 16px;
+        }
+
+        /* ==========================================================================
+           2. BANNER INTERACTION HEADER
+           ========================================================================== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            color: #ffffff;
         }
 
-        p {
-            text-align: center;
-            color: #cbd5e1;
+        .subtitle {
+            color: #94a3b8;
             font-size: 14px;
-            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
+        /* ==========================================================================
+           3. DATA COMPOSITION CANVAS
+           ========================================================================== */
         .card {
             background: #1e293b;
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .editor-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         label {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
             color: #cbd5e1;
+            letter-spacing: 0.2px;
         }
 
-        input, textarea {
+        /* ⚡ FIX: 16px font baseline kills the destructive mobile webview container zoom */
+        .form-control {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            background: #0f172a;
-            color: white;
-        }
-
-        textarea {
-            height: 150px;
-            resize: none;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 20px;
             padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 16px; 
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control::placeholder {
+            color: #4b5563;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            background: #090d16;
+        }
+
+        textarea.form-control {
+            min-height: 160px;
+            max-height: 320px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* ==========================================================================
+           4. PRIMARY EVENT TRIGGER BUTTONS
+           ========================================================================== */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
             background: #2563eb;
             border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            margin-top: 6px;
         }
 
-        button:hover {
+        /* ⚡ FIX: Added active scaling to block accidental multi-taps during latency spikes */
+        .btn-submit:active {
+            transform: scale(0.98);
             background: #1d4ed8;
         }
 
-        .back {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #38bdf8;
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 18px;
+            color: #94a3b8;
             text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .back-link:active {
+            color: #38bdf8;
+        }
+
+        /* ==========================================================================
+           5. ADAPTIVITY CELL BREAKPOINTS
+           ========================================================================== */
+        @media (max-width: 480px) {
+            .container { padding: 16px 12px; }
+            h1 { font-size: 19px; }
+            .card { padding: 16px; }
+            .form-control { padding: 10px; }
+            .btn-submit { padding: 12px; font-size: 14px; }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1>📘 Add New Lesson</h1>
-    <p>Create a new petroleum engineering lesson</p>
-
-    <div class="card">
-
-        <form method="POST">
-
-            <label>Lesson Title</label>
-            <input type="text" name="title" required>
-
-            <label>YouTube Video URL (embed link)</label>
-            <input type="text" name="video" placeholder="https://www.youtube.com/embed/..." required>
-
-            <label>Lesson Content</label>
-            <textarea name="content" required></textarea>
-
-            <button type="submit">➕ Add Lesson</button>
-
-        </form>
-
+    <div class="page-header">
+        <h1>📘 Add New Lesson</h1>
+        <p class="subtitle">Publish a new engineering lecture track directly to the live platform stream</p>
     </div>
 
-    <a class="back" href="/admin">⬅ Back to Admin</a>
+    <div class="card">
+        <form method="POST" class="editor-form">
+            
+            <div class="form-group">
+                <label for="title">Lesson Title</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g., Fundamentals of Two-Phase Fluid Flow" required>
+            </div>
+
+            <div class="form-group">
+                <label for="video">YouTube Video URL (Embed Link)</label>
+                <input type="url" id="video" name="video" class="form-control" placeholder="https://www.youtube.com/embed/VIDEO_ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Lesson Body Content</label>
+                <textarea id="content" name="content" class="form-control" placeholder="Compose structured lesson content here. Markdown formatting and engineering technical documentation notation blocks are fully supported..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">➕ Add Lesson to Syllabus</button>
+
+        </form>
+    </div>
+
+    <a class="back-link" href="/admin">← Cancel & Return to Control Panel</a>
 
 </div>
 

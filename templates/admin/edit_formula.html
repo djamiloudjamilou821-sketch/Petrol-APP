@@ -1,215 +1,258 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Formula</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Edit Engineering Formula</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-
-        *{
-            box-sizing:border-box;
+        /* ==========================================================================
+           1. COMPACT CORE RESET & HARDWARE MITIGATION
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body{
-            margin:0;
-            font-family:Arial, sans-serif;
-            background:#0f172a;
-            color:white;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .topbar{
-            background:#020617;
-            padding:18px;
-            text-align:center;
-            font-size:22px;
-            font-weight:bold;
-            position:sticky;
-            top:0;
+        /* ⚡ FIX: Combined redundant headers into a single cohesive, sticky safe-area element */
+        .topbar {
+            background: #1e293b;
+            padding: 16px 20px calc(16px + env(safe-area-inset-top, 0px)) 20px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        .container{
-            width:92%;
-            max-width:800px;
-            margin:auto;
-            padding:30px 0;
+        /* ==========================================================================
+           2. RESPONSIVE CONTAINER & CARD STRUCTURING
+           ========================================================================== */
+        .container {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 20px 14px calc(30px + env(safe-area-inset-bottom, 0px)) 14px;
+            flex: 1;
         }
 
-        .card{
-            background:#1e293b;
-            padding:30px;
-            border-radius:20px;
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        h1{
-            margin-top:0;
-            text-align:center;
-            margin-bottom:10px;
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        .subtitle{
-            text-align:center;
-            color:#cbd5e1;
-            margin-bottom:30px;
+        /* ==========================================================================
+           3. MOBILE-SAFE INPUT LAYOUT CONSTRAINTS
+           ========================================================================== */
+        .form-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        label{
-            display:block;
-            margin-top:18px;
-            margin-bottom:8px;
-            color:#cbd5e1;
-            font-size:14px;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
+        label {
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        /* ⚡ FIX: Set to 16px to prevent webview pinch zoom issues */
         input,
         textarea,
-        select{
-            width:100%;
-            padding:14px;
-            border:none;
-            border-radius:12px;
-            background:#0f172a;
-            color:white;
-            font-size:15px;
-            outline:none;
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
         }
 
-        textarea{
-            min-height:120px;
-            resize:vertical;
+        /* Custom appearance styling rules for drop-down menus */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
-        .btn{
-            width:100%;
-            margin-top:30px;
-            padding:15px;
-            border:none;
-            border-radius:14px;
-            background:#f59e0b;
-            color:white;
-            font-size:16px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: #090d16;
         }
 
-        .btn:hover{
-            background:#d97706;
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.5;
         }
 
-        .back{
-            display:block;
-            text-align:center;
-            margin-top:25px;
-            color:#38bdf8;
-            text-decoration:none;
+        /* Specific design block targets for Python scripting components */
+        textarea[name="python_formula"] {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            background: #050b14;
+            border-color: #1e293b;
+            color: #38bdf8;
         }
 
+        /* ==========================================================================
+           4. TOUCH INTERACTION MATRIX
+           ========================================================================== */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #f59e0b;
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+            margin-top: 8px;
+            transition: all 0.1s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+            background: #d97706;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .back:active {
+            color: #38bdf8;
+        }
+
+        /* ==========================================================================
+           5. ADAPTIVE MEDIA SCALING
+           ========================================================================== */
+        @media (max-width: 480px) {
+            .container { padding: 12px 10px; }
+            .card { padding: 16px; }
+            input, textarea, select { padding: 10px; }
+        }
     </style>
 </head>
-
 <body>
 
 <div class="topbar">
-    ✏️ Edit Formula
+    🧮 Formula Control Center
 </div>
 
 <div class="container">
 
     <div class="card">
-
-        <h1>Edit Engineering Formula</h1>
-
         <div class="subtitle">
-            Update your petroleum engineering calculator dynamically
+            Modify mathematical equations, variable indices, and algorithmic Python scripts.
         </div>
 
-        <form method="POST">
+        <form method="POST" class="form-layout">
 
-            <label>Formula Name</label>
-            <input
-                type="text"
-                name="name"
-                value="{{ formula.name }}"
-                required
-            >
+            <div class="form-group">
+                <label for="name">Formula Display Name</label>
+                <input type="text" id="name" name="name" value="{{ formula.name }}" placeholder="e.g., Oil Formation Volume Factor" required>
+            </div>
 
-            <label>Equation</label>
-            <input
-                type="text"
-                name="equation"
-                value="{{ formula.equation }}"
-                required
-            >
+            <div class="form-group">
+                <label for="equation">Standard Equation Representation</label>
+                <input type="text" id="equation" name="equation" value="{{ formula.equation }}" placeholder="e.g., Bo = 0.972 + 0.000147 * FVF" required>
+            </div>
 
-            <label>Description</label>
+            <div class="form-group">
+                <label for="description">Technical Description</label>
+                <textarea id="description" name="description" placeholder="Provide a brief explanation of how this mathematical concept applies to petroleum workflows..." required>{{ formula.description }}</textarea>
+            </div>
 
-            <textarea
-                name="description"
-                required
-            >{{ formula.description }}</textarea>
+            <div class="form-group">
+                <label for="category">Functional Domain Category</label>
+                <select id="category" name="category">
+                    <option value="{{ formula.category }}" selected>{{ formula.category }}</option>
+                    <option value="Reservoir">Reservoir Engineering</option>
+                    <option value="Drilling">Drilling Engineering</option>
+                    <option value="Production">Production Engineering</option>
+                    <option value="Fluid Mechanics">Fluid Mechanics</option>
+                    <option value="Pressure Analysis">Pressure Analysis</option>
+                    <option value="General">General Engineering</option>
+                </select>
+            </div>
 
-            <label>Category</label>
+            <div class="form-group">
+                <label for="variables">Variable Breakdown Parameters</label>
+                <textarea id="variables" name="variables" placeholder="Define symbols used (e.g., Bo = Oil FVF [bbl/STB], Rs = Solution GOR [scf/STB])...">{{ formula.variables }}</textarea>
+            </div>
 
-            <select name="category">
+            <div class="form-group">
+                <label for="python_formula">Back-End Computational Script (Python)</label>
+                <textarea id="python_formula" name="python_formula" placeholder="def calculate(Rs, gamma_g, gamma_o, T):&#10;    return 0.972 + 0.000147 * (Rs * (gamma_g / gamma_o)**0.5 + 1.25 * T)**1.175" required>{{ formula.python_formula }}</textarea>
+            </div>
 
-                <option value="{{ formula.category }}">
-                    {{ formula.category }}
-                </option>
-
-                <option value="Reservoir">
-                    Reservoir Engineering
-                </option>
-
-                <option value="Drilling">
-                    Drilling Engineering
-                </option>
-
-                <option value="Production">
-                    Production Engineering
-                </option>
-
-                <option value="Fluid Mechanics">
-                    Fluid Mechanics
-                </option>
-
-                <option value="Pressure Analysis">
-                    Pressure Analysis
-                </option>
-
-                <option value="General">
-                    General Engineering
-                </option>
-
-            </select>
-
-            <label>Variables</label>
-
-            <textarea
-                name="variables"
-            >{{ formula.variables }}</textarea>
-
-            <label>Python Formula</label>
-
-            <textarea
-                name="python_formula"
-                required
-            >{{ formula.python_formula }}</textarea>
-
-            <button class="btn" type="submit">
-                💾 Update Formula
-            </button>
+            <button class="btn" type="submit">💾 Update Calculation Profile</button>
 
         </form>
-
     </div>
 
-    <a href="/admin/manage-formulas" class="back">
-        ⬅ Back to Manage Formulas
-    </a>
+    <a href="/admin/manage-formulas" class="back">← Cancel & Return to Library</a>
 
 </div>
 
 </body>
-</html>
 </html>

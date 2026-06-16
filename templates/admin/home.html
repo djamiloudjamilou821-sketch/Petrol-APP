@@ -1,176 +1,240 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Admin Control Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-        body {
+        /* ==========================================================================
+           1. RESET & PREMIUM TOKENS
+           ========================================================================== */
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* TOP BAR */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================================================
+           2. NAVIGATION NAVIGATION BAR
+           ========================================================================== */
         .header {
             background: #1e293b;
-            padding: 15px 20px;
+            padding: 16px 20px calc(16px + env(safe-area-inset-top, 0px)) 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 18px;
-            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
-        .header small {
-            font-size: 12px;
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-home-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #94a3b8;
-            font-weight: normal;
-        }
-
-        .logout {
-            background: #ef4444;
-            padding: 8px 12px;
+            padding: 6px 14px;
             border-radius: 8px;
-            color: white;
+            font-size: 13px;
+            font-weight: 500;
             text-decoration: none;
-            font-size: 14px;
+            transition: all 0.2s ease;
         }
 
-        .logout:hover {
-            background: #dc2626;
+        .back-home-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
         }
 
+        /* ==========================================================================
+           3. CONTAINER & CONTROL RESPONSIVE GRID
+           ========================================================================== */
         .container {
-            width: 92%;
+            width: 100%;
             max-width: 1100px;
-            margin: auto;
-            margin-top: 25px;
+            margin: 0 auto;
+            padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px;
+            flex: 1;
         }
 
-        /* GRID */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
         }
 
-        /* CARD */
+        /* ==========================================================================
+           4. CARD COMPONENT ARCHITECTURE
+           ========================================================================== */
         .card {
             background: #1e293b;
             padding: 20px;
-            border-radius: 14px;
-            transition: 0.3s;
-            text-align: left;
-            border: 1px solid transparent;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease, background 0.2s ease;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border: 1px solid #334155;
-            background: #273449;
+        /* Mobile safe interaction style substitute for hover transforms */
+        .card:active {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: #243147;
+        }
+
+        .card-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .card h3 {
-            margin: 0;
-            font-size: 18px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .card p {
             color: #94a3b8;
             font-size: 13px;
-            margin-top: 8px;
+            line-height: 1.5;
         }
 
-        /* BUTTON */
+        /* ==========================================================================
+           5. ACTION TARGET ACCENTS
+           ========================================================================== */
         .btn {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 16px; /* Expanded touch zone space for thumbs */
+            border-radius: 12px;
             text-decoration: none;
             color: white;
             font-size: 14px;
-            transition: 0.2s;
+            font-weight: 600;
+            transition: opacity 0.15s ease, transform 0.1s ease;
         }
 
-        .btn:hover {
-            opacity: 0.85;
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
 
-        .green { background: #16a34a; }
-        .orange { background: #f97316; }
-        .blue { background: #2563eb; }
-        .purple { background: #7c3aed; }
+        /* Standardized Action Semantic Palettes */
+        .btn-create { background: #16a34a; }
+        .btn-warning { background: #ea580c; }
+        .btn-manage { background: #3b82f6; }
+        .btn-view { background: #475569; }
 
-        /* MOBILE */
-        @media (max-width: 600px) {
-            .header {
-                font-size: 16px;
-            }
+        /* ==========================================================================
+           6. RESPONSIVE BREAKPOINT SYSTEM
+           ========================================================================== */
+        @media (max-width: 480px) {
+            .header { padding: 14px 16px; }
+            .header-title { font-size: 15px; }
+            .container { padding: 16px 12px; }
+            .grid { gap: 12px; }
+            .card { padding: 16px; border-radius: 14px; }
         }
     </style>
 </head>
-
 <body>
 
 <div class="header">
-    ⚙️ Admin Dashboard
+    <div class="header-title">⚙️ Admin Control Center</div>
+    <a href="/" class="back-home-btn">App Home</a>
 </div>
 
 <div class="container">
-
     <div class="grid">
 
-        <!-- LESSONS -->
         <div class="card">
-            <h3>📚 Lessons</h3>
-            <p>Add engineering lessons</p>
-            <a href="/admin/add-lesson" class="btn green">➕ Add Lesson</a>
+            <div class="card-details">
+                <h3>📚 Lessons</h3>
+                <p>Publish new interactive engineering syllabus materials and course content modules.</p>
+            </div>
+            <a href="/admin/add-lesson" class="btn btn-create">➕ Add Lesson</a>
         </div>
 
-        <!-- FORMULAS -->
         <div class="card">
-            <h3>📊 Formulas</h3>
-            <p>Add engineering formulas</p>
-            <a href="/admin/add-formula" class="btn orange">➕ Add Formula</a>
+            <div class="card-details">
+                <h3>📊 Formulas</h3>
+                <p>Add technical equations, constants, and fluid parameter formulas into the live engine database.</p>
+            </div>
+            <a href="/admin/add-formula" class="btn btn-warning">➕ Add Formula</a>
         </div>
 
-        <!-- MANAGE LESSONS (IMPORTANT FIX) -->
         <div class="card">
-            <h3>🛠 Manage Lessons</h3>
-            <p>Edit or update existing lessons</p>
-            <a href="/admin/manage-lessons" class="btn">Manage lessons</a>
+            <div class="card-details">
+                <h3>🛠 Manage Lessons</h3>
+                <p>Edit, modify metadata, update reference material links, or remove older lesson items.</p>
+            </div>
+            <a href="/admin/manage-lessons" class="btn btn-manage">Modify Syllabus Records</a>
         </div>
 
-        <!-- VIEW LESSONS -->
         <div class="card">
-            <h3>📖 View Lessons</h3>
-            <p>See how students view lessons</p>
-            <a href="/lessons" class="btn">Lessons exist</a>
+            <div class="card-details">
+                <h3>📖 Student View: Lessons</h3>
+                <p>Review the student-facing catalog view layout to check current resource availability.</p>
+            </div>
+            <a href="/lessons" class="btn btn-view">Launch Student Catalog</a>
         </div>
 
-        <!-- VIEW FORMULAS -->
         <div class="card">
-            <h3>🧮 View Formulas</h3>
-            <p>Check formulas list</p>
-            <a href="/formulas" class="btn">Formulas exist</a>
+            <div class="card-details">
+                <h3>🧮 Student View: Formulas</h3>
+                <p>Verify live computational reference equations exactly as they appear inside the user application.</p>
+            </div>
+            <a href="/formulas" class="btn btn-view">Launch Equation Directory</a>
         </div>
 
-        <!-- MANAGE FORMULAS -->
         <div class="card">
-            <h3>🧮 Manage Formulas</h3>
-            <p>Edit formulas list</p>
-            <a href="/admin/manage-formulas" class="btn">Manage Formulas</a>
+            <div class="card-details">
+                <h3>🧮 Manage Formulas</h3>
+                <p>Perform backend configuration updates, update syntax formats, or adjust numeric calculation logs.</p>
+            </div>
+            <a href="/admin/manage-formulas" class="btn btn-manage">Modify Equation Library</a>
         </div>
-        <a href="/admin/manage-posts" class="admin-btn">
-            📢 Manage Community Posts
-        </a>
+
+        <div class="card">
+            <div class="card-details">
+                <h3>📢 Community Feed</h3>
+                <p>Moderate student discussion platforms, view reports, change pin statuses, and clear user flags.</p>
+            </div>
+            <a href="/admin/manage-posts" class="btn btn-manage">Open Moderation Panel</a>
+        </div>
 
     </div>
-
 </div>
 
 </body>

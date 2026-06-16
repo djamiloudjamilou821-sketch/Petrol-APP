@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ lesson.title }} - PetroApp</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         /* =========================
            CORE RESET & VARIABLES
@@ -13,69 +29,78 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Removes blue flash on mobile tap */
         }
 
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/hb.jpg");
+            background: linear-gradient(rgba(15, 23, 42, 0.93), rgba(15, 23, 42, 0.96)), url("/static/hb.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #f8fafc;
             min-height: 100vh;
-            padding-bottom: 60px;
+            padding-bottom: 40px;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
+        /* MOBILE-FIRST CONTAINER 
+           Ensures perfect padding on edge-to-edge mobile glass surfaces
+        */
         .container {
-            width: 92%;
-            max-width: 860px;
+            width: 100%;
+            max-width: 760px;
             margin: 0 auto;
-            padding-top: 24px;
+            padding: 16px 14px;
         }
 
         /* =========================
-           NAVIGATION BAR ARCHITECTURE
+           NAVIGATION BAR
         ========================= */
         .top-nav {
             display: flex;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .back-arrow {
             text-decoration: none;
             color: #94a3b8;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
         }
 
         .back-arrow:hover {
             color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.15);
         }
 
         /* =========================
            HEADER & STATUS MONITOR
         ========================= */
         .header {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            padding: 28px 24px;
-            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 20px 16px;
+            border-radius: 14px;
             text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 20px; /* Scaling down for small mobile devices */
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #ffffff;
@@ -83,18 +108,18 @@
         }
 
         .lesson-info {
-            margin-top: 10px;
+            margin-top: 8px;
             color: #94a3b8;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .progress-bar {
-            margin-top: 20px;
+            margin-top: 14px;
             width: 100%;
-            height: 6px;
+            height: 4px;
             background: #1e293b;
             border-radius: 10px;
             overflow: hidden;
@@ -104,7 +129,6 @@
             width: 100%;
             height: 100%;
             background: #10b981;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
         }
 
         /* =========================
@@ -113,10 +137,9 @@
         .video-box {
             background: rgba(30, 41, 59, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            padding: 12px;
-            border-radius: 16px;
-            margin-bottom: 20px;
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
@@ -129,47 +152,88 @@
         }
 
         /* =========================
-           CORE TECHNICAL LEAF CARD
+           CORE TECHNICAL CONTENT CARD
         ========================= */
         .content-card {
             background: rgba(30, 41, 59, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 32px 28px;
-            margin-bottom: 20px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 14px;
+            padding: 20px 16px;
+            margin-bottom: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .content-title {
-            font-size: 18px;
+            font-size: 12px;
             font-weight: 700;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             color: #38bdf8;
-            letter-spacing: -0.3px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+            padding-bottom: 6px;
         }
 
+        /* Smooth out raw pre-line walls of text for phone screens */
         .content {
             color: #cbd5e1;
-            line-height: 1.85;
-            font-size: 15px;
-            white-space: pre-line;
+            line-height: 1.7;
+            font-size: 14.5px; /* Clean tracking readability scale */
+            white-space: pre-line; 
+            word-break: break-word; /* Prevents long formula overflow */
+        }
+
+        /* Support utility blocks for structured lessons saved in Supabase */
+        .op-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3.5px solid #38bdf8;
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin: 14px 0;
+        }
+        
+        /* Mobile Horizontal Scroll Protection for equations and tables */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .metric-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 450px; /* Prevents total text squishing inside table viewports */
+            font-size: 13px;
+        }
+
+        .metric-table th, .metric-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
         }
 
         /* =========================
-           INTERACTION ACTIONS GATEWAY
+           MOBILE INTERACTION LAYOUT
         ========================= */
         .lesson-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            margin-top: 8px;
         }
 
         .action-btn {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 14px 24px;
+            padding: 16px 20px;
             text-decoration: none;
             border: none;
             border-radius: 12px;
@@ -177,58 +241,36 @@
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-        }
-
-        .ask-btn {
             background: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s ease;
         }
 
-        .ask-btn:hover {
-            background: #1d4ed8;
+        .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+            background: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
         }
-
         .action-btn:active {
-            transform: scale(0.99);
+            background: #1d4ed8;
+            transform: scale(0.98); /* Tactile feedback on screen tap */
         }
 
         /* =========================
-           RESPONSIVE RE-PROPORTIONS
+           TABLET & DESKTOP UP-SCALING
         ========================= */
-        @media (max-width: 600px) {
-            .container {
-                padding-top: 16px;
-            }
-
-            .header {
-                padding: 24px 16px;
-            }
-
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .content-card {
-                padding: 24px 18px;
-            }
-
-            .content {
-                font-size: 14px;
-                line-height: 1.75;
-            }
-
-            .action-btn {
-                font-size: 14px;
-                padding: 12px 16px;
-            }
+        @media (min-width: 600px) {
+            .container { padding: 24px 20px; }
+            .header { padding: 28px 24px; margin-bottom: 20px; }
+            .header h1 { font-size: 24px; }
+            .content-card { padding: 32px 24px; margin-bottom: 20px; }
+            .content { font-size: 15px; line-height: 1.8; }
+            .video-box { padding: 10px; margin-bottom: 20px; }
         }
     </style>
 </head>
-<body>
+<body class="tex2jax_process">
 
 <div class="container">
     <div class="top-nav">
@@ -250,12 +292,13 @@
     </div>
 
     <div class="content-card">
-        <div class="content-title">Lesson Overview</div>
+        <div class="content-title">Lesson Notebook</div>
+        
         <div class="content" id="lesson-content">{{ lesson.content }}</div>
     </div>
 
     <div class="lesson-actions">
-        <button class="action-btn ask-btn" onclick="askPetroAI()">
+        <button class="action-btn" onclick="askPetroAI()">
             🤖 Ask PetroAI About This Lesson
         </button>
     </div>
@@ -264,18 +307,11 @@
 <script>
 function askPetroAI() {
     const title = document.getElementById("lesson-title").innerText;
-    sessionStorage.setItem("lesson_title", title);
-    window.location.href = "/petroai";
-}
-
-function sendToPetroAI() {
-    const title = document.getElementById("lesson-title").innerText;
     const content = document.getElementById("lesson-content").innerText;
 
     sessionStorage.setItem("lesson_title", title);
     sessionStorage.setItem("lesson_content", content);
-    sessionStorage.setItem("generate_quiz", "true");
-
+    
     window.location.href = "/petroai";
 }
 </script>

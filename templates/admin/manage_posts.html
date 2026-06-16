@@ -1,147 +1,239 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage Posts</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8">
+    <title>Manage Community Activity Feed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:system-ui, -apple-system, Arial;
+        /* ==========================================================================
+           1. COMPACT ENGINE RESET & TEXT PROTECTIONS
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body{
-            background:#0b1220;
-            color:white;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0b1220;
+            color: #f8fafc;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container{
-            width:92%;
-            max-width:800px;
-            margin:auto;
-            padding:20px 10px 60px;
+        .container {
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 24px 14px calc(40px + env(safe-area-inset-bottom, 0px)) 14px;
+            flex: 1;
         }
 
-        /* HEADER */
-        h1{
-            text-align:center;
-            font-size:22px;
-            margin-bottom:20px;
-            color:#38bdf8;
+        /* ==========================================================================
+           2. HEADER ACTIONS MATRIX
+           ========================================================================== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 14px;
         }
 
-        /* POST CARD */
-        .post-card{
-            background:#111827;
-            border:1px solid #1f2937;
-            border-radius:16px;
-            padding:15px;
-            margin-bottom:18px;
-            box-shadow:0 6px 20px rgba(0,0,0,0.25);
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #38bdf8;
+            letter-spacing: -0.3px;
         }
 
-        .username{
-            font-weight:700;
-            color:#38bdf8;
-            margin-bottom:8px;
+        .btn-nav {
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: #1f2937;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.15s ease;
         }
 
-        .content{
-            color:#e5e7eb;
-            line-height:1.6;
-            margin-bottom:10px;
-            word-break:break-word;
+        .btn-nav:active {
+            background: #334155;
+            color: #ffffff;
         }
 
-        .post-img{
-            width:100%;
-            border-radius:12px;
-            margin-top:10px;
-            max-height:350px;
-            object-fit:cover;
+        /* ==========================================================================
+           3. CONTAINER CARD AND METADATA ELEMENTS
+           ========================================================================== */
+        .post-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* BUTTONS */
-        .btn{
-            border:none;
-            padding:10px 14px;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:600;
-            transition:0.2s;
+        .post-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
-        .btn-danger{
-            background:#ef4444;
-            color:white;
-            width:100%;
-            margin-top:10px;
+        .username {
+            font-weight: 700;
+            font-size: 14px;
+            color: #38bdf8;
         }
 
-        .btn-danger:hover{
-            background:#dc2626;
+        .content {
+            color: #e5e7eb;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
         }
 
-        /* COMMENTS */
-        .comments{
-            margin-top:15px;
-            padding-top:10px;
-            border-top:1px solid #1f2937;
+        .post-img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 12px;
+            max-height: 320px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .comment{
-            background:#0f172a;
-            padding:10px;
-            border-radius:10px;
-            margin-top:10px;
+        /* ==========================================================================
+           4. FLEX BUTTON STRUCTURE
+           ========================================================================== */
+        .btn-action {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.1s ease;
         }
 
-        .comment strong{
-            color:#fbbf24;
+        .btn-action:active {
+            transform: scale(0.97);
         }
 
-        .comment-delete{
-            background:#ef4444;
-            color:white;
-            border:none;
-            padding:6px 10px;
-            border-radius:8px;
-            margin-top:6px;
-            cursor:pointer;
-            font-size:12px;
+        .btn-danger-link {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
 
-        .comment-delete:hover{
-            background:#dc2626;
+        .btn-danger-link:active {
+            background: #ef4444;
+            color: #ffffff;
         }
 
-        /* MOBILE */
-        @media(max-width:600px){
-            h1{
-                font-size:18px;
-            }
+        /* ==========================================================================
+           5. COMMENTS FEED ITERATION ROW
+           ========================================================================== */
+        .comments-section {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #1f2937;
+        }
 
-            .post-card{
-                padding:12px;
-            }
+        .comments-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .comment-item {
+            background: #0f172a;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-top: 8px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .comment-content {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #cbd5e1;
+            flex: 1;
+        }
+
+        .comment-content strong {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .btn-comment-delete {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.1s ease;
+        }
+
+        .btn-comment-delete:active {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        /* ==========================================================================
+           6. COMPACT MEDIA BREAKPOINTS
+           ========================================================================== */
+        @media(max-width: 480px) {
+            .container { padding: 16px 10px; }
+            .page-header { margin-bottom: 16px; }
+            .post-card { padding: 12px; border-radius: 12px; }
+            .comment-item { padding: 8px 10px; }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
 
-    <h1>🛠️ Manage Community Posts</h1>
+    <div class="page-header">
+        <h1>🛠️ Manage Posts</h1>
+        <a href="/admin" class="btn-nav">← Control Panel</a>
+    </div>
 
     {% for post in posts %}
-
     <div class="post-card">
-
-        <div class="username">
-            👤 {{ post.user.username }}
+        
+        <div class="post-meta">
+            <span class="username">👤 {{ post.user.username }}</span>
+            
+            <form action="/admin/delete-post/{{ post.id }}" method="POST" onsubmit="return confirm('⚠️ Permanently delete this community post?')">
+                <button class="btn-action btn-danger-link" type="submit">
+                    Delete
+                </button>
+            </form>
         </div>
 
         <div class="content">
@@ -149,51 +241,32 @@
         </div>
 
         {% if post.image %}
-            <img src="{{ post.image }}" class="post-img">
+            <img src="{{ post.image }}" class="post-img" alt="Community shared visual attachment profile">
         {% endif %}
 
-        <form action="/admin/delete-post/{{ post.id }}"
-              method="POST"
-              onsubmit="return confirm('Delete this post?')">
-
-            <button class="btn btn-danger" type="submit">
-                🗑 Delete Post
-            </button>
-
-        </form>
-
-        <!-- COMMENTS -->
-        <div class="comments">
-
-            <strong style="color:#38bdf8;">
-                💬 Comments
-            </strong>
+        <div class="comments-section">
+            <span class="comments-label">💬 Discussion Stream</span>
 
             {% for comment in post.comments %}
+            <div class="comment-item">
+                <div class="comment-content">
+                    <strong>{{ comment.user.username }}</strong>{{ comment.content }}
+                </div>
 
-            <div class="comment">
-
-                <strong>{{ comment.user.username }}</strong><br>
-                {{ comment.content }}
-
-                <form action="/admin/delete-comment/{{ comment.id }}"
-                      method="POST"
-                      onsubmit="return confirm('Delete this comment?')">
-
-                    <button class="comment-delete" type="submit">
-                        Delete
-                    </button>
-
+                <form action="/admin/delete-comment/{{ comment.id }}" method="POST" onsubmit="return confirm('Remove comment?')">
+                    <button class="btn-comment-delete" type="submit">Delete</button>
                 </form>
-
             </div>
-
+            {% else %}
+            <div style="font-size: 12px; color: #4b5563; padding: 4px 0;">No comments logged on this post profile.</div>
             {% endfor %}
-
         </div>
 
     </div>
-
+    {% else %}
+    <div style="background: #111827; border: 1px dashed #1f2937; padding: 40px; text-align: center; border-radius: 16px; color: #6b7280;">
+        No active user posts detected inside the platform moderation queue.
+    </div>
     {% endfor %}
 
 </div>
