@@ -123,7 +123,7 @@ def register_admin(app):
         if not session.get("admin"):
             return redirect("/admin-login")
 
-        lessons = Lesson.query.all()
+        lessons = Lesson.query.order_by(Lesson.id).all()
 
         return render_template(
             "admin/manage_lessons.html",
@@ -194,7 +194,7 @@ def register_admin(app):
         if not session.get("admin"):
             return redirect("/admin-login")
 
-        formulas = Formula.query.all()
+        formulas = Formula.query.order_by(Formula.id).all()
 
         return render_template("admin/manage_formulas.html", formulas=formulas)
         return render_template("admin/manage_formulas.html", formulas=formulas)

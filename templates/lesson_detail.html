@@ -29,7 +29,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Removes blue flash on mobile tap */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -45,9 +45,6 @@
             line-height: 1.6;
         }
 
-        /* MOBILE-FIRST CONTAINER 
-           Ensures perfect padding on edge-to-edge mobile glass surfaces
-        */
         .container {
             width: 100%;
             max-width: 760px;
@@ -100,7 +97,7 @@
         }
 
         .header h1 {
-            font-size: 20px; /* Scaling down for small mobile devices */
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #ffffff;
@@ -176,16 +173,14 @@
             padding-bottom: 6px;
         }
 
-        /* Smooth out raw pre-line walls of text for phone screens */
         .content {
             color: #cbd5e1;
             line-height: 1.7;
-            font-size: 14.5px; /* Clean tracking readability scale */
+            font-size: 14.5px;
             white-space: pre-line; 
-            word-break: break-word; /* Prevents long formula overflow */
+            word-break: break-word;
         }
 
-        /* Support utility blocks for structured lessons saved in Supabase */
         .op-card {
             background: rgba(15, 23, 42, 0.6);
             border-left: 3.5px solid #38bdf8;
@@ -194,7 +189,6 @@
             margin: 14px 0;
         }
         
-        /* Mobile Horizontal Scroll Protection for equations and tables */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -207,7 +201,7 @@
         .metric-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 450px; /* Prevents total text squishing inside table viewports */
+            min-width: 450px;
             font-size: 13px;
         }
 
@@ -223,10 +217,13 @@
         }
 
         /* =========================
-           MOBILE INTERACTION LAYOUT
+           MOBILE INTERACTION LAYOUT (UPGRADED)
         ========================= */
-        .lesson-actions {
-            margin-top: 8px;
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .action-btn {
@@ -253,8 +250,51 @@
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
         }
         .action-btn:active {
-            background: #1d4ed8;
-            transform: scale(0.98); /* Tactile feedback on screen tap */
+            transform: scale(0.98);
+        }
+
+        /* PRO COMPLETE BUTTON */
+        .complete-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 16px 20px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        .complete-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* PRO COMPLETED BADGE */
+        .completed-badge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(16, 185, 129, 0.1); /* Glassy background */
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: default;
         }
 
         /* =========================
@@ -267,6 +307,7 @@
             .content-card { padding: 32px 24px; margin-bottom: 20px; }
             .content { font-size: 15px; line-height: 1.8; }
             .video-box { padding: 10px; margin-bottom: 20px; }
+            .action-group { flex-direction: row; } /* Puts buttons side-by-side on desktop */
         }
     </style>
 </head>
@@ -283,7 +324,7 @@
             📚 Module • 🎓 Petroleum Engineering
         </div>
         <div class="progress-bar">
-            <div class="progress"></div>
+            <div class="progress" style="width: {% if completed %}100%{% else %}0%{% endif %}"></div>
         </div>
     </div>
 
@@ -297,9 +338,19 @@
         <div class="content" id="lesson-content">{{ lesson.content }}</div>
     </div>
 
-    <div class="lesson-actions">
+    <div class="action-group">
+        {% if completed %}
+            <div class="completed-badge">
+                ✅ Done
+            </div>
+        {% else %}
+            <a href="/complete_lesson/{{ lesson.id }}" class="complete-btn" role="button">
+                ✓ Mark Done
+            </a>
+        {% endif %}
+
         <button class="action-btn" onclick="askPetroAI()">
-            🤖 Ask PetroAI About This Lesson
+            🤖 Ask Your Questions
         </button>
     </div>
 </div>

@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, session, redirect, render_template, url_for
 from database import db
-from models import Lesson, Formula, User, Post, Comment, Like, Quiz
+from models import Lesson, Formula, User, Post, Comment, Like, Quiz, LessonProgress
 from datetime import timedelta
 from werkzeug.utils import secure_filename
 from gemini_quiz import generate_quiz
@@ -62,11 +62,25 @@ def prefers_json():
 @app.route("/")
 @app.route("/home")
 def home():
+
     if not session.get("logged_in"):
         return redirect("/login")
 
-    # We hardcode "en" here so your templates don't break if they still look for the 'lang' variable
-    return render_template("index.html", lang="en")
+    completed_lessons = 0
+    total_lessons = Lesson.query.count()
+
+    if session.get("user_id"):
+        completed_lessons = LessonProgress.query.filter_by(
+            user_id=session["user_id"],
+            completed=True
+        ).count()
+
+    return render_template(
+        "index.html",
+        lang="en",
+        completed_lessons=completed_lessons,
+        total_lessons=total_lessons
+    )
 
 @app.route("/subject")
 def subject_home():

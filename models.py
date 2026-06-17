@@ -14,6 +14,12 @@ class Lesson(db.Model):
     video = db.Column(db.String(500), nullable=False)
 
     content = db.Column(db.Text, nullable=False)
+    
+    progress = db.relationship(
+        "LessonProgress",
+        backref="lesson",
+        cascade="all, delete-orphan"
+    )
 
 
 # =========================
@@ -88,11 +94,15 @@ class User(db.Model):
 
     profile_pic = db.Column(db.String(300))
 
-    country = db.Column(db.String(100))
-
     university = db.Column(db.String(200))
 
     petroleum_level = db.Column(db.String(100))
+
+    progress = db.relationship(
+        "LessonProgress",
+        backref="user",
+        cascade="all, delete-orphan"
+    )
 
 class Post(db.Model):
 
@@ -187,4 +197,29 @@ class Quiz(db.Model):
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
+    )
+
+class LessonProgress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    lesson_id = db.Column(
+        db.Integer,
+        db.ForeignKey("lesson.id"),
+        nullable=False
+    )
+
+    completed = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    completed_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now()
     )
