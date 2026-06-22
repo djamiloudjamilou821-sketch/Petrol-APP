@@ -773,8 +773,10 @@
             <a href="/subject" class="nav-link">
                 <i class="fas fa-book"></i> Subjects
             </a>
-        </nav>
-
+            <a href="/profile/{{ session.get('user_id') }}" class="nav-link">
+                <i class="fas fa-user"></i> Profile
+            </a>
+        </nav>    
         <div class="header-right">
             <button class="hamburger" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>
