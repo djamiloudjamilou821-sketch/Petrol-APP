@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PetroAI Chat Assistant</title>
+    <title>PetroAI - AI Assistant</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* ==========================================================================
-           CORE RESET & VARIABLE CONFIGURATION
-           ========================================================================== */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
@@ -17,283 +17,587 @@
         }
 
         html, body {
-            background: #0b0f19;
-            color: #f1f5f9;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
-            overflow-y: auto;
             width: 100%;
             height: 100%;
+            overflow: hidden;
         }
 
-        /* ⚡ FIXES STANDALONE MOBILE CUT-OFFS: Masters absolute layout bounds safely */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== APP CONTAINER ===== */
         .app-container {
             display: flex;
             flex-direction: column;
             width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100%;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        /* ==========================================================================
-           TOP METRIC NAVIGATION HEADER
-           ========================================================================== */
+        /* ===== HEADER ===== */
         .header {
-            background: #111827;
-            padding: 14px 16px;
-            display: grid;
-            grid-template-columns: 80px 1fr 80px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            display: flex;
             align-items: center;
-            border-bottom: 1px solid #1f2937;
+            justify-content: space-between;
+            gap: 16px;
             flex-shrink: 0;
-            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
         .header-title {
-            text-align: center;
-            font-weight: 600;
-            font-size: 16px;
-            letter-spacing: -0.2px;
-        }
-
-        .back-nav {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            gap: 8px;
         }
 
-        .back-arrow {
-            color: #9ca3af;
-            text-decoration: none;
-            padding: 6px 12px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .back-arrow:hover {
-            color: #f3f4f6;
-            background: #374151;
-        }
-
-        .action-nav {
+        .ai-badge {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 6px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .new-chat-btn {
-            background: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
-            width: 34px;
-            height: 34px;
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
+            color: #1f2937;
             font-size: 18px;
-            font-weight: 500;
             cursor: pointer;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
         }
 
         .new-chat-btn:hover {
-            color: #f3f4f6;
-            background: #374151;
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
-        /* ==========================================================================
-           STREAMING CHAT WORKSPACE
-           ========================================================================== */
+        /* ===== CHAT BOX ===== */
         #chat-box {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 16px;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
+            overflow-x: hidden;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             -webkit-overflow-scrolling: touch;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         #chat-box::-webkit-scrollbar {
-            width: 5px;
-        }
-        #chat-box::-webkit-scrollbar-thumb {
-            background: #2d3748;
-            border-radius: 10px;
+            width: 8px;
         }
 
-        /* ==========================================================================
-           CHAT BUBBLES FRAMEWORK
-           ========================================================================== */
+        #chat-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #chat-box::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        #chat-box::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* ===== CHAT BUBBLES ===== */
         .bubble-wrapper {
             display: flex;
             width: 100%;
-            margin-bottom: 2px;
+            animation: slideIn 0.3s ease-out;
         }
 
-        .user-wrapper { justify-content: flex-end; }
-        .ai-wrapper { justify-content: flex-start; }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-wrapper {
+            justify-content: flex-end;
+        }
+
+        .ai-wrapper {
+            justify-content: flex-start;
+        }
 
         .bubble {
-            max-width: 85%;
+            max-width: 75%;
             padding: 12px 16px;
-            border-radius: 18px;
-            line-height: 1.55;
+            border-radius: 12px;
+            line-height: 1.6;
             font-size: 15px;
             word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .user {
-            background: #2563eb;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
         .ai {
-            background: #111827;
-            border: 1px solid #1f2937;
+            background: white;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
             border-bottom-left-radius: 4px;
         }
 
-        /* MARKDOWN DECORATOR TARGETS */
-        .ai-content p { margin-bottom: 10px; }
-        .ai-content p:last-child { margin-bottom: 0; }
-        .ai-content h3 { margin: 14px 0 6px; font-size: 16px; color: #38bdf8; }
-        .ai-content b { color: #f59e0b; }
-        .ai-content ul { padding-left: 20px; margin: 8px 0; }
-        .ai-content li { margin-bottom: 4px; }
+        /* ===== AI CONTENT FORMATTING ===== */
+        .ai-content p {
+            margin-bottom: 12px;
+        }
 
+        .ai-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-content h3 {
+            margin: 16px 0 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .ai-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .ai-content b {
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .ai-content ul {
+            padding-left: 20px;
+            margin: 12px 0;
+        }
+
+        .ai-content li {
+            margin-bottom: 6px;
+            color: #374151;
+        }
+
+        .ai-content code {
+            background: #f3f4f6;
+            color: #d97706;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        /* ===== COPY BUTTON ===== */
         .copy-btn {
-            display: block;
-            margin-top: 10px;
-            background: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
-            padding: 4px 10px;
+            display: inline-block;
+            margin-top: 12px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            width: fit-content;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
-        .copy-btn:hover { background: #374151; color: #f3f4f6; }
 
-        /* TYPING INDICATOR LOADING COMPONENT */
-        .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 6px 0; }
+        .copy-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+            border-color: #d1d5db;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 0;
+        }
+
         .typing-indicator span {
-            width: 8px; height: 8px; background: #9ca3af; border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
-            40% { transform: scale(1.0); opacity: 1; }
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
         }
 
-        /* ==========================================================================
-           CONSOLIDATED FOOTER TERMINAL
-           ========================================================================== */
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* ===== FOOTER / INPUT AREA ===== */
         .footer-container {
-            background: #111827;
-            padding: 12px 16px;
-            border-top: 1px solid #1f2937;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 20px;
             flex-shrink: 0;
             width: 100%;
-        }
-
-        .footer-container {
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
             position: sticky;
             bottom: 0;
             z-index: 100;
+            padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
         }
 
         .input-area {
             display: flex;
-            max-width: 760px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 24px;
-            padding: 5px 6px 5px 14px;
-            gap: 10px;
-            align-items: flex-end; /* Keeps send button pinned nicely at bottom edge */
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 8px 12px;
+            gap: 12px;
+            align-items: flex-end;
             transition: all 0.2s ease;
         }
 
         .input-area:focus-within {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
-            background: #111827;
+            border-color: #1e40af;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
 
         #question {
             flex: 1;
             background: transparent;
             border: none;
-            color: #f9fafb;
+            color: #1f2937;
             outline: none;
             resize: none;
             font-family: inherit;
             font-size: 15px;
             padding: 8px 0;
             min-height: 24px;
-            max-height: 120px; /* Limits expansion bounds smoothly */
-            line-height: 1.4;
+            max-height: 120px;
+            line-height: 1.5;
         }
 
         #question::placeholder {
-            color: #6b7280;
+            color: #9ca3af;
         }
 
         .send-btn {
-            background: #2563eb;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
             border: none;
-            border-radius: 18px;
+            border-radius: 8px;
             padding: 8px 16px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
-            height: 34px;
+            transition: all 0.2s ease;
+            height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            gap: 6px;
         }
 
-        .send-btn:hover { background: #1d4ed8; }
-        .send-btn:active { transform: scale(0.96); }
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
 
-        /* ==========================================================================
-           SMALL SMARTPHONE MEDIA RESPONSIVENESS RULES
-           ========================================================================== */
-        @media (max-width: 480px) {
-            .header { padding: 12px 12px; }
-            .bubble { max-width: 90%; font-size: 14px; }
-            #chat-box { padding: 14px 10px; }
-            
-            /* ⚡ KEY FIX FOR STANDALONE DOWNLOADED MODE: Forces native OS spacing fallback safety offset */
+        .send-btn:active {
+            transform: scale(0.96);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== ERROR MESSAGE ===== */
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* ===== WELCOME MESSAGE ===== */
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .welcome-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            #chat-box {
+                padding: 16px 12px;
+                gap: 12px;
+            }
+
+            .bubble {
+                max-width: 85%;
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
             .footer-container {
-                padding-bottom: max(
-                    12px,
-                    env(safe-area-inset-bottom)
-                );
+                padding: 12px 16px;
+            }
+
+            .input-area {
+                padding: 6px 10px;
+                gap: 10px;
+            }
+
+            #question {
+                font-size: 14px;
+                padding: 6px 0;
+            }
+
+            .send-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+                height: 32px;
+            }
+
+            .copy-btn {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+
+            .ai-content h3 {
+                font-size: 15px;
+                margin: 12px 0 6px;
+            }
+
+            .ai-content ul {
+                padding-left: 16px;
+                margin: 10px 0;
+            }
+
+            .ai-content li {
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 12px;
+            }
+
+            .back-btn,
+            .new-chat-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            #chat-box {
+                padding: 12px 10px;
+                gap: 10px;
+            }
+
+            .bubble {
+                max-width: 90%;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .bubble-wrapper {
+                gap: 8px;
+            }
+
+            .footer-container {
+                padding: 10px 12px;
+                padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+            }
+
+            .input-area {
+                padding: 6px 8px;
+                gap: 8px;
+                border-radius: 10px;
+            }
+
+            #question {
+                font-size: 13px;
+                padding: 6px 0;
+                min-height: 20px;
+            }
+
+            .send-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+                height: 30px;
+                gap: 4px;
+            }
+
+            .copy-btn {
+                padding: 4px 8px;
+                font-size: 10px;
+                margin-top: 10px;
+            }
+
+            .ai-content {
+                font-size: 13px;
+            }
+
+            .ai-content p {
+                margin-bottom: 10px;
+            }
+
+            .ai-content h3 {
+                font-size: 14px;
+                margin: 10px 0 6px;
+            }
+
+            .ai-content ul {
+                padding-left: 16px;
+                margin: 8px 0;
+            }
+
+            .ai-content li {
+                margin-bottom: 4px;
+                font-size: 13px;
+            }
+
+            .welcome-message {
+                padding: 30px 16px;
+            }
+
+            .welcome-icon {
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+
+            .welcome-title {
+                font-size: 16px;
+            }
+
+            .welcome-text {
+                font-size: 13px;
             }
         }
     </style>
@@ -303,211 +607,244 @@
 
 <div class="app-container">
 
+    <!-- HEADER -->
     <div class="header">
-        <div class="back-nav">
-            <a class="back-arrow" href="javascript:history.back()">←</a>
+        <div class="header-left">
+            <a class="back-btn" href="javascript:history.back()" title="Go Back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-title">
+                <div class="ai-badge">
+                    <i class="fas fa-brain"></i>
+                </div>
+                PetroAI
+            </div>
         </div>
-        <div class="header-title">🤖 PetroAI</div>
-        <div class="action-nav">
-            <button class="new-chat-btn" onclick="clearChat()">+</button>
+        <div class="header-right">
+            <button class="new-chat-btn" onclick="clearChat()" title="New Chat">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
     </div>
 
+    <!-- CHAT BOX -->
     <div id="chat-box"></div>
 
+    <!-- INPUT AREA -->
     <div class="footer-container">
         <div class="input-area">
-            <textarea id="question" rows="1" placeholder="Ask a question..." autocomplete="off"></textarea>
-            <button class="send-btn" onclick="askAI()">Send</button>
+            <textarea 
+                id="question" 
+                rows="1" 
+                placeholder="Ask a question about petroleum engineering..."
+                autocomplete="off"
+            ></textarea>
+            <button class="send-btn" onclick="askAI()" title="Send Message">
+                <i class="fas fa-paper-plane"></i>
+                <span>Send</span>
+            </button>
         </div>
     </div>
 
 </div>
 
+<!-- SCRIPTS -->
 <script>
-const chatBox = document.getElementById("chat-box");
-const input = document.getElementById("question");
+    const chatBox = document.getElementById("chat-box");
+    const input = document.getElementById("question");
 
-let isLoading = false;
+    let isLoading = false;
 
-// Automatically handles flexible layout growth heights for textareas
-input.addEventListener("input", function() {
-    this.style.height = "auto";
-    this.style.height = this.scrollHeight + "px";
-});
+    // Auto-resize textarea
+    input.addEventListener("input", function() {
+        this.style.height = "auto";
+        this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
 
-function escapeHTML(str) {
-    return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+    // Handle Enter key
+    input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            askAI();
+        }
+    });
 
-function formatAI(text) {
-    if (!text) return "";
+    function escapeHTML(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+    }
 
-    let clean = escapeHTML(text.trim());
+    function formatAI(text) {
+        if (!text) return "";
 
-    clean = clean.replace(/^### (.*?)(?:\n|$)/gm, "<h3>$1</h3>");
-    clean = clean.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+        let clean = escapeHTML(text.trim());
 
-    let lines = clean.split("\n");
-    let out = [];
-    let inList = false;
+        // Format headers
+        clean = clean.replace(/^### (.*?)(?:\n|$)/gm, "<h3>$1</h3>");
+        clean = clean.replace(/^## (.*?)(?:\n|$)/gm, "<h3>$1</h3>");
 
-    for (let line of lines) {
-        line = line.trim();
+        // Format bold
+        clean = clean.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
 
-        if (line.startsWith("- ")) {
-            if (!inList) {
-                out.push("<ul>");
-                inList = true;
+        // Format code
+        clean = clean.replace(/`(.*?)`/g, "<code>$1</code>");
+
+        let lines = clean.split("\n");
+        let out = [];
+        let inList = false;
+
+        for (let line of lines) {
+            line = line.trim();
+
+            if (line.startsWith("- ")) {
+                if (!inList) {
+                    out.push("<ul>");
+                    inList = true;
+                }
+                out.push(`<li>${line.slice(2)}</li>`);
+            } else {
+                if (inList) {
+                    out.push("</ul>");
+                    inList = false;
+                }
+                if (line) out.push(`<p>${line}</p>`);
             }
-            out.push(`<li>${line.slice(2)}</li>`);
+        }
+
+        if (inList) out.push("</ul>");
+
+        return out.join("");
+    }
+
+    function syncStorage() {
+        localStorage.setItem("petroai_chat", chatBox.innerHTML);
+    }
+
+    function loadChat() {
+        const saved = localStorage.getItem("petroai_chat");
+        if (saved) {
+            chatBox.innerHTML = saved;
         } else {
-            if (inList) {
-                out.push("</ul>");
-                inList = false;
-            }
-            if (line) out.push(`<p>${line}</p>`);
+            showWelcome();
         }
     }
 
-    if (inList) out.push("</ul>");
-
-    return out.join("");
-}
-
-function syncStorage() {
-    localStorage.setItem("petroai_chat", chatBox.innerHTML);
-}
-
-function clearChat() {
-    if (confirm("Clear conversation history?")) {
-        localStorage.removeItem("petroai_chat");
+    function showWelcome() {
         chatBox.innerHTML = `
             <div class="bubble-wrapper ai-wrapper">
                 <div class="bubble ai ai-content">
-                    <p>Hello 👋 I am PetroAI, your engineering tutor.</p>
+                    <div class="welcome-message">
+                        <div class="welcome-icon">🤖</div>
+                        <div class="welcome-title">Welcome to PetroAI</div>
+                        <div class="welcome-text">
+                            I'm your AI-powered petroleum engineering tutor. Ask me anything about drilling, reservoir engineering, production, or any other petroleum engineering topics!
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
-        syncStorage();
     }
-}
 
-async function askAI() {
-    if (isLoading) return;
+    function clearChat() {
+        if (confirm("Clear all conversation history?")) {
+            localStorage.removeItem("petroai_chat");
+            showWelcome();
+        }
+    }
 
-    const question = input.value.trim();
-    if (!question) return;
-
-    isLoading = true;
-
-    chatBox.insertAdjacentHTML("beforeend", `
-        <div class="bubble-wrapper user-wrapper">
-            <div class="bubble user">${escapeHTML(question)}</div>
-        </div>
-    `);
-
-    input.value = "";
-    input.style.height = "auto"; // Snap container back to initial single-row grid scale
-
-    const loadingId = "load_" + Date.now();
-
-    // Renders pulse animations instead of plain text strings
-    chatBox.insertAdjacentHTML("beforeend", `
-        <div class="bubble-wrapper ai-wrapper" id="${loadingId}">
-            <div class="bubble ai">
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-    `);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    try {
-        const res = await fetch("/ask_petroai", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ question })
+    function copyText(btn) {
+        const bubble = btn.closest(".bubble");
+        const text = bubble.innerText.replace("Copy", "").trim();
+        
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = btn.innerText;
+            btn.innerText = "✓ Copied!";
+            setTimeout(() => {
+                btn.innerText = originalText;
+            }, 2000);
         });
+    }
 
-        const data = await res.json();
+    async function askAI() {
+        if (isLoading) return;
 
-        document.getElementById(loadingId)?.remove();
+        const question = input.value.trim();
+        if (!question) return;
 
+        isLoading = true;
+
+        // Add user message
         chatBox.insertAdjacentHTML("beforeend", `
-            <div class="bubble-wrapper ai-wrapper">
-                <div class="bubble ai ai-content">
-                    ${formatAI(data.answer)}
-                    <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            <div class="bubble-wrapper user-wrapper">
+                <div class="bubble user">${escapeHTML(question)}</div>
+            </div>
+        `);
+
+        input.value = "";
+        input.style.height = "auto";
+
+        const loadingId = "load_" + Date.now();
+
+        // Add loading indicator
+        chatBox.insertAdjacentHTML("beforeend", `
+            <div class="bubble-wrapper ai-wrapper" id="${loadingId}">
+                <div class="bubble ai">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
             </div>
         `);
 
-        syncStorage();
-
-    } catch (e) {
-        document.getElementById(loadingId)?.remove();
-
-        chatBox.insertAdjacentHTML("beforeend", `
-            <div class="bubble-wrapper ai-wrapper">
-                <div class="bubble ai" style="color: #f87171; border-color: rgba(248, 113, 113, 0.2);">
-                    ⚠️ Connection error. Try again.
-                </div>
-            </div>
-        `);
-    }
-
-    isLoading = false;
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function copyText(btn) {
-    const rawText = btn.parentElement.innerText;
-    // Clears out helper copy strings from clips safely
-    const cleanText = rawText.substring(0, rawText.lastIndexOf("Copy")).trim();
-    navigator.clipboard.writeText(cleanText).then(() => {
-        const originalText = btn.innerText;
-        btn.innerText = "Copied! ✓";
-        setTimeout(() => { btn.innerText = originalText; }, 2000);
-    });
-}
-
-input.addEventListener("keypress", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        askAI();
-    }
-});
-
-window.onload = () => {
-    const saved = localStorage.getItem("petroai_chat");
-    if (saved && saved.trim() !== "") {
-        chatBox.innerHTML = saved;
-    } else {
-        chatBox.innerHTML = `
-            <div class="bubble-wrapper ai-wrapper">
-                <div class="bubble ai ai-content">
-                    <p>Hello 👋 I am PetroAI, your engineering tutor.</p>
-                </div>
-            </div>
-        `;
-    }
-    chatBox.scrollTop = chatBox.scrollHeight;
-};
-
-window.visualViewport?.addEventListener("resize", () => {
-    setTimeout(() => {
         chatBox.scrollTop = chatBox.scrollHeight;
-    }, 100);
-});
+
+        try {
+            const res = await fetch("/ask_petroai", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question })
+            });
+
+            const data = await res.json();
+
+            document.getElementById(loadingId)?.remove();
+
+            chatBox.insertAdjacentHTML("beforeend", `
+                <div class="bubble-wrapper ai-wrapper">
+                    <div class="bubble ai ai-content">
+                        ${formatAI(data.answer)}
+                        <button class="copy-btn" onclick="copyText(this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            `);
+
+            syncStorage();
+
+        } catch (e) {
+            document.getElementById(loadingId)?.remove();
+
+            chatBox.insertAdjacentHTML("beforeend", `
+                <div class="bubble-wrapper ai-wrapper">
+                    <div class="bubble ai">
+                        <div class="error-message">
+                            <strong>Error:</strong> Unable to get response. Please try again.
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+        isLoading = false;
+    }
+
+    // Load chat on page load
+    document.addEventListener("DOMContentLoaded", loadChat);
 </script>
 
 </body>

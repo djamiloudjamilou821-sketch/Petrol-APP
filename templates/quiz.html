@@ -2,135 +2,697 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>{{ subject | capitalize }} Quiz - PetroApp</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        .animate-slide-up {
-            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #f0f4ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== QUIZ CARD ===== */
+        .quiz-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            width: 100%;
+            max-width: 700px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== QUESTION SECTION ===== */
+        .question-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1f2937;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        /* ===== OPTIONS SECTION ===== */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px 18px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #1e40af;
+            background: #f0f4ff;
+            transform: translateX(4px);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .option-letter {
+            font-weight: 700;
+            color: #1e40af;
+            min-width: 24px;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* ===== SUCCESS STATE ===== */
+        .option-btn.correct {
+            border-color: #10b981;
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .option-btn.correct .option-letter {
+            color: #10b981;
+        }
+
+        /* ===== ERROR STATE ===== */
+        .option-btn.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .option-btn.incorrect .option-letter {
+            color: #ef4444;
+        }
+
+        /* ===== RESULT SECTION ===== */
+        .result-section {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-section.success {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+        }
+
+        .result-section.error {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+        }
+
+        .result-feedback {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-section.success .result-feedback {
+            color: #065f46;
+        }
+
+        .result-section.error .result-feedback {
+            color: #991b1b;
+        }
+
+        .result-details {
+            font-size: 13px;
+            line-height: 1.8;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 12px;
+        }
+
+        .result-section.success .result-details {
+            color: #047857;
+        }
+
+        .result-section.error .result-details {
+            color: #7f1d1d;
+        }
+
+        .result-detail-item {
+            margin-bottom: 10px;
+        }
+
+        .result-detail-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-detail-label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .result-detail-value {
+            display: block;
+            margin-left: 0;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .action-btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ===== ERROR MESSAGE ===== */
+        .error-container {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .error-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #991b1b;
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            font-size: 14px;
+            color: #7f1d1d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .quiz-card {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+
+            .options-container {
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .option-btn {
+                padding: 14px 16px;
+                font-size: 14px;
+                gap: 10px;
+            }
+
+            .result-section {
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+
+            .result-feedback {
+                font-size: 13px;
+            }
+
+            .result-details {
+                font-size: 12px;
+            }
+
+            .action-buttons {
+                gap: 10px;
+                padding-top: 20px;
+            }
+
+            .action-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .error-container {
+                padding: 20px;
+            }
+
+            .error-icon {
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+
+            .error-title {
+                font-size: 16px;
+            }
+
+            .error-message {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .container {
+                padding: 12px 12px;
+            }
+
+            .quiz-card {
+                padding: 16px;
+            }
+
+            .question-label {
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+
+            .question-text {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 16px;
+            }
+
+            .options-container {
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 13px;
+                gap: 10px;
+            }
+
+            .option-letter {
+                min-width: 20px;
+                font-size: 14px;
+            }
+
+            .option-text {
+                font-size: 13px;
+            }
+
+            .result-section {
+                padding: 12px;
+                margin-bottom: 16px;
+            }
+
+            .result-feedback {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+
+            .result-details {
+                font-size: 11px;
+                padding-top: 10px;
+            }
+
+            .result-detail-item {
+                margin-bottom: 8px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+                padding-top: 16px;
+            }
+
+            .action-btn {
+                padding: 12px 14px;
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            .error-container {
+                padding: 16px;
+            }
+
+            .error-icon {
+                font-size: 36px;
+                margin-bottom: 8px;
+            }
+
+            .error-title {
+                font-size: 14px;
+            }
+
+            .error-message {
+                font-size: 12px;
+                margin-bottom: 16px;
+            }
+
+            .footer {
+                padding: 12px 12px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
-<body class="bg-[#0F172A] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+<body>
 
-    <nav class="bg-[#1E293B] border-b border-slate-800/80 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="javascript:history.back()" class="back-arrow" aria-label="Go Back">⬅</a>
-            <span class="text-[11px] font-bold bg-slate-900 text-[#38BDF8] border border-[#38BDF8]/20 px-2.5 py-1 rounded-full shadow-inner">
-                {{ subject | capitalize }} Assessment
-            </span>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <i class="fas fa-book"></i> {{ subject | capitalize }} Assessment
         </div>
-    </nav>
+    </div>
+</div>
 
-    <main class="flex-grow flex items-center justify-center px-3 py-6 sm:py-12">
-        <div class="w-full max-w-xl bg-[#1E293B] border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl space-y-6 animate-slide-up">
-            
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h2 class="text-sm font-black uppercase text-[#38BDF8] tracking-widest">
-                    {{ subject }} Module
-                </h2>
+<!-- MAIN CONTAINER -->
+<div class="container">
+    {% if quiz.error %}
+    <!-- ERROR STATE -->
+    <div class="quiz-card">
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <div class="error-title">Oops! Something went wrong</div>
+            <div class="error-message">{{ quiz.error }}</div>
+            <a href="{{ url_for('quizzes') }}" class="action-btn secondary">
+                <i class="fas fa-arrow-left"></i> Back to Quiz Selection
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <!-- QUIZ CARD -->
+    <div class="quiz-card">
+        <!-- QUESTION SECTION -->
+        <div class="question-label">
+            <i class="fas fa-lightbulb"></i> Question
+        </div>
+        <div class="question-text">
+            {{ quiz.question }}
+        </div>
+
+        <!-- OPTIONS SECTION -->
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer('A', this)">
+                <span class="option-letter">A</span>
+                <span class="option-text">{{ quiz.A }}</span>
+            </button>
+            <button class="option-btn" onclick="checkAnswer('B', this)">
+                <span class="option-letter">B</span>
+                <span class="option-text">{{ quiz.B }}</span>
+            </button>
+            <button class="option-btn" onclick="checkAnswer('C', this)">
+                <span class="option-letter">C</span>
+                <span class="option-text">{{ quiz.C }}</span>
+            </button>
+            <button class="option-btn" onclick="checkAnswer('D', this)">
+                <span class="option-letter">D</span>
+                <span class="option-text">{{ quiz.D }}</span>
+            </button>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div id="result-section" class="result-section">
+            <div class="result-feedback" id="feedback"></div>
+            <div class="result-details">
+                <div class="result-detail-item">
+                    <span class="result-detail-label">Correct Answer:</span>
+                    <span class="result-detail-value" id="correct-letter-display">{{ quiz.answer }}</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">Explanation:</span>
+                    <span class="result-detail-value">{{ quiz.explanation }}</span>
+                </div>
             </div>
-
-            {% if quiz.error %}
-                <div class="bg-rose-950/40 border border-rose-500/20 text-rose-200 p-5 rounded-xl text-center space-y-4">
-                    <span class="text-3xl block">⚠️</span>
-                    <p class="text-sm font-medium"><strong class="font-bold text-white">Oops!</strong> {{ quiz.error }}</p>
-                    <a href="{{ url_for('quizzes') }}" class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-slate-700 transition active:scale-95">
-                        Back to Selection
-                    </a>
-                </div>
-            {% else %}
-                <div class="space-y-1.5">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Active Inquiry</span>
-                    <p class="text-base sm:text-lg font-bold text-white leading-snug">
-                        {{ quiz.question }}
-                    </p>
-                </div>
-                
-                <div class="flex flex-col gap-3">
-                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('A', this)">
-                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">A)</strong> {{ quiz.A }}
-                    </button>
-                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('B', this)">
-                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">B)</strong> {{ quiz.B }}
-                    </button>
-                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('C', this)">
-                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">C)</strong> {{ quiz.C }}
-                    </button>
-                    <button class="option-btn group w-full bg-[#0F172A] border-2 border-slate-800/80 hover:border-[#38BDF8]/60 rounded-xl p-4 text-left text-sm sm:text-base text-slate-300 font-medium cursor-pointer transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed" onclick="checkAnswer('D', this)">
-                        <strong class="text-[#38BDF8] mr-1.5 group-hover:text-blue-400 transition-colors">D)</strong> {{ quiz.D }}
-                    </button>
-                </div>
-
-                <div id="result-section" class="hidden border rounded-xl p-4 sm:p-5 space-y-3 transition-all duration-300">
-                    <p id="feedback" class="text-sm font-bold flex items-center gap-1.5"></p>
-                    <div class="text-xs sm:text-sm space-y-1.5 text-slate-300 border-t border-white/10 pt-3">
-                        <p><strong class="text-white">Correct Answer:</strong> <span id="correct-letter-display" class="text-[#38BDF8] font-bold">{{ quiz.answer }}</span></p>
-                        <p class="leading-relaxed"><strong class="text-white">Explanation:</strong> {{ quiz.explanation }}</p>
-                    </div>
-                </div>
-                
-                <div class="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-                    <a href="{{ url_for('quizzes') }}" class="w-full sm:w-auto text-center order-2 sm:order-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs sm:text-sm font-bold py-3 px-5 rounded-xl transition active:scale-95">
-                        Change Subject
-                    </a>
-                    <a href="{{ url_for('quiz', subject=subject) }}" class="w-full sm:w-auto text-center order-1 sm:order-2 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-blue-500/10 transition active:scale-95">
-                        Next Question ➔
-                    </a>
-                </div>
-            {% endif %}
         </div>
-    </main>
 
-    <footer class="bg-[#0F172A] border-t border-slate-900/60 py-5 text-center text-[10px] text-slate-500 select-none">
-        &copy; 2026 PetroApp. Engineered for digital field analysis review.
-    </footer>
+        <!-- ACTION BUTTONS -->
+        <div class="action-buttons">
+            <a href="{{ url_for('quiz', subject=subject) }}" class="action-btn primary">
+                <i class="fas fa-arrow-right"></i> Next Question
+            </a>
+            <a href="{{ url_for('quizzes') }}" class="action-btn secondary">
+                <i class="fas fa-th"></i> Change Subject
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
 
-    <script>
-        // Grab correct answer string value from Python backend execution compiler
-        const correctAnswer = "{{ quiz.answer | default('A') }}".trim().toUpperCase();
+<!-- FOOTER -->
+<div class="footer">
+    <i class="fas fa-copyright"></i> 2026 PetroApp. Engineered for digital field analysis review.
+</div>
 
-        function checkAnswer(selectedOption, targetButton) {
-            const resultDiv = document.getElementById('result-section');
-            const feedbackText = document.getElementById('feedback');
-            const buttons = document.querySelectorAll('.option-btn');
+<!-- SCRIPTS -->
+<script>
+    const correctAnswer = "{{ quiz.answer | default('A') }}".trim().toUpperCase();
+
+    function checkAnswer(selectedOption, targetButton) {
+        const resultDiv = document.getElementById('result-section');
+        const feedbackText = document.getElementById('feedback');
+        const buttons = document.querySelectorAll('.option-btn');
+        
+        // Disable all buttons to prevent multiple selections
+        buttons.forEach(btn => btn.disabled = true);
+        
+        if (selectedOption === correctAnswer) {
+            // Success state
+            targetButton.classList.add('correct');
             
-            // Lock out further button interactions to maintain scoring integrity
-            buttons.forEach(btn => btn.disabled = true);
+            feedbackText.innerHTML = '<i class="fas fa-check-circle"></i> <strong>Correct!</strong> Well done!';
+            resultDiv.className = 'result-section show success';
+        } else {
+            // Error state
+            targetButton.classList.add('incorrect');
             
-            if (selectedOption === correctAnswer) {
-                // Apply green success borders and subtle background fills to selected button
-                targetButton.classList.remove('border-slate-800/80', 'hover:border-[#38BDF8]/60');
-                targetButton.classList.add('border-emerald-500', 'bg-emerald-950/20');
-                
-                feedbackText.innerHTML = "🎉 <strong>Correct Option!</strong> Well calculated.";
-                resultDiv.className = "block bg-emerald-950/30 border-emerald-500/20 text-emerald-300 p-4 rounded-xl space-y-2 animate-slide-up";
-            } else {
-                // Apply red highlight configurations to clicked button
-                targetButton.classList.remove('border-slate-800/80', 'hover:border-[#38BDF8]/60');
-                targetButton.classList.add('border-rose-500', 'bg-rose-950/20');
-                
-                // Highlight the actual correct option text button so user sees what they missed
-                buttons.forEach(btn => {
-                    const btnText = btn.innerText.trim();
-                    if (btnText.startsWith(correctAnswer + ")") || btnText.startsWith(correctAnswer)) {
-                        btn.classList.remove('border-slate-800/80');
-                        btn.classList.add('border-emerald-500/60', 'bg-emerald-950/10');
-                    }
-                });
+            // Highlight the correct answer
+            buttons.forEach(btn => {
+                const btnLetter = btn.querySelector('.option-letter').textContent.trim();
+                if (btnLetter === correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
 
-                feedbackText.innerHTML = "❌ <strong>Incorrect Assessment.</strong> Review documentation analysis below:";
-                resultDiv.className = "block bg-rose-950/30 border-rose-500/20 text-rose-300 p-4 rounded-xl space-y-2 animate-slide-up";
-            }
+            feedbackText.innerHTML = '<i class="fas fa-times-circle"></i> <strong>Incorrect.</strong> Review the explanation below:';
+            resultDiv.className = 'result-section show error';
         }
-    </script>
+    }
+</script>
 
 </body>
 </html>

@@ -2,123 +2,198 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Petroleum Unit Converter</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petroleum Unit Converter - PetroApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* =========================
-           FROSTED APPLICATION SHELL
-        ========================= */
-        .container {
-            width: 92%;
-            max-width: 500px;
-            margin: 0 auto;
-            background: rgba(30, 41, 59, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(16px);
-            padding: 32px 24px;
-            border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-            position: relative;
-            text-align: center;
-        }
-
-        /* =========================
-           NAVIGATION BAR ARCHITECTURE
-        ========================= */
-        .top-nav {
-            position: absolute;
-            left: 20px;
-            top: 28px;
-        }
-
-        .back-arrow {
+            color: #1f2937;
             text-decoration: none;
-            color: #94a3b8;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
             transition: all 0.2s ease;
-            display: inline-block;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .back-arrow:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
-        /* =========================
-           TYPOGRAPHY MODULES
-        ========================= */
-        h2 {
-            font-size: 24px;
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== CONVERTER CARD ===== */
+        .converter-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            width: 100%;
+            max-width: 600px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== HEADER SECTION ===== */
+        .converter-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .converter-title {
+            font-size: 28px;
             font-weight: 800;
+            color: #1f2937;
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
-            color: #ffffff;
-            padding-top: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        p {
+        .converter-description {
             font-size: 14px;
-            color: #94a3b8;
-            line-height: 1.5;
-            margin-bottom: 24px;
+            color: #6b7280;
+            line-height: 1.6;
         }
 
-        /* =========================
-           FORM CONTROLS INTERFACE
-        ========================= */
-        form {
+        /* ===== FORM SECTION ===== */
+        .converter-form {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
         }
 
-        select, input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            background: #0f172a;
-            color: white;
-            font-size: 16px; /* Prevents auto-zoom scaling on iOS platforms */
-            outline: none;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-input,
+        .form-select {
+            padding: 14px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1f2937;
+            background: #ffffff;
             transition: all 0.2s ease;
             -webkit-appearance: none;
             appearance: none;
         }
 
-        /* Style tweaks specifically for select dropdown styling */
-        select {
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%231e40af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
             background-position: right 12px center;
             background-repeat: no-repeat;
             background-size: 20px;
@@ -126,138 +201,317 @@
             cursor: pointer;
         }
 
-        select:focus, input:focus {
-            border-color: rgba(56, 189, 248, 0.6);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+        .form-select option {
+            background: #ffffff;
+            color: #1f2937;
+            padding: 8px;
         }
 
-        /* System Dropdown Customizations */
-        select option, select optgroup {
-            background: #0f172a;
-            color: white;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #2563eb;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-            margin-top: 6px;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
-        }
-
-        button:active {
-            transform: scale(0.99);
-        }
-
-        /* =========================
-           COMPUTED DATA OUTPUT MODULE
-        ========================= */
-        .card {
-            margin-top: 20px;
-            padding: 18px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result {
-            font-size: 18px;
+        .form-select optgroup {
+            background: #f9fafb;
+            color: #1f2937;
             font-weight: 700;
-            color: #38bdf8;
-            letter-spacing: -0.3px;
         }
 
-        /* =========================
-           MOBILE OPTIMIZATIONS
-        ========================= */
-        @media (max-width: 600px) {
+        /* ===== SUBMIT BUTTON ===== */
+        .submit-btn {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ===== RESULT SECTION ===== */
+        .result-section {
+            margin-top: 28px;
+            padding: 24px;
+            background: linear-gradient(135deg, #dbeafe, #f0f4ff);
+            border: 2px solid #1e40af;
+            border-radius: 10px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e40af;
+            font-family: 'Monaco', 'Courier New', monospace;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+
             .container {
-                padding: 28px 16px;
-                width: 94%;
+                padding: 24px 16px;
             }
 
-            h2 {
+            .converter-card {
+                padding: 24px;
+            }
+
+            .converter-title {
+                font-size: 24px;
+            }
+
+            .converter-description {
+                font-size: 13px;
+            }
+
+            .form-input,
+            .form-select {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .submit-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .result-section {
+                padding: 20px;
+                margin-top: 24px;
+            }
+
+            .result-value {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .converter-card {
+                padding: 16px;
+            }
+
+            .converter-header {
+                margin-bottom: 24px;
+            }
+
+            .converter-title {
                 font-size: 20px;
-                padding-top: 32px; /* Shifts header clear of nav button on tiny screens */
+                margin-bottom: 6px;
             }
 
-            .top-nav {
-                left: 16px;
-                top: 16px;
+            .converter-description {
+                font-size: 12px;
             }
 
-            select, input, button {
-                font-size: 15px;
-                padding: 12px;
+            .form-group {
+                gap: 6px;
+            }
+
+            .form-label {
+                font-size: 12px;
+            }
+
+            .form-input,
+            .form-select {
+                padding: 12px 12px;
+                font-size: 14px;
+                border-radius: 6px;
+            }
+
+            .form-select {
+                background-position: right 10px center;
+                background-size: 18px;
+                padding-right: 36px;
+            }
+
+            .converter-form {
+                gap: 12px;
+            }
+
+            .submit-btn {
+                padding: 12px 14px;
+                font-size: 13px;
+                gap: 6px;
+                margin-top: 4px;
+            }
+
+            .result-section {
+                padding: 16px;
+                margin-top: 20px;
+            }
+
+            .result-label {
+                font-size: 11px;
+                margin-bottom: 6px;
+            }
+
+            .result-value {
+                font-size: 20px;
+            }
+
+            .footer {
+                padding: 12px 12px;
+                font-size: 11px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">⬅</a>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <i class="fas fa-exchange-alt"></i> Unit Converter
+        </div>
     </div>
+</div>
 
-    <h2>🛠️ Petroleum Converter</h2>
-    <p>Convert oil, gas, pressure, and engineering units cleanly</p>
+<!-- MAIN CONTAINER -->
+<div class="container">
+    <div class="converter-card">
+        <!-- HEADER SECTION -->
+        <div class="converter-header">
+            <div class="converter-title">
+                <i class="fas fa-wrench"></i> Petroleum Converter
+            </div>
+            <p class="converter-description">
+                Convert oil, gas, pressure, and engineering units with precision
+            </p>
+        </div>
 
-    <form method="POST">
-        <input name="value" type="number" step="any" placeholder="Enter numerical value..." required autocomplete="off">
+        <!-- FORM SECTION -->
+        <form method="POST" class="converter-form">
+            <!-- INPUT VALUE -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-hashtag"></i> Enter Value
+                </label>
+                <input 
+                    type="number" 
+                    name="value" 
+                    step="any" 
+                    class="form-input"
+                    placeholder="Enter numerical value..."
+                    required 
+                    autocomplete="off"
+                >
+            </div>
 
-        <select name="conversion" required>
-            <option value="">-- Select Target System --</option>
+            <!-- CONVERSION TYPE -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-exchange-alt"></i> Select Conversion
+                </label>
+                <select name="conversion" class="form-select" required>
+                    <option value="">-- Choose a conversion --</option>
 
-            <optgroup label="🌍 Length & Depth">
-                <option value="m_to_ft">Meters (m) → Feet (ft)</option>
-                <option value="ft_to_m">Feet (ft) → Meters (m)</option>
-            </optgroup>
+                    <optgroup label="📏 Length & Depth">
+                        <option value="m_to_ft">Meters (m) → Feet (ft)</option>
+                        <option value="ft_to_m">Feet (ft) → Meters (m)</option>
+                    </optgroup>
 
-            <optgroup label="⚖️ Pressure Controls">
-                <option value="psi_to_bar">PSI → Bar</option>
-                <option value="bar_to_psi">Bar → PSI</option>
-            </optgroup>
+                    <optgroup label="⚖️ Pressure Controls">
+                        <option value="psi_to_bar">PSI → Bar</option>
+                        <option value="bar_to_psi">Bar → PSI</option>
+                    </optgroup>
 
-            <optgroup label="🛢️ Volumetric Flow & Yield">
-                <option value="bbl_to_l">Barrels (bbl) → Liters (L)</option>
-                <option value="l_to_bbl">Liters (L) → Barrels (bbl)</option>
-                <option value="bbl_to_m3">Barrels (bbl) → Cubic Meters (m³)</option>
-                <option value="m3_to_bbl">Cubic Meters (m³) → Barrels (bbl)</option>
-                <option value="l_to_m3">Liters (L) → Cubic Meters (m³)</option>
-                <option value="m3_to_l">Cubic Meters (m³) → Liters (L)</option>
-            </optgroup>
-        </select>
+                    <optgroup label="🛢️ Volumetric Flow & Yield">
+                        <option value="bbl_to_l">Barrels (bbl) → Liters (L)</option>
+                        <option value="l_to_bbl">Liters (L) → Barrels (bbl)</option>
+                        <option value="bbl_to_m3">Barrels (bbl) → Cubic Meters (m³)</option>
+                        <option value="m3_to_bbl">Cubic Meters (m³) → Barrels (bbl)</option>
+                        <option value="l_to_m3">Liters (L) → Cubic Meters (m³)</option>
+                        <option value="m3_to_l">Cubic Meters (m³) → Liters (L)</option>
+                    </optgroup>
+                </select>
+            </div>
 
-        <button type="submit">Execute Conversion</button>
-    </form>
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-calculator"></i> Convert
+            </button>
+        </form>
 
-    {% if result is not none %}
-        <div class="card">
-            <div class="result">
-                Output Value = {{ result }}
+        <!-- RESULT SECTION -->
+        {% if result is not none %}
+        <div class="result-section">
+            <div class="result-label">
+                <i class="fas fa-check-circle"></i> Conversion Result
+            </div>
+            <div class="result-value">
+                {{ result }}
             </div>
         </div>
-    {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <i class="fas fa-copyright"></i> 2026 PetroApp. Engineered for petroleum unit conversions.
 </div>
 
 </body>

@@ -2,342 +2,237 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PetroApp Dashboard</title>
+    <title>PetroApp - Professional Learning Platform</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#1e293b">
+    <meta name="theme-color" content="#1e40af">
     <link rel="icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #f8fafc;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), url("/static/bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
             min-height: 100vh;
         }
-        
-        /* =========================
-           DESKTOP SIDEBAR
-        ========================= */
-        .sidebar {
-            width: 200px;
-            background: #0f172a;
-            height: 100vh;
-            position: fixed;
-            left: 0;
+
+        /* ===== HEADER & NAVIGATION ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
             top: 0;
-            padding: 24px 16px;
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 20px;
             display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            z-index: 100;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         .logo {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-bottom: 32px;
-            padding-left: 8px;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        .nav a {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Ensures text and badge stay neat */
-            padding: 12px 16px;
-            border-radius: 12px;
+            color: #1e40af;
             text-decoration: none;
-            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .logo:hover {
+            color: #1e3a8a;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+            margin-left: 40px;
+        }
+
+        .nav-link {
+            padding: 10px 16px;
+            color: #6b7280;
+            text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            border-radius: 8px;
             transition: all 0.2s ease;
-            position: relative; /* Base anchor for layout metrics */
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .nav a:hover {
-            background: #1e293b;
-            color: #f8fafc;
-            transform: translateX(4px);
+        .nav-link:hover {
+            background: #f3f4f6;
+            color: #1e40af;
         }
 
-        .nav a.logout {
-            margin-top: auto;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-
-        .nav a.logout:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-        }
-
-        /* WhatsApp Notification Badge */
-        .wp-badge {
-            background-color: #25D366;
+        .nav-badge {
+            background: #ef4444;
             color: white;
-            border-radius: 20px;
+            border-radius: 12px;
             padding: 2px 8px;
             font-size: 11px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: 700;
+            margin-left: 4px;
         }
 
-        /* =========================
-           MAIN DASHBOARD LAYOUT
-        ========================= */
-        .main {
-            margin-left: 240px;
-            padding: 32px 40px;
-            max-width: 1400px;
-        }
-
-        .topbar {
+        .header-right {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            gap: 12px;
         }
 
         .hamburger {
             display: none;
-            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
             cursor: pointer;
-            color: #f8fafc;
-            background: #1e293b;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .user {
-            background: rgba(30, 41, 59, 0.7);
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            backdrop-filter: blur(8px);
-        }
-
-        /* =========================
-           HERO HEADER COMPONENT
-        ========================= */
-        .hero {
-            text-align: center;
-            padding: 60px 20px 80px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 42px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            background-clip: text; 
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: #94a3b8;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .main-btn {
-            display: inline-block;
-            margin-top: 28px;
-            padding: 14px 28px;
-            background: #2563eb;
-            color: white;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            font-size: 20px;
+            color: #1f2937;
             transition: all 0.2s ease;
         }
 
-        .main-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        .hamburger:hover {
+            background: #e5e7eb;
         }
 
-        /* =========================
-           FUNCTIONAL METRIC CARDS
-        ========================= */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 24px;
-            border-radius: 16px;
-            text-decoration: none;
-            color: white;
-            backdrop-filter: blur(12px);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .card p {
-            color: #94a3b8;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border-radius: 8px;
             font-size: 14px;
-            line-height: 1.6;
+            font-weight: 600;
+            color: #1f2937;
         }
 
-        .card:hover {
-            transform: translateY(-6px);
-            background: rgba(30, 41, 59, 0.6);
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-        }
-
-        /* =========================
-           PROGRESS TRACKER UPGRADES
-        ========================= */
-        .progress-card {
-            grid-column: 1 / -1; 
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(56, 189, 248, 0.25);
-        }
-
-        .progress-card:hover {
-            border-color: rgba(56, 189, 248, 0.6);
-        }
-
-        .progress-container {
-            margin-top: 18px;
-        }
-
-        .progress-header {
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 10px;
-            color: #e2e8f0;
-        }
-
-        .progress-text {
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
             font-size: 14px;
-            font-weight: 500;
         }
 
-        .progress-percentage {
-            font-size: 20px;
-            font-weight: 800;
-            color: #38bdf8;
-            line-height: 1;
-        }
-
-        .progress-track {
-            background: #0f172a;
-            border-radius: 12px;
-            height: 14px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #0284c7, #38bdf8);
-            border-radius: 12px;
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transform: translateX(-100%);
-            animation: shimmer 2.5s infinite;
-        }
-
-        @keyframes shimmer {
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        /* =========================
-           MOBILE MENUS & DRAWER
-        ========================= */
+        /* ===== MOBILE MENU ===== */
         .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 260px;
-            height: 100vh;
-            background: #0f172a;
-            padding: 24px 16px;
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        background: #ffffff;
+        padding: 20px;
+        border-right: 1px solid #e5e7eb;
+
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+
+        z-index: 2000;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .mobile-menu.active {
-            left: 0;
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1f2937;
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-nav-link {
+            padding: 12px 16px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-nav-link:hover {
+            background: #f3f4f6;
+            color: #1e40af;
         }
 
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
-            z-index: 999;
+            z-index: 1999;
             transition: opacity 0.3s ease;
         }
 
@@ -345,179 +240,785 @@
             display: block;
         }
 
-        /* =========================
-           MEDIA RESPONSIVENESS
-        ========================= */
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #1e40af;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ===== STATS SECTION ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* ===== PROGRESS CARD ===== */
+        .progress-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-percentage {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e40af;
+        }
+
+        .progress-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(30, 64, 175, 0.3);
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-info {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* ===== FEATURES GRID ===== */
+        .features-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .features-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            text-decoration: none;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #1e40af;
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.15);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .card p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e40af;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #1f2937;
+            color: #d1d5db;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid #374151;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-link {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: #f3f4f6;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1024px) {
             .main {
-                padding: 24px;
+                padding: 30px 16px;
+            }
+
+            .hero {
+                padding: 40px 20px;
+                margin-bottom: 40px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .grid {
+                gap: 16px;
             }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
+            .header-container {
+                padding: 12px 16px;
+            }
+
+            .nav-desktop {
                 display: none;
             }
 
+            .hamburger {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             .main {
-                margin-left: 0;
                 padding: 20px 16px;
             }
 
-            .hamburger {
-                display: block;
-            }
-
-            .topbar {
-                margin-bottom: 24px;
-            }
-
             .hero {
-                padding: 40px 10px 48px;
+                padding: 40px 16px;
+                margin-bottom: 30px;
+                border-radius: 12px;
             }
 
             .hero h1 {
                 font-size: 32px;
+                margin-bottom: 12px;
+            }
+
+            .hero p {
+                font-size: 16px;
+                margin-bottom: 24px;
+            }
+
+            .hero-buttons {
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .features-title {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .features-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
             }
 
             .grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .progress-section {
+                padding: 20px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .user-info {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 20px;
+                gap: 6px;
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .main {
+                padding: 16px 12px;
+            }
+
+            .hero {
+                padding: 30px 12px;
+                margin-bottom: 20px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .progress-section {
+                padding: 16px;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card-icon {
+                font-size: 32px;
+            }
+
+            .card h3 {
+                font-size: 16px;
+            }
+
+            .card p {
+                font-size: 13px;
+            }
+
+            .features-title {
+                font-size: 20px;
+            }
+
+            .features-subtitle {
+                font-size: 13px;
+            }
+
+            .footer {
+                padding: 24px 12px;
+            }
+
+            .footer-links {
+                gap: 12px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="mobile-menu" id="mobileMenu">
-    <div class="logo">🛢️ PetroApp</div>
-    <div class="nav">
-        <a href="/petroai">🤖 PetroAI</a>
-        <a href="/news" class="btn">
-            📰 Petroleum News
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="/" class="logo">
+            <div class="logo-icon">🛢️</div>
+            <span class="logo-text">PetroApp</span>
         </a>
-        <a href="/community">
-            <span>📢 Community</span>
-            {% if new_posts_count > 0 %}
-                <span class="wp-badge">{{ new_posts_count }}</span>
-            {% endif %}
-        </a>
-        
-        <a href="/subject">📘 Subject</a>
-        <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
-        
-        {% if session.get("logged_in") %}
-            <a href="/logout" class="logout">Logout</a>
-        {% else %}
-            <a href="/login" class="logout">Login</a>
-        {% endif %}
+
+        <!-- DESKTOP NAVIGATION -->
+        <nav class="nav-desktop">
+            <a href="/petroai" class="nav-link">
+                <i class="fas fa-robot"></i> PetroAI
+            </a>
+            <a href="/news" class="nav-link">
+                <i class="fas fa-newspaper"></i> News
+            </a>
+            <a href="/community" class="nav-link">
+                <i class="fas fa-comments"></i> Community
+                {% if new_posts_count > 0 %}
+                    <span class="nav-badge">{{ new_posts_count }}</span>
+                {% endif %}
+            </a>
+            <a href="/subject" class="nav-link">
+                <i class="fas fa-book"></i> Subjects
+            </a>
+        </nav>
+
+        <div class="header-right">
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ session["username"][0]|upper if session.get("username") else "P" }}
+                </div>
+                <span>{{ session["username"] if session.get("logged_in") else "Guest" }}</span>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- MOBILE MENU -->
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="logo" style="margin: 0;">
+            <div class="logo-icon">🛢️</div>
+            <span>PetroApp</span>
+        </div>
+        <button class="mobile-menu-close" onclick="toggleMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
 
-<div class="sidebar">
-    <div class="logo">🛢️ PetroApp</div>
-    <div class="nav">
-        <a href="/petroai">🤖 PetroAI</a>
-        <a href="/news" class="btn">
-            📰 Petroleum News
+    <nav class="mobile-nav">
+        <a href="/petroai" class="mobile-nav-link" onclick="toggleMenu()">
+            <span><i class="fas fa-robot"></i> PetroAI</span>
         </a>
-        <a href="/community">
-            <span>📢 Community</span>
+        <a href="/news" class="mobile-nav-link" onclick="toggleMenu()">
+            <span><i class="fas fa-newspaper"></i> Petroleum News</span>
+        </a>
+        <a href="/community" class="mobile-nav-link" onclick="toggleMenu()">
+            <span><i class="fas fa-comments"></i> Community</span>
             {% if new_posts_count > 0 %}
-                <span class="wp-badge">{{ new_posts_count }}</span>
+                <span class="nav-badge">{{ new_posts_count }}</span>
             {% endif %}
         </a>
-        
-        <a href="/subject">📘 Subject</a>
-        <a href="/profile/{{ session.get('user_id') }}">👤 Profile</a>
+        <a href="/subject" class="mobile-nav-link" onclick="toggleMenu()">
+            <span><i class="fas fa-book"></i> Subjects</span>
+        </a>
+        <a href="/profile/{{ session.get('user_id') }}" class="mobile-nav-link" onclick="toggleMenu()">
+            <span><i class="fas fa-user"></i> Profile</span>
+        </a>
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid #e5e7eb;">
 
         {% if session.get("logged_in") %}
-            <a href="/logout" class="logout">Logout</a>
+            <a href="/logout" class="mobile-nav-link" style="color: #ef4444;" onclick="toggleMenu()">
+                <span><i class="fas fa-sign-out-alt"></i> Logout</span>
+            </a>
         {% else %}
-            <a href="/login" class="logout">Login</a>
+            <a href="/login" class="mobile-nav-link" style="color: #1e40af;" onclick="toggleMenu()">
+                <span><i class="fas fa-sign-in-alt"></i> Login</span>
+            </a>
         {% endif %}
-    </div>
+    </nav>
 </div>
 
+<!-- MAIN CONTENT -->
 <div class="main">
-    <div class="topbar">
-        <div class="hamburger" onclick="toggleMenu()">☰</div>
-        <div class="user">
-            {{ session["username"] if session.get("logged_in") else "Guest" }}
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <h1>Master Petroleum Engineering</h1>
+        <p>Learn, practice, and calculate like a real engineer.</p>
+        <div class="hero-buttons">
+            <a href="/lessons" class="btn btn-primary">
+                <i class="fas fa-play-circle"></i> Start Learning
+            </a>
+            <a href="/community" class="btn btn-secondary">
+                <i class="fas fa-users"></i> Join Community
+            </a>
         </div>
     </div>
 
-    <div class="hero">
-        <h1>   
-            Petroleum Learning Platform
-        </h1>
-        <p> 
-            Learn, practice, and calculate like a real engineer
-        </p>
-        <a class="main-btn" href="/lessons">
-            Start Learning
-        </a>
+    <!-- STATS SECTION -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_lessons }}</div>
+            <div class="stat-label">Lessons Available</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ completed_lessons }}</div>
+            <div class="stat-label">Lessons Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">100+</div>
+            <div class="stat-label">Quiz Questions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Engineering Formulas</div>
+        </div>
     </div>
 
-    <div class="grid">
-        <a href="/lessons" class="card progress-card">
-            <h3>🏆 Learning Progress</h3>
+    <!-- PROGRESS SECTION -->
+    <div class="progress-section">
+        <div class="progress-header">
+            <div class="progress-title">
+                <i class="fas fa-chart-line"></i> Your Learning Progress
+            </div>
+            <div class="progress-percentage">
+                {% if total_lessons > 0 %}{{ (completed_lessons * 100 / total_lessons)|round }}{% else %}0{% endif %}%
+            </div>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" style="width: {% if total_lessons > 0 %}{{ (completed_lessons * 100 / total_lessons)|round }}{% else %}0{% endif %}%;"></div>
+        </div>
+        <div class="progress-info">
+            <i class="fas fa-info-circle"></i> You've completed {{ completed_lessons }} of {{ total_lessons }} lessons
+        </div>
+    </div>
 
-            <div class="progress-container">
-                <div class="progress-header">
-                    <span class="progress-text">
-                        Course Completion: {{ completed_lessons }} of {{ total_lessons }} lessons
-                    </span>
-                    <span class="progress-percentage">
-                        {% if total_lessons > 0 %}{{ (completed_lessons * 100 / total_lessons)|round }}{% else %}0{% endif %}%
-                    </span>
-                </div>
-                
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: {% if total_lessons > 0 %}{{ (completed_lessons * 100 / total_lessons)|round }}{% else %}0{% endif %}%;"></div>
-                </div>
+    <!-- FEATURES SECTION -->
+    <h2 class="features-title">Learning Features</h2>
+    <p class="features-subtitle">Everything you need to master petroleum engineering in one platform</p>
+
+    <div class="grid">
+        <!-- LESSONS CARD -->
+        <a href="/lessons" class="card">
+            <div class="card-icon">📘</div>
+            <h3>Lessons</h3>
+            <p>Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals, drilling operations, production systems, and more.</p>
+            <div class="card-footer">
+                <span>Explore Lessons</span>
+                <i class="fas fa-arrow-right"></i>
             </div>
         </a>
 
-        <a href="/lessons" class="card">
-            <h3>📘 Lessons</h3>
-            <p>Learn petroleum engineering step-by-step with structured lessons covering reservoir fundamentals, drilling operations, production systems, and real industry concepts.</p>
-        </a>
-
+        <!-- QUIZ CARD -->
         <a href="/quizzes" class="card">
-            <h3>🧠 Quiz System</h3>
-            <p>Test your understanding with interactive quizzes based on real petroleum engineering, math, physics, chemistry, geology and languages topics.</p>
+            <div class="card-icon">🧠</div>
+            <h3>Quiz System</h3>
+            <p>Test your understanding with interactive quizzes based on real petroleum engineering, math, physics, chemistry, geology and language topics.</p>
+            <div class="card-footer">
+                <span>Take Quizzes</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
         </a>
 
+        <!-- CONVERTER CARD -->
         <a href="/converter" class="card">
-            <h3>⚙️ Engineering Converter</h3>
+            <div class="card-icon">⚙️</div>
+            <h3>Unit Converter</h3>
             <p>Quickly convert oil & gas units like barrels, liters, pressure (psi/bar), and more. Designed for real field calculations and engineering accuracy.</p>
+            <div class="card-footer">
+                <span>Convert Units</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
         </a>
 
+        <!-- FORMULAS CARD -->
         <a href="/formulas" class="card">
-            <h3>📊 Petroleum Formulas</h3>
+            <div class="card-icon">📊</div>
+            <h3>Formulas</h3>
             <p>Access essential engineering formulas used in production, drilling, and reservoir calculations. Understand how professionals solve real industry problems.</p>
+            <div class="card-footer">
+                <span>View Formulas</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- PETROAI CARD -->
+        <a href="/petroai" class="card">
+            <div class="card-icon">🤖</div>
+            <h3>PetroAI Assistant</h3>
+            <p>Get instant answers to your petroleum engineering questions. Our AI assistant is trained on industry knowledge and best practices.</p>
+            <div class="card-footer">
+                <span>Chat with AI</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- COMMUNITY CARD -->
+        <a href="/community" class="card">
+            <div class="card-icon">👥</div>
+            <h3>Community</h3>
+            <p>Connect with fellow petroleum engineering students and professionals. Share ideas, ask questions, and learn from the community.</p>
+            <div class="card-footer">
+                <span>Join Community</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
         </a>
     </div>
 </div>
 
-<script>
-function toggleMenu() {
-    const menu = document.getElementById("mobileMenu");
-    const overlay = document.getElementById("overlay");
-    menu.classList.toggle("active");
-    overlay.classList.toggle("active");
-}
+<!-- FOOTER -->
+<div class="footer">
+    <div class="footer-content">
+        <div class="footer-links">
+            <a class="footer-link">About</a>
+            <a class="footer-link">Privacy Policy</a>
+            <a class="footer-link">Terms of Service</a>
+            <a class="footer-link">Contact</a>
+        </div>
+        <div class="footer-text">
+            &copy; 2026 PetroApp. All rights reserved. | Empowering the generation of petroleum engineers.
+        </div>
+    </div>
+</div>
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/static/sw.js")
-        .then(() => console.log("PWA Ready"))
-        .catch(err => console.log("PWA Fail", err));
+<!-- SCRIPTS -->
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const overlay = document.getElementById("overlay");
+        menu.classList.toggle("active");
+        overlay.classList.toggle("active");
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById("mobileMenu");
+        const hamburger = document.querySelector('.hamburger');
+        const overlay = document.getElementById("overlay");
+        
+        if (!menu.contains(event.target) && !hamburger.contains(event.target) && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+        }
     });
-}
+
+    // PWA Service Worker Registration
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/static/sw.js")
+            .then(() => console.log("PWA Ready"))
+            .catch(err => console.log("PWA Fail", err));
+        });
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
 </script>
+
 </body>
 </html>

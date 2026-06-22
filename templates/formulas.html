@@ -2,335 +2,698 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Petroleum Formulas Library</title>
+    <title>Engineering Formula Library - PetroApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }    
-        
-        body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #f8fafc;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            padding-bottom: 60px;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* =========================
-           TOP APPLICATION HEADER
-        ========================= */
-        .topbar {
-            background: #0f172a;
-            padding: 16px 20px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER & NAVIGATION ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-        }
-
-        .top-nav {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .back-arrow {
-            text-decoration: none;
-            color: #94a3b8;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.2s ease;
-        }
-
-        .back-arrow:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 0;
-        }
-
-        /* =========================
-           HERO SEARCH CONSOLE
-        ========================= */
-        .hero {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .hero h1 {
-            font-size: 30px;
-            font-weight: 800;
-            letter-spacing: -0.7px;
-            margin-bottom: 8px;
-            color: #ffffff;
-        }
-
-        .hero p {
-            color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.6;
-            max-width: 640px;
-            margin: 0 auto;
-        }
-
-        .search-box {
-            margin-top: 24px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-box input {
-            width: 100%;
-            max-width: 500px;
-            padding: 14px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            background: #1e293b;
-            color: white;
-            font-size: 15px;
-            outline: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
-        }
-
-        .search-box input:focus {
-            border-color: rgba(37, 99, 235, 0.6);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* =========================
-           FORMULAS GRID CONTAINER
-        ========================= */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            justify-content: space-between;
             gap: 20px;
         }
 
-        .card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            border-radius: 18px;
-            padding: 24px;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
             text-decoration: none;
-            color: white;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #1f2937;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: #6b7280;
+            max-width: 700px;
+            margin: 0 auto 28px;
+            line-height: 1.7;
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 40px;
+            font-size: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #1f2937;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+            font-size: 16px;
+        }
+
+        
+
+        /* ===== FORMULAS GRID ===== */
+        .formulas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .formula-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
+            gap: 16px;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .formula-card:hover {
+            transform: translateY(-8px);
+            border-color: #1e40af;
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.15);
+        }
+
+        .formula-header {
+            display: flex;
             justify-content: space-between;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            align-items: flex-start;
+            gap: 12px;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(56, 189, 248, 0.4);
-            background: rgba(30, 41, 59, 0.7);
-            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.05);
-        }
-
-        .category {
-            align-self: flex-start;
-            background: rgba(37, 99, 235, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            padding: 4px 10px;
+        .category-badge {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #1e40af;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 14px;
-        }
-
-        .title {
-            font-size: 19px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            margin-bottom: 12px;
-            color: #ffffff;
-        }
-
-        /* MATH CORE COMPONENT */
-        .equation {
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 14px;
-            border-radius: 12px;
-            color: #38bdf8;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 14px;
-            overflow-x: auto;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .desc {
-            color: #94a3b8;
-            font-size: 13.5px;
-            line-height: 1.6;
-            margin-bottom: 20px;
+        .category-badge.drilling {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .category-badge.reservoir {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .category-badge.production {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .category-badge.fluid {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .category-badge.pressure {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .formula-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1.4;
             flex-grow: 1;
         }
 
-        .footer {
+        .formula-card:hover .formula-title {
+            color: #1e40af;
+        }
+
+        /* ===== EQUATION DISPLAY ===== */
+        .equation-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Courier New', 'SFMono-Regular', monospace;
+            font-size: 14px;
+            color: #1e40af;
+            font-weight: 600;
+            text-align: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        /* ===== DESCRIPTION ===== */
+        .formula-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+
+        /* ===== FOOTER ===== */
+        .formula-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
         }
 
-        .open-btn {
-            color: #cbd5e1;
+        .formula-link {
+            color: #1e40af;
+            font-weight: 700;
             font-size: 13px;
-            font-weight: 600;
-            transition: color 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
         }
 
-        .arrow {
+        .formula-card:hover .formula-link {
+            gap: 10px;
+        }
+
+        .formula-arrow {
             font-size: 14px;
-            color: #64748b;
-            transition: transform 0.2s ease, color 0.2s ease;
+            transition: transform 0.2s ease;
         }
 
-        .card:hover .open-btn {
-            color: #38bdf8;
+        .formula-card:hover .formula-arrow {
+            transform: translateX(4px);
         }
 
-        .card:hover .arrow {
-            color: #38bdf8;
-            transform: translateX(3px);
-        }
-
-        .empty {
+        /* ===== NO RESULTS STATE ===== */
+        .no-results {
             text-align: center;
-            padding: 80px 0;
-            color: #64748b;
+            padding: 60px 20px;
+            display: none;
         }
 
-        /* =========================
-           RESPONSIVE RE-PROPORTIONS
-        ========================= */
-        @media(max-width: 700px){
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .no-results-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .no-results-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .no-results-btn {
+            padding: 10px 24px;
+            background: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .no-results-btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 32px 16px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .formulas-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
             .hero h1 {
                 font-size: 24px;
             }
 
-            .grid {
+            .hero p {
+                font-size: 14px;
+            }
+
+            .search-input {
+                padding: 12px 14px 12px 36px;
+                font-size: 14px;
+            }
+
+            .search-icon {
+                left: 10px;
+                font-size: 14px;
+            }
+
+            .filter-section {
+                gap: 8px;
+                margin-bottom: 24px;
+            }
+
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .formulas-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .formula-card {
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .formula-title {
+                font-size: 16px;
+            }
+
+            .equation-box {
+                padding: 12px;
+                font-size: 12px;
+            }
+
+            .formula-description {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .hero h1 {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+
+            .hero p {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .search-input {
+                padding: 10px 12px 10px 32px;
+                font-size: 13px;
+            }
+
+            .search-icon {
+                left: 8px;
+                font-size: 13px;
+            }
+
+            .filter-section {
+                gap: 6px;
+                margin-bottom: 20px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .filter-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .formulas-grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 12px;
+                margin-bottom: 20px;
             }
 
-            .card {
-                padding: 18px;
+            .formula-card {
+                padding: 12px;
+                gap: 10px;
             }
 
-            .title {
-                font-size: 18px;
+            .formula-header {
+                gap: 8px;
+            }
+
+            .category-badge {
+                padding: 4px 10px;
+                font-size: 10px;
+            }
+
+            .formula-title {
+                font-size: 14px;
+            }
+
+            .equation-box {
+                padding: 10px;
+                font-size: 11px;
+            }
+
+            .formula-description {
+                font-size: 12px;
+            }
+
+            .formula-footer {
+                padding-top: 10px;
+            }
+
+            .formula-link {
+                font-size: 12px;
+                gap: 4px;
+            }
+
+            .formula-arrow {
+                font-size: 12px;
+            }
+
+            .no-results-icon {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+
+            .no-results-title {
+                font-size: 16px;
+            }
+
+            .no-results-text {
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="topbar">
-    <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">⬅</a>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <div class="header-left">
+            <a href="javascript:history.back()" class="back-btn" title="Go Back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-title">
+                <i class="fas fa-flask"></i> Formula Library
+            </div>
+        </div>
     </div>
-    🛢️ PetroFormula Library
 </div>
 
+<!-- MAIN CONTAINER -->
 <div class="container">
+    <!-- HERO SECTION -->
     <div class="hero">
         <h1>Engineering Formula Library</h1>
-        <p>
-            Explore petroleum engineering equations used in drilling, reservoir engineering, production, fluid mechanics, pressure analysis, and field calculations.
-        </p>
-        <div class="search-box">
-            <input type="text" id="search" placeholder="🔍 Search formulas by name or module..." onkeyup="searchFormula()" autocomplete="off">
+        <p>Explore petroleum engineering equations.</p>
+    </div>
+
+    <!-- SEARCH SECTION -->
+    <div class="search-section">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+                type="text" 
+                id="search" 
+                class="search-input" 
+                placeholder="Search formulas by name or module..." 
+                onkeyup="searchFormula()"
+                autocomplete="off"
+            >
         </div>
     </div>
 
+    
+
+    <!-- FORMULAS GRID -->
     {% if formulas %}
-    <div class="grid" id="formulaGrid">
+    <div class="formulas-grid" id="formulaGrid">
         {% for f in formulas %}
-        <a href="/formula/{{ f.id }}" class="card formula-card">
-            <div>
-                <div class="category">
+        <a href="/formula/{{ f.id }}" class="formula-card formula-item" data-category="{{ (f.category or 'Engineering')|lower }}">
+            <div class="formula-header">
+                <h3 class="formula-title">{{ f.name }}</h3>
+                <span class="category-badge {{ (f.category or 'Engineering')|lower }}">
                     {{ f.category if f.category else "Engineering" }}
-                </div>
-                <div class="title">
-                    {{ f.name }}
-                </div>
-                <div class="equation">
-                    {{ f.equation }}
-                </div>
-                <div class="desc">
-                    {{ f.description }}
-                </div>
+                </span>
             </div>
-            <div class="footer">
-                <div class="open-btn">Explore Variable Breakdown</div>
-                <div class="arrow">➔</div>
+
+            <div class="equation-box">
+                {{ f.equation }}
+            </div>
+
+            <p class="formula-description">
+                {{ f.description }}
+            </p>
+
+            <div class="formula-footer">
+                <span class="formula-link">
+                    Explore Variables
+                    <i class="fas fa-arrow-right formula-arrow"></i>
+                </span>
             </div>
         </a>
         {% endfor %}
     </div>
     {% else %}
-    <div class="empty">
-        <h2>No equations logged</h2>
-        <p>Add technical reference modules inside the application control workspace.</p>
+    <div class="no-results" style="display: block;">
+        <div class="no-results-icon">📐</div>
+        <div class="no-results-title">No Formulas Available</div>
+        <div class="no-results-text">Add technical reference modules inside the application control workspace.</div>
     </div>
     {% endif %}
+
+    <!-- NO RESULTS STATE -->
+    <div id="noResults" class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <div class="no-results-title">No Formulas Found</div>
+        <div class="no-results-text">We couldn't find any formulas matching your search. Try adjusting your search terms or filters.</div>
+        <button class="no-results-btn" onclick="resetSearch()">Clear Search</button>
+    </div>
 </div>
 
+<!-- SCRIPTS -->
 <script>
-function searchFormula() {
-    const input = document.getElementById("search").value.toLowerCase();
-    const cards = document.getElementsByClassName("formula-card");
+    function searchFormula() {
+        const input = document.getElementById("search").value.toLowerCase().trim();
+        const cards = document.querySelectorAll(".formula-item");
+        let hasMatches = false;
 
-    for (let i = 0; i < cards.length; i++) {
-        const text = cards[i].innerText.toLowerCase();
-        if (text.includes(input)) {
-            // Revert back cleanly to standard flex alignment instead of forcing block
-            cards[i].style.display = "flex";
-        } else {
-            cards[i].style.display = "none";
-        }
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            
+            if (text.includes(input)) {
+                card.style.display = "";
+                hasMatches = true;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        const noResultsDiv = document.getElementById("noResults");
+        noResultsDiv.style.display = hasMatches ? "none" : "block";
     }
-}
+
+    function filterByCategory(category) {
+        const cards = document.querySelectorAll(".formula-item");
+        const buttons = document.querySelectorAll(".filter-btn");
+
+        // Update active button
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        let hasMatches = false;
+
+        cards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            let show = false;
+
+            if (category === 'all') {
+                show = true;
+            } else if (cardCategory === category) {
+                show = true;
+            }
+
+            card.style.display = show ? "" : "none";
+            if (show) hasMatches = true;
+        });
+
+        const noResultsDiv = document.getElementById("noResults");
+        noResultsDiv.style.display = hasMatches ? "none" : "block";
+    }
+
+    function resetSearch() {
+        document.getElementById("search").value = "";
+        document.querySelectorAll(".formula-item").forEach(card => {
+            card.style.display = "";
+        });
+        document.getElementById("noResults").style.display = "none";
+        document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll(".filter-btn")[0].classList.add('active');
+    }
 </script>
+
 </body>
 </html>

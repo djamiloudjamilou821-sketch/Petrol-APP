@@ -3,326 +3,662 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ formula.name }} - Calculator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.93)), url("/static/bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
             min-height: 100vh;
             padding-bottom: 40px;
-            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            width: 92%;
-            max-width: 720px;
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px 20px;
+        }
+
+        .header-container {
+            max-width: 900px;
             margin: 0 auto;
-            padding-top: 24px;
-        }
-
-        /* =========================
-           NAVIGATION BAR ARCHITECTURE
-        ========================= */
-        .top-nav {
             display: flex;
             align-items: center;
-            margin-bottom: 24px;
+            gap: 16px;
         }
 
-        .back-arrow {
-            text-decoration: none;
-            color: #94a3b8;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 14px;
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+            text-decoration: none;
+            cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .back-arrow:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.15);
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
-        /* =========================
-           FROSTED CALCULATOR CARD
-        ========================= */
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        /* ===== FORMULA CARD ===== */
         .card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(16px);
-            padding: 32px 24px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
         }
 
-        .category {
+        .category-badge {
             display: inline-block;
-            background: rgba(37, 99, 235, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            padding: 4px 12px;
+            background: #f0f4ff;
+            color: #1e40af;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 16px;
         }
 
-        h1 {
-            font-size: 26px;
+        .formula-title {
+            font-size: 32px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            line-height: 1.25;
+            color: #1f2937;
+            letter-spacing: -1px;
             margin-bottom: 12px;
+            line-height: 1.2;
         }
 
-        .description {
-            line-height: 1.6;
-            color: #94a3b8;
-            font-size: 14.5px;
-            margin-bottom: 24px;
+        .formula-description {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.7;
+            margin-bottom: 28px;
         }
 
-        /* =========================
-           RESPONSIVE FORMULA DISPLAY
-        ========================= */
-        .equation {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 22px;
+        /* ===== EQUATION DISPLAY ===== */
+        .equation-section {
+            margin-bottom: 32px;
+        }
+
+        .section-label {
+            font-size: 13px;
             font-weight: 700;
-            color: #10b981;
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 18px 14px;
-            border-radius: 12px;
-            text-align: center;
-            margin: 24px 0;
-            overflow-x: auto;
-            white-space: nowrap;
-            /* Inward touch scrolling optimizations */
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-        }
-
-        .section-title {
-            margin-top: 24px;
-            color: #38bdf8;
-            font-size: 15px;
-            font-weight: 700;
+            color: #1e40af;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .variables {
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            padding: 16px;
-            border-radius: 12px;
-            line-height: 1.7;
-            color: #cbd5e1;
-            font-size: 14px;
-            margin-top: 8px;
-            white-space: pre-line;
-        }
-
-        /* =========================
-           INPUT TERMINAL MATRIX
-        ========================= */
-        form {
-            margin-top: 24px;
-        }
-
-        label {
-            display: block;
-            margin-top: 16px;
-            margin-bottom: 6px;
-            color: #cbd5e1;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .equation-box {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
             border-radius: 10px;
-            background: #0f172a;
-            color: white;
-            font-size: 16px;
-            outline: none;
+            padding: 24px;
+            font-family: 'Monaco', 'Courier New', 'SFMono-Regular', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e40af;
+            text-align: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            word-break: break-word;
+            line-height: 1.8;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ===== VARIABLES SECTION ===== */
+        .variables-section {
+            margin-bottom: 32px;
+        }
+
+        .variables-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.8;
+            white-space: pre-line;
+            word-break: break-word;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        /* ===== FORM SECTION ===== */
+        .form-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .form-label-variable {
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1f2937;
             transition: all 0.2s ease;
-            /* Disables standard iOS inner shadows and default mobile rendering */
-            -webkit-appearance: none; 
+            font-family: inherit;
+            -webkit-appearance: none;
             appearance: none;
         }
 
-        input:focus {
-            border-color: rgba(56, 189, 248, 0.6);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+        .form-input:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+            background: #ffffff;
         }
 
-        button {
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .submit-btn {
             width: 100%;
             margin-top: 28px;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: #2563eb;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
+            border: none;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
         }
 
-        button:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
         }
 
-        button:active {
-            transform: scale(0.99);
+        .submit-btn:active {
+            transform: scale(0.98);
         }
 
-        /* =========================
-           COMPUTED DATA OUTPUTS
-        ========================= */
-        .result {
-            margin-top: 24px;
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 20px;
-            border-radius: 14px;
-            text-align: center;
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== RESULT DISPLAY ===== */
+        .result-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+            border: 2px solid #6ee7b7;
+            border-radius: 10px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .result h2 {
-            margin: 0;
-            font-size: 20px;
+        .result-label {
+            font-size: 12px;
             font-weight: 700;
-            color: #34d399;
-            letter-spacing: -0.3px;
+            color: #059669;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
-        /* =========================
-           RESPONSIVE RE-PROPORTIONS
-        ========================= */
-        @media (max-width: 600px) {
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #065f46;
+            font-family: 'Monaco', 'Courier New', monospace;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        /* ===== ERROR MESSAGE ===== */
+        .error-message {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            color: #991b1b;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                gap: 12px;
+            }
+
             .container {
-                padding-top: 16px;
+                padding: 24px 16px;
             }
 
             .card {
-                padding: 24px 16px;
-                border-radius: 16px;
+                padding: 24px;
             }
 
-            h1 {
-                font-size: 22px;
+            .formula-title {
+                font-size: 24px;
             }
 
-            .description {
-                font-size: 13.5px;
+            .formula-description {
+                font-size: 15px;
                 margin-bottom: 20px;
             }
 
-            .equation {
-                font-size: 18px;
-                padding: 14px 10px;
-                margin: 20px 0;
+            .equation-box {
+                padding: 16px;
+                font-size: 16px;
             }
 
-            input {
-                padding: 12px;
-                font-size: 15px;
+            .variables-box {
+                padding: 16px;
+                font-size: 13px;
             }
 
-            button {
-                padding: 14px;
+            .form-section {
+                margin-top: 24px;
+                padding-top: 24px;
+            }
+
+            .form-title {
+                font-size: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-label {
+                font-size: 13px;
+            }
+
+            .form-input {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .submit-btn {
+                padding: 12px 16px;
                 font-size: 15px;
                 margin-top: 24px;
             }
 
-            .result h2 {
-                font-size: 18px;
+            .result-section {
+                padding: 20px;
+                margin-top: 24px;
+            }
+
+            .result-value {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .category-badge {
+                padding: 6px 12px;
+                font-size: 11px;
+                margin-bottom: 12px;
+            }
+
+            .formula-title {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+
+            .formula-description {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .section-label {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+
+            .equation-box {
+                padding: 12px;
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .variables-section {
+                margin-bottom: 20px;
+            }
+
+            .variables-box {
+                padding: 12px;
+                font-size: 12px;
+                line-height: 1.6;
+            }
+
+            .form-section {
+                margin-top: 20px;
+                padding-top: 20px;
+            }
+
+            .form-title {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 14px;
+            }
+
+            .form-label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .form-input {
+                padding: 10px 12px;
+                font-size: 14px;
+                border-radius: 6px;
+            }
+
+            .submit-btn {
+                padding: 12px 14px;
+                font-size: 14px;
+                margin-top: 20px;
+                gap: 6px;
+            }
+
+            .result-section {
+                padding: 16px;
+                margin-top: 20px;
+            }
+
+            .result-label {
+                font-size: 11px;
+            }
+
+            .result-value {
+                font-size: 20px;
+            }
+
+            .error-message {
+                padding: 12px;
+                font-size: 13px;
+                margin-top: 12px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">⬅</a>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">{{ formula.name }}</div>
     </div>
+</div>
 
+<!-- MAIN CONTAINER -->
+<div class="container">
     <div class="card">
-        <div class="category">
+        <!-- CATEGORY BADGE -->
+        <div class="category-badge">
             {{ formula.category }}
         </div>
 
-        <h1>{{ formula.name }}</h1>
+        <!-- FORMULA TITLE -->
+        <h1 class="formula-title">{{ formula.name }}</h1>
 
-        <div class="description">
+        <!-- DESCRIPTION -->
+        <p class="formula-description">
             {{ formula.description }}
+        </p>
+
+        <!-- EQUATION SECTION -->
+        <div class="equation-section">
+            <div class="section-label">
+                <i class="fas fa-function"></i> Formula
+            </div>
+            <div class="equation-box">
+                {{ formula.equation }}
+            </div>
         </div>
 
-        <div class="equation">
-            {{ formula.equation }}
+        <!-- VARIABLES SECTION -->
+        <div class="variables-section">
+            <div class="section-label">
+                <i class="fas fa-book"></i> Variables & Units
+            </div>
+            <div class="variables-box">
+                {{ formula.variables }}
+            </div>
         </div>
 
-        <div class="section-title">📘 Variables & Reference Units</div>
-        <div class="variables">{{ formula.variables }}</div>
+        <!-- CALCULATION FORM -->
+        <div class="form-section">
+            <h2 class="form-title">
+                <i class="fas fa-calculator"></i> Calculate
+            </h2>
 
-        <form method="POST">
-            {% for var in variables %}
-                <label>Value for Variable [ {{ var }} ]</label>
-                <input 
-                    type="number" 
-                    step="any" 
-                    name="{{ var }}" 
-                    placeholder="Enter raw numerical data..." 
-                    required
-                >
-            {% endfor %}
+            <form method="POST">
+                {% for var in variables %}
+                <div class="form-group">
+                    <label class="form-label">
+                        Enter value for <span class="form-label-variable">{{ var }}</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        step="any" 
+                        name="{{ var }}" 
+                        class="form-input"
+                        placeholder="Enter numerical value..."
+                        required
+                    >
+                </div>
+                {% endfor %}
 
-            <button type="submit">⚙️ Run System Calculations</button>
-        </form>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-play"></i>
+                    Calculate Result
+                </button>
+            </form>
 
+            <!-- ERROR MESSAGE -->
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- RESULT DISPLAY -->
         {% if result is not none %}
-        <div class="result">
-            <h2>Result = {{ result }}</h2>
+        <div class="result-section">
+            <div class="result-label">
+                <i class="fas fa-check-circle"></i> Calculation Result
+            </div>
+            <div class="result-value">
+                {{ result }}
+            </div>
         </div>
         {% endif %}
     </div>
 </div>
+
+<!-- SCRIPTS -->
+<script>
+    // Form validation and error handling
+    const form = document.querySelector('form');
+    const errorMessage = document.getElementById('errorMessage');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Clear previous error messages
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+
+            // Validate that all fields are filled
+            const inputs = form.querySelectorAll('input[required]');
+            let hasError = false;
+
+            inputs.forEach(input => {
+                if (!input.value || isNaN(input.value)) {
+                    hasError = true;
+                    input.style.borderColor = '#fca5a5';
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                errorMessage.textContent = 'Please fill in all fields with valid numbers.';
+                errorMessage.classList.add('show');
+            }
+        });
+
+        // Clear error styling on input
+        form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.style.borderColor = '';
+            });
+        });
+    }
+
+    // Smooth scroll to result when page loads with result
+    window.addEventListener('load', function() {
+        const resultSection = document.querySelector('.result-section');
+        if (resultSection) {
+            setTimeout(() => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    });
+</script>
 
 </body>
 </html>

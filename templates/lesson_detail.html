@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ lesson.title }} - PetroApp</title>
+    <title>{{ lesson.title }} - PetroApp Learning</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- MathJax for Mathematical Equations -->
     <script>
         window.MathJax = {
             tex: {
@@ -22,9 +24,7 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* =========================
-           CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
@@ -32,339 +32,808 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.93), rgba(15, 23, 42, 0.96)), url("/static/hb.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #f8fafc;
-            min-height: 100vh;
-            padding-bottom: 40px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
-        .container {
-            width: 100%;
-            max-width: 760px;
+        /* ===== HEADER & NAVIGATION ===== */
+        .header-nav {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 16px 14px;
-        }
-
-        /* =========================
-           NAVIGATION BAR
-        ========================= */
-        .top-nav {
+            padding: 12px 20px;
             display: flex;
             align-items: center;
-            margin-bottom: 16px;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        .back-arrow {
-            text-decoration: none;
-            color: #94a3b8;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 10px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            display: inline-flex;
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
             align-items: center;
             justify-content: center;
+            color: #1f2937;
+            text-decoration: none;
+            cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 18px;
         }
 
-        .back-arrow:hover {
-            color: white;
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.15);
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
-        /* =========================
-           HEADER & STATUS MONITOR
-        ========================= */
-        .header {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 20px 16px;
-            border-radius: 14px;
-            text-align: center;
-            margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            line-height: 1.3;
-        }
-
-        .lesson-info {
-            margin-top: 8px;
-            color: #94a3b8;
-            font-size: 11px;
+        .nav-title {
+            font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .progress-bar {
-            margin-top: 14px;
-            width: 100%;
-            height: 4px;
-            background: #1e293b;
-            border-radius: 10px;
+            color: #6b7280;
+            flex-grow: 1;
+            white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .progress {
-            width: 100%;
-            height: 100%;
+        .nav-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
             background: #10b981;
         }
 
-        /* =========================
-           MEDIA VIEWPORT PLATFORM
-        ========================= */
-        .video-box {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 6px;
-            border-radius: 14px;
-            margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px;
         }
 
-        iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border: none;
+        /* ===== LESSON HEADER ===== */
+        .lesson-header {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .lesson-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 12px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .meta-item i {
+            color: #1e40af;
+            font-size: 16px;
+        }
+
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
             border-radius: 10px;
-            display: block;
+            overflow: hidden;
+            min-width: 150px;
         }
 
-        /* =========================
-           CORE TECHNICAL CONTENT CARD
-        ========================= */
-        .content-card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 14px;
-            padding: 20px 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(30, 64, 175, 0.3);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .content-title {
-            font-size: 12px;
+        .progress-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e40af;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ===== VIDEO SECTION ===== */
+        .video-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 32px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+
+        /* ===== CONTENT SECTION ===== */
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 16px;
-            color: #38bdf8;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
-            padding-bottom: 6px;
+            color: #1f2937;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .content {
-            color: #cbd5e1;
-            line-height: 1.7;
-            font-size: 14.5px;
-            white-space: pre-line; 
+        .section-title i {
+            color: #1e40af;
+        }
+
+        .lesson-content {
+            color: #374151;
+            line-height: 1.8;
+            font-size: 15px;
+             white-space: pre-line; 
             word-break: break-word;
         }
 
-        .op-card {
-            background: rgba(15, 23, 42, 0.6);
-            border-left: 3.5px solid #38bdf8;
-            padding: 14px;
-            border-radius: 0 10px 10px 0;
-            margin: 14px 0;
+        .lesson-content h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-top: 24px;
+            margin-bottom: 12px;
         }
-        
+
+        .lesson-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-content p {
+            margin-bottom: 16px;
+        }
+
+        .lesson-content ul,
+        .lesson-content ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .lesson-content li {
+            margin-bottom: 8px;
+        }
+
+        .lesson-content strong {
+            color: #1f2937;
+            font-weight: 700;
+        }
+
+        .lesson-content em {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* ===== HIGHLIGHT CARDS ===== */
+        .highlight-card {
+            background: #f0f4ff;
+            border-left: 4px solid #1e40af;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .highlight-card.warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .highlight-card.success {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+
+        .highlight-card.info {
+            background: #dbeafe;
+            border-left-color: #3b82f6;
+        }
+
+        .highlight-card-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1f2937;
+        }
+
+        .highlight-card-text {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        /* ===== TABLE STYLING ===== */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin: 16px 0;
+            margin: 20px 0;
             border-radius: 8px;
-            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid #e5e7eb;
         }
 
-        .metric-table {
+        .lesson-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 450px;
-            font-size: 13px;
+            min-width: 500px;
+            font-size: 14px;
         }
 
-        .metric-table th, .metric-table td {
-            padding: 10px 12px;
+        .lesson-table th {
+            background: #f3f4f6;
+            color: #1f2937;
+            font-weight: 700;
+            padding: 12px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 2px solid #e5e7eb;
         }
 
-        .metric-table th {
-            background: rgba(255, 255, 255, 0.04);
-            color: #ffffff;
+        .lesson-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
         }
 
-        /* =========================
-           MOBILE INTERACTION LAYOUT (UPGRADED)
-        ========================= */
-        .action-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px;
+        .lesson-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 32px;
         }
 
         .action-btn {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px 20px;
+            gap: 8px;
+            padding: 16px 24px;
             text-decoration: none;
             border: none;
-            border-radius: 12px;
-            color: white;
+            border-radius: 10px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            background: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-            background: #1d4ed8;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+        .btn-primary {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
         }
-        .action-btn:active {
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-primary:active {
             transform: scale(0.98);
         }
 
-        /* PRO COMPLETE BUTTON */
-        .complete-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 16px 20px;
-            text-decoration: none;
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            border-color: #1e40af;
+            color: #1e40af;
+        }
+
+        .btn-success {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
-        .complete-btn:hover {
+        .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
         }
 
-        .complete-btn:active {
+        .btn-success:active {
             transform: scale(0.98);
         }
 
-        /* PRO COMPLETED BADGE */
         .completed-badge {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(16, 185, 129, 0.1); /* Glassy background */
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
+            gap: 8px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 2px solid #10b981;
+            color: #059669;
             font-size: 15px;
-            font-weight: 600;
-            border-radius: 12px;
+            font-weight: 700;
+            border-radius: 10px;
             cursor: default;
         }
 
-        /* =========================
-           TABLET & DESKTOP UP-SCALING
-        ========================= */
-        @media (min-width: 600px) {
-            .container { padding: 24px 20px; }
-            .header { padding: 28px 24px; margin-bottom: 20px; }
-            .header h1 { font-size: 24px; }
-            .content-card { padding: 32px 24px; margin-bottom: 20px; }
-            .content { font-size: 15px; line-height: 1.8; }
-            .video-box { padding: 10px; margin-bottom: 20px; }
-            .action-group { flex-direction: row; } /* Puts buttons side-by-side on desktop */
+        .completed-badge i {
+            font-size: 18px;
+        }
+
+        /* ===== NAVIGATION BUTTONS ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f3f4f6;
+            color: #6b7280;
+            text-decoration: none;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
+            border-color: #1e40af;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 12px 16px;
+            }
+
+            .nav-title {
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .lesson-header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .lesson-title {
+                font-size: 24px;
+                gap: 8px;
+            }
+
+            .lesson-meta {
+                gap: 12px;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+
+            .meta-item {
+                font-size: 13px;
+            }
+
+            .progress-section {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-bar {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .progress-text {
+                text-align: left;
+            }
+
+            .video-section {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .content-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .lesson-content {
+                font-size: 14px;
+                line-height: 1.7;
+            }
+
+            .lesson-content h2 {
+                font-size: 18px;
+                margin-top: 16px;
+            }
+
+            .lesson-content h3 {
+                font-size: 15px;
+            }
+
+            .action-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .action-btn {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                margin-top: 20px;
+                padding-top: 20px;
+            }
+
+            .nav-btn {
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .nav-title {
+                font-size: 11px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .lesson-header {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .lesson-title {
+                font-size: 20px;
+                gap: 6px;
+            }
+
+            .lesson-meta {
+                gap: 8px;
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+                flex-wrap: wrap;
+            }
+
+            .meta-item {
+                font-size: 12px;
+            }
+
+            .video-section {
+                padding: 8px;
+                margin-bottom: 16px;
+            }
+
+            .content-section {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                margin-bottom: 12px;
+                gap: 6px;
+            }
+
+            .lesson-content {
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .lesson-content h2 {
+                font-size: 16px;
+                margin-top: 12px;
+                margin-bottom: 8px;
+            }
+
+            .lesson-content h3 {
+                font-size: 14px;
+                margin-top: 10px;
+            }
+
+            .lesson-content p {
+                margin-bottom: 12px;
+            }
+
+            .highlight-card {
+                padding: 12px;
+                margin: 16px 0;
+            }
+
+            .highlight-card-text {
+                font-size: 13px;
+            }
+
+            .table-responsive {
+                margin: 16px 0;
+            }
+
+            .lesson-table {
+                font-size: 12px;
+                min-width: 100%;
+            }
+
+            .lesson-table th,
+            .lesson-table td {
+                padding: 8px;
+            }
+
+            .action-section {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-top: 16px;
+            }
+
+            .action-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+                gap: 6px;
+            }
+
+            .completed-badge {
+                padding: 12px 16px;
+                font-size: 13px;
+                gap: 6px;
+            }
+
+            .nav-buttons {
+                margin-top: 16px;
+                padding-top: 16px;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 10px;
+                font-size: 12px;
+                gap: 6px;
+            }
         }
     </style>
 </head>
 <body class="tex2jax_process">
 
-<div class="container">
-    <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">⬅</a>
-    </div>
-
-    <div class="header">
-        <h1 id="lesson-title">🎥 {{ lesson.title }}</h1>
-        <div class="lesson-info">
-            📚 Module • 🎓 Petroleum Engineering
+<!-- HEADER NAVIGATION -->
+<div class="header-nav">
+    <div class="nav-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="nav-progress">
+            {% if completed %}
+                <span class="progress-dot"></span>
+                <span>Completed</span>
+            {% else %}
+                <span>In Progress</span>
+            {% endif %}
         </div>
-        <div class="progress-bar">
-            <div class="progress" style="width: {% if completed %}100%{% else %}0%{% endif %}"></div>
-        </div>
-    </div>
-
-    <div class="video-box">
-        <iframe src="{{ lesson.video }}" allowfullscreen></iframe>
-    </div>
-
-    <div class="content-card">
-        <div class="content-title">Lesson Notebook</div>
-        
-        <div class="content" id="lesson-content">{{ lesson.content }}</div>
-    </div>
-
-    <div class="action-group">
-        {% if completed %}
-            <div class="completed-badge">
-                ✅ Done
-            </div>
-        {% else %}
-            <a href="/complete_lesson/{{ lesson.id }}" class="complete-btn" role="button">
-                ✓ Mark Done
-            </a>
-        {% endif %}
-
-        <button class="action-btn" onclick="askPetroAI()">
-            🤖 Ask Your Questions
-        </button>
     </div>
 </div>
 
-<script>
-function askPetroAI() {
-    const title = document.getElementById("lesson-title").innerText;
-    const content = document.getElementById("lesson-content").innerText;
+<!-- MAIN CONTAINER -->
+<div class="container">
+    <!-- LESSON HEADER -->
+    <div class="lesson-header">
+        <div class="lesson-title" id="lesson-title">
+            <i class="fas fa-book-open"></i> {{ lesson.title }}
+        </div>
+        <div class="lesson-meta">
+            <div class="meta-item">
+                <i class="fas fa-layer-group"></i>
+                <span>Module Lesson</span>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span>Self-Paced</span>
+            </div>
+        </div>
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {% if completed %}100{% else %}0{% endif %}%;"></div>
+            </div>
+        </div>
+    </div>
 
-    sessionStorage.setItem("lesson_title", title);
-    sessionStorage.setItem("lesson_content", content);
-    
-    window.location.href = "/petroai";
-}
+    <!-- VIDEO SECTION -->
+    {% if lesson.video %}
+    <div class="video-section">
+        <div class="video-container">
+            <iframe src="{{ lesson.video }}" allowfullscreen></iframe>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- LESSON CONTENT -->
+    <div class="content-section">
+        <div class="section-title">
+            <i class="fas fa-scroll"></i> Lesson Content
+        </div>
+        <div class="lesson-content" id="lesson-content">
+            {{ lesson.content }}
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-section">
+        {% if completed %}
+            <div class="completed-badge">
+                <i class="fas fa-check-circle"></i> Lesson Completed
+            </div>
+        {% else %}
+            <a href="/complete_lesson/{{ lesson.id }}" class="action-btn btn-success" role="button">
+                <i class="fas fa-check"></i> Mark as Complete
+            </a>
+        {% endif %}
+
+        <button class="action-btn btn-primary" onclick="askPetroAI()">
+            <i class="fas fa-robot"></i> Ask PetroAI
+        </button>
+
+    </div>
+
+</div>
+
+<!-- SCRIPTS -->
+<script>
+    function askPetroAI() {
+        const title = document.getElementById("lesson-title").innerText;
+        const content = document.getElementById("lesson-content").innerText;
+
+        sessionStorage.setItem("lesson_title", title);
+        sessionStorage.setItem("lesson_content", content);
+        
+        window.location.href = "/petroai";
+    }
+
+    // Optional: Add smooth scroll behavior for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
 </script>
+
 </body>
 </html>
