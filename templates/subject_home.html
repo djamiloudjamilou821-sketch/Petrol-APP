@@ -1,76 +1,526 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Foundations of Petroleum Engineering</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>Foundations of Petroleum Engineering - PetroApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body{
-            margin:0;
-            font-family:Arial;
-            background: linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)),
-                url("/static/hb.jpg");
-
-            background-size: cover;
-            background-position: center;
-            color:white;
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .container{
-            width:92%;
-            max-width:850px;
-            margin:auto;
-            padding:20px;
+        html, body {
+            width: 100%;
+            height: 100%;
         }
 
-        h1{
-            text-align:center;
-            color:#38bdf8;
-            font-size:22px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .card{
-            background:#1e293b;
-            padding:16px;
-            border-radius:12px;
-            margin-top:12px;
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .title{
-            font-size:18px;
-            font-weight:bold;
-            color:#38bdf8;
-            margin-bottom:8px;
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        .desc{
-            font-size:14px;
-            color:#cbd5e1;
-            line-height:1.6;
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f2937;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            flex-shrink: 0;
         }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #1e40af;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #1f2937;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: #6b7280;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ===== SUBJECT GRID ===== */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .subject-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-8px);
+            border-color: #1e40af;
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.15);
+        }
+
+        .subject-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .subject-icon {
+            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .subject-card:hover .subject-icon {
+            background: #f0f4ff;
+            transform: scale(1.1);
+        }
+
+        .subject-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .subject-card:hover .subject-title {
+            color: #1e40af;
+        }
+
+        .subject-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .subject-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+            margin-top: auto;
+        }
+
+        .subject-link {
+            color: #1e40af;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .subject-card:hover .subject-link {
+            gap: 10px;
+        }
+
+        .subject-arrow {
+            font-size: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .subject-card:hover .subject-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .empty-message {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: auto;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 32px 16px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .subject-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .subject-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 12px;
+            }
+
+            .subject-card {
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .subject-icon {
+                font-size: 28px;
+                width: 44px;
+                height: 44px;
+            }
+
+            .subject-title {
+                font-size: 16px;
+            }
+
+            .subject-description {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .hero-badge {
+                padding: 6px 12px;
+                font-size: 11px;
+                margin-bottom: 12px;
+            }
+
+            .hero h1 {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+
+            .hero p {
+                font-size: 13px;
+            }
+
+            .subject-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .subject-card {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .subject-icon {
+                font-size: 24px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .subject-title {
+                font-size: 14px;
+                margin-bottom: 2px;
+            }
+
+            .subject-description {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .subject-footer {
+                padding-top: 10px;
+                gap: 8px;
+            }
+
+            .subject-link {
+                font-size: 12px;
+                gap: 4px;
+            }
+
+            .subject-arrow {
+                font-size: 12px;
+            }
+
+            .empty-state {
+                padding: 40px 16px;
+            }
+
+            .empty-icon {
+                font-size: 40px;
+                margin-bottom: 12px;
+            }
+
+            .empty-title {
+                font-size: 16px;
+            }
+
+            .empty-message {
+                font-size: 12px;
+            }
+
+            .footer {
+                padding: 16px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subject-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .subject-card:nth-child(1) { animation-delay: 0.1s; }
+        .subject-card:nth-child(2) { animation-delay: 0.2s; }
+        .subject-card:nth-child(3) { animation-delay: 0.3s; }
+        .subject-card:nth-child(4) { animation-delay: 0.4s; }
+        .subject-card:nth-child(5) { animation-delay: 0.5s; }
+        .subject-card:nth-child(6) { animation-delay: 0.6s; }
+        .subject-card:nth-child(7) { animation-delay: 0.7s; }
+        .subject-card:nth-child(8) { animation-delay: 0.8s; }
+        .subject-card:nth-child(9) { animation-delay: 0.9s; }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-    
-    <div class="top-nav">
-        <a href="javascript:history.back()" class="back-arrow">
-            ⬅
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
         </a>
+        <div class="header-title">
+            <i class="fas fa-book"></i> Foundations
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-graduation-cap"></i> Core Curriculum
+        </div>
+        <h1>Foundations of Petroleum Engineering</h1>
+        <p>Master the fundamental principles and core concepts that form the foundation of modern petroleum engineering practice.</p>
     </div>
 
-    <h1>📘 Foundations of Petroleum Engineering</h1>
-
-    {% for subject in subjects %}
-        <div class="card">
-            <div class="title">{{ subject.name }}</div>
-            <div class="desc">{{ subject.description }}</div>
+    <!-- SUBJECT GRID -->
+    {% if subjects %}
+    <div class="subject-grid">
+        {% for subject in subjects %}
+        <div class="subject-card">
+            <div class="subject-icon">📚</div>
+            <div class="subject-title">{{ subject.name }}</div>
+            <p class="subject-description">{{ subject.description }}</p>
+            <div class="subject-footer">
+                <span class="subject-link">
+                    Explore
+                    <i class="fas fa-arrow-right subject-arrow"></i>
+                </span>
+            </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No Subjects Available</div>
+        <div class="empty-message">Check back soon for new foundational content.</div>
+    </div>
+    {% endif %}
+</div>
 
+<!-- FOOTER -->
+<div class="footer">
+    <i class="fas fa-copyright"></i> 2026 PetroApp. Engineered for petroleum engineering education.
 </div>
 
 </body>

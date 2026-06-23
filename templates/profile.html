@@ -1,325 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Profile</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>User Profile - PetroApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* =========================
-            CORE RESET & VARIABLES
-        ========================= */
+        /* ===== CORE RESET & TYPOGRAPHY ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
         }
 
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-            background: linear-gradient(rgba(15,23,42,0.9), rgba(15,23,42,0.95)), url("/static/hb.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
             min-height: 100vh;
-            padding-bottom: 30px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            width: 100%;
-            max-width: 550px;
+        /* ===== HEADER ===== */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 900px;
             margin: 0 auto;
-            padding-top: 0; /* Let cover photo hit the top screen edge */
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
         }
 
-        /* BACK NAVIGATION BUTTON */
-        .back-arrow {
-            position: fixed;
-            top: 15px;
-            left: 15px;
+        .back-btn {
             width: 40px;
             height: 40px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%; /* Rounded circular button like FB */
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            color: white;
+            color: #1f2937;
             text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
             font-size: 18px;
-            transition: 0.2s;
-            z-index: 1000;
+            flex-shrink: 0;
         }
 
-        .back-arrow:active {
-            transform: scale(0.9);
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1e40af;
         }
 
-        /* =========================
-            FACEBOOK PROFILE ARCHITECTURE
-        ========================= */
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px;
+            width: 100%;
+        }
+
+        /* ===== PROFILE CARD ===== */
         .profile-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 0 0 20px 20px; /* Curve only the bottom edge */
+            background: white;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* COVER BANNER HEADER */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== COVER PHOTO ===== */
         .cover-photo {
             width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #1e3a8a, #0369a1); /* Tech default gradient */
+            height: 200px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             background-size: cover;
             background-position: center;
             position: relative;
         }
 
-        /* HEADER AVATAR WRAPPER */
-        .avatar-container {
-            width: 100%;
-            height: 60px; /* Offset spacing context */
+        /* ===== AVATAR SECTION ===== */
+        .avatar-section {
             position: relative;
-            margin-bottom: 12px;
+            padding: 0 24px 24px;
         }
 
         .profile-img {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #0f172a; /* Frame outline separation */
+            border: 5px solid white;
             position: absolute;
-            top: -60px; /* Push exactly halfway up into the banner area */
+            top: -70px;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
-        /* HEADER TEXT HEADINGS */
+        /* ===== PROFILE HEADER TEXT ===== */
         .profile-header-text {
             text-align: center;
-            padding: 0 20px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 80px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 24px;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 2px;
+        .profile-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1f2937;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
         }
 
-        .email-subtext {
-            color: #94a3b8;
-            font-size: 13px;
-            margin-bottom: 12px;
+        .profile-email {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 16px;
         }
 
-        /* =========================
-            FACEBOOK COHESIVE BIO COMPONENT (FIXED FOR MULTI-LINE)
-        ========================= */
-        .fb-bio-section {
-            width: 100%;
-            max-width: 380px;
-            margin: 0 auto;
+        /* ===== BIO SECTION ===== */
+        .bio-section {
             text-align: center;
-            padding: 0 10px;
-            word-wrap: break-word;
-            word-break: break-word;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .bio-text {
-            font-size: 14.5px;
-            color: #e2e8f0;
-            line-height: 1.5;
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.6;
             font-style: italic;
-            display: block;
-            white-space: pre-line; /* Keeps multi-line breaks formatted cleanly */
+            margin-bottom: 12px;
         }
 
         .bio-placeholder {
-            color: #64748b;
             font-size: 14px;
+            color: #9ca3af;
+            font-style: italic;
         }
 
-        .inline-bio-btn {
+        .bio-action {
             display: inline-block;
             margin-top: 8px;
             background: transparent;
             border: none;
-            color: #38bdf8;
+            color: #1e40af;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
-        .inline-bio-btn:hover {
+        .bio-action:hover {
+            color: #3b82f6;
             text-decoration: underline;
         }
 
-        /* =========================
-            FACEBOOK "INTRO" BACKGROUND CARD
-        ========================= */
+        /* ===== INTRO CARD ===== */
         .intro-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin-bottom: 16px;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
         }
 
-        .intro-card h3 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            color: #ffffff;
+        .intro-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .intro-row {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 12px;
-            font-size: 14.5px;
-            color: #cbd5e1;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .intro-row:last-child {
-            margin-bottom: 0;
+            border-bottom: none;
         }
 
         .intro-icon {
-            font-size: 16px;
-            width: 24px;
+            font-size: 20px;
+            width: 32px;
             text-align: center;
-            color: #94a3b8;
+            flex-shrink: 0;
         }
 
-        .intro-highlight {
-            color: #ffffff;
-            font-weight: 500;
+        .intro-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            flex-shrink: 0;
         }
 
-        /* PRIMARY FOOTER CTA ACTION BUTTON */
+        .intro-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            flex: 1;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
         .profile-actions {
-            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .btn {
+        .action-btn {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            width: 100%;
-            padding: 12px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14.5px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
         }
 
-        .btn:hover {
-            background: #1d4ed8;
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
         }
 
-        .btn:active {
+        .action-btn:active {
             transform: scale(0.98);
         }
 
-        /* RESPONSIVE DESIGN TUNING */
-        @media (max-width: 550px) {
-            .profile-card {
-                border-radius: 0; /* Full bleed edge on mobile screens */
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: auto;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
             }
-            .intro-card {
-                margin-left: 8px;
-                margin-right: 8px;
+
+            .container {
+                padding: 24px 16px;
             }
-            .profile-actions {
-                padding: 0 8px;
-            }
+
             .cover-photo {
-                height: 130px;
+                height: 160px;
+            }
+
+            .profile-img {
+                width: 120px;
+                height: 120px;
+                top: -60px;
+            }
+
+            .profile-header-text {
+                padding-top: 70px;
+                padding-bottom: 20px;
+            }
+
+            .profile-name {
+                font-size: 24px;
+            }
+
+            .bio-section {
+                padding: 16px 20px;
+            }
+
+            .intro-card {
+                padding: 20px;
+            }
+
+            .intro-title {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            .intro-row {
+                padding: 10px 0;
+            }
+
+            .action-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 12px 12px;
+                gap: 12px;
+            }
+
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 16px 12px;
+            }
+
+            .profile-card {
+                margin-bottom: 16px;
+            }
+
+            .cover-photo {
+                height: 140px;
+            }
+
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                top: -50px;
+                border-width: 4px;
+            }
+
+            .profile-header-text {
+                padding-top: 60px;
+                padding-bottom: 16px;
+            }
+
+            .profile-name {
+                font-size: 20px;
+                margin-bottom: 2px;
+            }
+
+            .profile-email {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+
+            .bio-section {
+                padding: 12px 16px;
+            }
+
+            .bio-text {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            .bio-placeholder {
+                font-size: 12px;
+            }
+
+            .bio-action {
+                font-size: 12px;
+                margin-top: 6px;
+            }
+
+            .intro-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .intro-title {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+
+            .intro-row {
+                padding: 8px 0;
+                gap: 10px;
+            }
+
+            .intro-icon {
+                font-size: 18px;
+                width: 28px;
+            }
+
+            .intro-label {
+                font-size: 12px;
+            }
+
+            .intro-value {
+                font-size: 13px;
+            }
+
+            .profile-actions {
+                gap: 10px;
+            }
+
+            .action-btn {
+                padding: 12px 14px;
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            .footer {
+                padding: 12px 12px;
+                font-size: 11px;
             }
         }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-    <a href="javascript:history.back()" class="back-arrow">⬅</a>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-container">
+        <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">
+            <i class="fas fa-user-circle"></i> User Profile
+        </div>
+    </div>
+</div>
 
+<!-- MAIN CONTAINER -->
+<div class="container">
+    <!-- PROFILE CARD -->
     <div class="profile-card">
+        <!-- COVER PHOTO -->
         <div class="cover-photo"></div>
-        
-        <div class="avatar-container">
+
+        <!-- AVATAR & HEADER -->
+        <div class="avatar-section">
             {% if user.profile_pic %}
-                <img class="profile-img" src="{{ user.profile_pic }}" alt="Avatar">
+                <img class="profile-img" src="{{ user.profile_pic }}" alt="Profile Picture">
             {% else %}
                 <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Default Avatar">
             {% endif %}
+
+            <div class="profile-header-text">
+                <div class="profile-name">{{ user.username }}</div>
+                <div class="profile-email">{{ user.email }}</div>
+            </div>
         </div>
 
-        <div class="profile-header-text">
-            <h1>{{ user.username }}</h1>
-            <div class="email-subtext">{{ user.email }}</div>
-            
-            <div class="fb-bio-section">
-                {% if user.bio %}
-                    <div class="bio-text">“{{ user.bio }}”</div>
-                    {% if session.get("user_id") == user.id %}
-                        <a href="/edit-profile" class="inline-bio-btn">Edit Bio</a>
-                    {% endif %}
-                {% else %}
-                    <p class="bio-placeholder">No bio added yet.</p>
-                    {% if session.get("user_id") == user.id %}
-                        <a href="/edit-profile" class="inline-bio-btn">✍️ Add Bio</a>
-                    {% endif %}
+        <!-- BIO SECTION -->
+        <div class="bio-section">
+            {% if user.bio %}
+                <div class="bio-text">"{{ user.bio }}"</div>
+                {% if session.get("user_id") == user.id %}
+                    <a href="/edit-profile" class="bio-action">
+                        <i class="fas fa-edit"></i> Edit Bio
+                    </a>
                 {% endif %}
-            </div>
+            {% else %}
+                <p class="bio-placeholder">No bio added yet.</p>
+                {% if session.get("user_id") == user.id %}
+                    <a href="/edit-profile" class="bio-action">
+                        <i class="fas fa-plus"></i> Add Bio
+                    </a>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 
+    <!-- INTRO CARD -->
     <div class="intro-card">
-        <h3>Intro</h3>
-        
+        <div class="intro-title">
+            <i class="fas fa-info-circle"></i> About
+        </div>
+
         <div class="intro-row">
             <span class="intro-icon">🛢️</span>
-            <span>Level: <span class="intro-highlight">{{ user.petroleum_level or "Engineering Student" }}</span></span>
+            <span class="intro-label">Level:</span>
+            <span class="intro-value">{{ user.petroleum_level or "Engineering Student" }}</span>
         </div>
 
         <div class="intro-row">
             <span class="intro-icon">🏫</span>
-            <span>Studies at <span class="intro-highlight">{{ user.university or "Petroleum School" }}</span></span>
+            <span class="intro-label">Studies at:</span>
+            <span class="intro-value">{{ user.university or "Petroleum School" }}</span>
         </div>
 
         <div class="intro-row">
             <span class="intro-icon">🌍</span>
-            <span>From <span class="intro-highlight">{{ user.country or "Earth" }}</span></span>
+            <span class="intro-label">From:</span>
+            <span class="intro-value">{{ user.country or "Earth" }}</span>
         </div>
     </div>
 
+    <!-- ACTION BUTTONS -->
+    {% if session.get("user_id") == user.id %}
     <div class="profile-actions">
-        {% if session.get("user_id") == user.id %}
-            <a href="/edit-profile" class="btn">
-                <span>⚙️</span> Edit Profile Details
-            </a>
-        {% endif %}
+        <a href="/edit-profile" class="action-btn">
+            <i class="fas fa-cog"></i> Edit Profile
+        </a>
     </div>
+    {% endif %}
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <i class="fas fa-copyright"></i> 2026 PetroApp. Engineered for petroleum engineering education.
 </div>
 
 </body>
